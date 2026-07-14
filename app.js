@@ -38,17 +38,109 @@ const defaultState = {
 };
 
 function clone(obj){return JSON.parse(JSON.stringify(obj))}
-function load(){
+
+function loadLocal(){
   const raw=localStorage.getItem(STORAGE_KEY);
-  let s=raw?JSON.parse(raw):clone(defaultState);
-  if(s.daily?.date!==today()){
-    const fresh=clone(defaultState).daily;
-    s.daily=fresh;
+  let saved=raw?JSON.parse(raw):clone(defaultState);
+
+  if(saved.daily?.date!==today()){
+    saved.daily=clone(defaultState).daily;
   }
-  return s;
+
+  return saved;
 }
-let state=load();
-function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));renderAll()}
+
+let state=loadLocal();
+let cloudSaveTimer=null;
+let appInitialized=false;
+
+function getSupabaseClient(){
+  return window.statusOSSupabase || null;
+}
+
+async function getSignedInUser(){
+  const client=getSupabaseClient();
+  if(!client) return null;
+
+  const {data,error}=await client.auth.getUser();
+
+  if(error){
+    console.error("StatusOS user lookup failed:",error);
+    return null;
+  }
+
+  return data?.user || null;
+}
+
+async function saveCloud(){
+  const client=getSupabaseClient();
+  const user=await getSignedInUser();
+
+  if(!client || !user) return;
+
+  const {error}=await client
+    .from("statusos_workspaces")
+    .upsert(
+      {
+        user_id:user.id,
+        app_state:state,
+        updated_at:new Date().toISOString()
+      },
+      {onConflict:"user_id"}
+    );
+
+  if(error){
+    console.error("StatusOS cloud save failed:",error);
+  }
+}
+
+function save(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  renderAll();
+
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer=setTimeout(saveCloud,500);
+}
+
+async function loadCloud(){
+  const client=getSupabaseClient();
+  const user=await getSignedInUser();
+
+  if(!client || !user) return;
+
+  const {data,error}=await client
+    .from("statusos_workspaces")
+    .select("app_state")
+    .eq("user_id",user.id)
+    .maybeSingle();
+
+  if(error){
+    console.error("StatusOS cloud load failed:",error);
+    return;
+  }
+
+  if(data?.app_state && Object.keys(data.app_state).length){
+    state=data.app_state;
+
+    if(state.daily?.date!==today()){
+      state.daily=clone(defaultState).daily;
+    }
+
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  }else{
+    const {error:insertError}=await client
+      .from("statusos_workspaces")
+      .insert({
+        user_id:user.id,
+        app_state:state,
+        updated_at:new Date().toISOString()
+      });
+
+    if(insertError){
+      console.error("StatusOS first cloud save failed:",insertError);
+    }
+  }
+}
 
 const dayThemes={
   Sunday:["Reset Day",["Rest","Family time","Light planning"]],
@@ -188,4 +280,11 @@ function renderAll(){
   renderBoard("sales",["Lead","Contacted","Conversation","Proposal","Won","Lost"],"salesBoard",x=>`<strong>${x.name}</strong><p>${x.offer||"Opportunity"}</p><small>${money(x.value)} • ${x.nextAction||"No next action"}</small><div class="card-actions"><button class="mini-btn delete" onclick="removeItem('sales','${x.id}')">Delete</button></div>`);
   renderProjects();renderRevenue();renderGoals();renderTemplates();renderStats();renderSettings();
 }
-renderAll();
+window.initStatusOSApp = async function () {
+  if(!appInitialized){
+    await loadCloud();
+    appInitialized=true;
+  }
+
+  renderAll();
+};

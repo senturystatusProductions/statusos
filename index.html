@@ -13,6 +13,35 @@
   <title>Sentury Status OS</title>
 </head>
 <body>
+  <div id="authScreen" class="auth-screen">
+    <div class="auth-card">
+      <div class="brand-mark auth-logo">SS</div>
+  
+      <p class="eyebrow">STATUSOS</p>
+      <h2>Sign in to sync your business.</h2>
+      <p class="muted">Use the same account on your computer and iPhone.</p>
+  
+      <form id="authForm">
+        <label>
+          Email
+          <input id="authEmail" type="email" required>
+        </label>
+  
+        <label>
+          Password
+          <input id="authPassword" type="password" minlength="6" required>
+        </label>
+  
+        <button class="button" type="submit">Sign In</button>
+  
+        <button id="signUpBtn" class="button secondary" type="button">
+          Create Account
+        </button>
+      </form>
+  
+      <p id="authMessage" class="small muted"></p>
+    </div>
+  </div>
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
@@ -280,7 +309,10 @@
     </form>
   </dialog>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
   <script src="app.js"></script>
+  <script src="auth.js"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
@@ -288,3 +320,4 @@
   </script>
 </body>
 </html>
+
