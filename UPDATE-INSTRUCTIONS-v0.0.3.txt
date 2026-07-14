@@ -1,0 +1,38 @@
+STATUSOS v0.0.3 REALTIME SYNC
+=============================
+
+WHAT CHANGED
+- Changes made on one signed-in device automatically appear on another.
+- No browser refresh is required.
+- Local storage remains as an offline fallback.
+- Cloud saving still uses the existing statusos_workspaces table.
+
+STEP 1 — ENABLE REALTIME IN SUPABASE
+1. Open Supabase.
+2. Open SQL Editor.
+3. Create a new query.
+4. Copy all text from enable-realtime.sql.
+5. Paste it and click Run.
+6. If Supabase says the table is already in the publication, realtime is already enabled.
+
+STEP 2 — REPLACE PROJECT FILES
+Copy all files from this package into:
+D:\New Downloads\statusos-clone
+
+Choose Replace the files in the destination.
+
+STEP 3 — TEST LOCALLY
+1. Restart the local server.
+2. Open http://localhost:8080/
+3. Press Ctrl + Shift + R.
+4. Sign in.
+5. Keep desktop open.
+6. Change or delete an artist on the iPhone.
+7. The desktop should update automatically within a few seconds.
+
+STEP 4 — COMMIT AND PUSH
+Run:
+
+git add app.js service-worker.js enable-realtime.sql UPDATE-INSTRUCTIONS-v0.0.3.txt
+git commit -m "StatusOS v0.0.3 realtime sync"
+git push

@@ -53,6 +53,8 @@ function loadLocal(){
 let state=loadLocal();
 let cloudSaveTimer=null;
 let appInitialized=false;
+let realtimeChannel=null;
+let suppressCloudSave=false;
 
 function getSupabaseClient(){
   return window.statusOSSupabase || null;
@@ -98,6 +100,8 @@ function save(){
   localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
   renderAll();
 
+  if(suppressCloudSave) return;
+
   clearTimeout(cloudSaveTimer);
   cloudSaveTimer=setTimeout(saveCloud,500);
 }
@@ -140,6 +144,54 @@ async function loadCloud(){
       console.error("StatusOS first cloud save failed:",insertError);
     }
   }
+}
+
+async function startRealtimeSync(){
+  const client=getSupabaseClient();
+  const user=await getSignedInUser();
+
+  if(!client || !user) return;
+
+  if(realtimeChannel){
+    await client.removeChannel(realtimeChannel);
+    realtimeChannel=null;
+  }
+
+  realtimeChannel=client
+    .channel(`statusos-workspace-${user.id}`)
+    .on(
+      "postgres_changes",
+      {
+        event:"UPDATE",
+        schema:"public",
+        table:"statusos_workspaces",
+        filter:`user_id=eq.${user.id}`
+      },
+      payload=>{
+        const incoming=payload?.new?.app_state;
+
+        if(!incoming || !Object.keys(incoming).length) return;
+
+        suppressCloudSave=true;
+        state=incoming;
+
+        if(state.daily?.date!==today()){
+          state.daily=clone(defaultState).daily;
+        }
+
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+        renderAll();
+
+        setTimeout(()=>{
+          suppressCloudSave=false;
+        },0);
+      }
+    )
+    .subscribe(status=>{
+      if(status==="SUBSCRIBED"){
+        console.log("StatusOS realtime sync connected.");
+      }
+    });
 }
 
 const dayThemes={
@@ -283,6 +335,7 @@ function renderAll(){
 window.initStatusOSApp = async function () {
   if(!appInitialized){
     await loadCloud();
+    await startRealtimeSync();
     appInitialized=true;
   }
 
