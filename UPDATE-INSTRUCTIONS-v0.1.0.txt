@@ -1,0 +1,14 @@
+STATUSOS v0.1.0 DASHBOARD
+
+1. Extract this ZIP.
+2. Copy all files into D:\New Downloads\statusos-clone
+3. Replace existing files.
+4. Restart local server.
+5. Open http://localhost:8080/
+6. Press Ctrl + Shift + R.
+7. Test desktop and iPhone.
+
+Commit:
+git add .
+git commit -m "StatusOS v0.1.0 dashboard"
+git push

@@ -326,7 +326,37 @@ window.bumpProject=id=>{const p=state.projects.find(x=>x.id===id);p.progress=Mat
 window.incrementGoal=id=>{const g=state.goals.find(x=>x.id===id);const n=prompt("How much progress should be added?","1");if(n!==null){g.current+=Number(n||0);save()}}
 window.copyTemplate=id=>{const t=state.templates.find(x=>x.id===id);navigator.clipboard.writeText(t.message);alert("Template copied.")}
 
+
+function renderDashboardHeader(){
+  const now=new Date();
+  const hour=now.getHours();
+  const greeting=hour<12?"Good morning":hour<17?"Good afternoon":"Good evening";
+  const welcome=document.getElementById("welcomeHeading");
+  const day=document.getElementById("dashboardDay");
+  const fullDate=document.getElementById("dashboardFullDate");
+  if(welcome) welcome.textContent=`${greeting}, Sam.`;
+  if(day) day.textContent=now.toLocaleDateString(undefined,{weekday:"long"});
+  if(fullDate) fullDate.textContent=now.toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"});
+}
+
+function renderRecentActivity(){
+  const container=document.getElementById("recentActivity");
+  if(!container) return;
+
+  const activity=[];
+  state.revenue.slice(-3).forEach(item=>activity.push({title:`Revenue added: ${money(item.amount)}`,detail:item.name||item.source||"Revenue",date:item.date||""}));
+  state.artists.slice(-3).forEach(item=>activity.push({title:`Artist added: ${item.name}`,detail:item.status||"New Lead",date:item.lastContact||""}));
+  state.projects.slice(-3).forEach(item=>activity.push({title:`Project updated: ${item.name}`,detail:item.nextStep||item.type||"Project",date:item.deadline||""}));
+
+  const latest=activity.slice(-6).reverse();
+  container.innerHTML=latest.length
+    ? latest.map(item=>`<div class="activity-item"><div><strong>${item.title}</strong><small>${item.detail}</small></div><small>${item.date?fmtDate(item.date):"Recent"}</small></div>`).join("")
+    : `<div class="activity-empty">No recent activity yet.</div>`;
+}
+
 function renderAll(){
+  renderDashboardHeader();
+  renderRecentActivity();
   renderDaily();renderCRM();
   renderBoard("content",["Ideas","Writing","Filming","Ready","Posted"],"contentBoard",x=>`<strong>${x.title}</strong><p>${x.platform}</p><small>${x.hook||"No hook yet"} ${x.date?"• "+fmtDate(x.date):""}</small><div class="card-actions"><button class="mini-btn delete" onclick="removeItem('content','${x.id}')">Delete</button></div>`);
   renderBoard("sales",["Lead","Contacted","Conversation","Proposal","Won","Lost"],"salesBoard",x=>`<strong>${x.name}</strong><p>${x.offer||"Opportunity"}</p><small>${money(x.value)} • ${x.nextAction||"No next action"}</small><div class="card-actions"><button class="mini-btn delete" onclick="removeItem('sales','${x.id}')">Delete</button></div>`);

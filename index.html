@@ -82,6 +82,33 @@
       </header>
 
       <section id="dashboard" class="view active">
+        <article class="dashboard-welcome card">
+          <div>
+            <p class="eyebrow">MISSION CONTROL</p>
+            <h2 id="welcomeHeading">Welcome back, Sam.</h2>
+            <p class="muted">Here is what needs your attention today.</p>
+          </div>
+          <div class="dashboard-date">
+            <strong id="dashboardDay"></strong>
+            <span id="dashboardFullDate"></span>
+          </div>
+        </article>
+
+        <div class="quick-actions card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Quick Actions</p>
+              <h3>Move the business forward</h3>
+            </div>
+          </div>
+          <div class="quick-action-grid">
+            <button class="quick-action" data-open="artistModal">+ New Artist</button>
+            <button class="quick-action" data-open="projectModal">+ New Project</button>
+            <button class="quick-action" data-open="contentModal">+ New Content</button>
+            <button class="quick-action" data-open="revenueModal">+ Add Revenue</button>
+          </div>
+        </div>
+
         <div class="hero-grid">
           <article class="card mission-card">
             <p class="eyebrow">Today's Mission</p>
@@ -126,6 +153,16 @@
         </div>
 
         <div id="dailySections"></div>
+
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Recent Activity</p>
+              <h3>Latest business updates</h3>
+            </div>
+          </div>
+          <div id="recentActivity" class="activity-list"></div>
+        </article>
       </section>
 
       <section id="crm" class="view">
