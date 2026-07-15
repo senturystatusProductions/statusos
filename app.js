@@ -1127,6 +1127,7 @@ function initializeInterface() {
   bindModals();
   bindForms();
   bindControls();
+  bindAssistant();
 }
 
 window.initStatusOSApp = async function initStatusOSApp() {
@@ -1143,3 +1144,41 @@ window.initStatusOSApp = async function initStatusOSApp() {
 document.addEventListener("DOMContentLoaded", () => {
   renderDashboardHeader();
 });
+
+
+function bindAssistant() {
+  const input = document.getElementById("assistantInput");
+  const sendButton = document.getElementById("assistantSend");
+  const messages = document.getElementById("assistantMessages");
+
+  if (!input || !sendButton || !messages) return;
+
+  function sendAssistantMessage() {
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    const userMessage = document.createElement("div");
+    userMessage.className = "assistant-message user";
+    userMessage.textContent = message;
+    messages.appendChild(userMessage);
+
+    const assistantReply = document.createElement("div");
+    assistantReply.className = "assistant-message ai";
+    assistantReply.textContent =
+      "StatusOS AI received your message. The real AI connection will be added next.";
+    messages.appendChild(assistantReply);
+
+    input.value = "";
+    input.focus();
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  sendButton.addEventListener("click", sendAssistantMessage);
+
+  input.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      sendAssistantMessage();
+    }
+  });
+}
