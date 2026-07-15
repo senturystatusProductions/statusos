@@ -313,7 +313,32 @@ function renderRevenue(){
 }
 function renderGoals(){document.getElementById("goalList").innerHTML=state.goals.map(g=>{const pct=Math.min(100,Math.round((g.current/g.target)*100));return `<article class="card goal-card"><h3>${g.name}</h3><div class="meter"><span style="width:${pct}%"></span></div><p>${g.current} / ${g.target}</p><small class="muted">${g.deadline?fmtDate(g.deadline):"No deadline"}</small><div class="card-actions"><button class="mini-btn" onclick="incrementGoal('${g.id}')">Add Progress</button><button class="mini-btn delete" onclick="removeItem('goals','${g.id}')">Delete</button></div></article>`}).join("")}
 function renderTemplates(){document.getElementById("templateList").innerHTML=state.templates.map(t=>`<article class="card template-card"><h3>${t.name}</h3><p class="muted">${t.message}</p><div class="card-actions"><button class="mini-btn" onclick="copyTemplate('${t.id}')">Copy</button><button class="mini-btn delete" onclick="removeItem('templates','${t.id}')">Delete</button></div></article>`).join("")}
-function renderStats() {
+function function renderStats() {
+  const now = new Date();
+
+  const monthlyRevenue = state.revenue
+    .filter(item => {
+      const date = new Date(item.date);
+
+      return (
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear()
+      );
+    })
+    .reduce((total, item) => total + Number(item.amount || 0), 0);
+
+  document.getElementById("statArtists").textContent =
+    state.artists.length;
+
+  document.getElementById("statProjects").textContent =
+    state.projects.filter(project => Number(project.progress || 0) < 100).length;
+
+  document.getElementById("statContent").textContent =
+    state.content.filter(item => item.stage !== "Posted").length;
+
+  document.getElementById("statRevenue").textContent =
+    "$" + monthlyRevenue.toLocaleString();
+} {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
 
