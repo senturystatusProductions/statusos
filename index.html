@@ -127,13 +127,46 @@
             </div>
             <p>Daily Completion</p>
           </article>
-        </div>
+        </div><article class="card" id="businessSnapshot">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Business Snapshot</p>
+              <h3>Status at a Glance</h3>
+            </div>
+          </div>
+        
+          <div class="snapshot-grid">
+            <div>👥 <strong id="snapshotArtists">0</strong> Artists</div>
+            <div>🎵 <strong id="snapshotProjects">0</strong> Projects</div>
+            <div>📝 <strong id="snapshotContent">0</strong> Content Waiting</div>
+            <div>💰 <strong id="snapshotRevenue">$0</strong> This Month</div>
+          </div>
+        </article>
 
-        <div class="stats-grid">
-          <article class="stat card"><span>Artists Contacted</span><strong id="statContacted">0</strong><small>This week</small></article>
-          <article class="stat card"><span>Follow-ups Due</span><strong id="statFollowups">0</strong><small>Needs attention</small></article>
-          <article class="stat card"><span>Content Posted</span><strong id="statPosts">0</strong><small>This week</small></article>
-          <article class="stat card"><span>Revenue</span><strong id="statRevenue">$0</strong><small>This month</small></article>
+        <<div class="stats-grid">
+          <article class="stat card">
+            <span>Total Artists</span>
+            <strong id="statArtists">0</strong>
+            <small>All contacts</small>
+          </article>
+        
+          <article class="stat card">
+            <span>Active Projects</span>
+            <strong id="statProjects">0</strong>
+            <small>In progress</small>
+          </article>
+        
+          <article class="stat card">
+            <span>Content Queue</span>
+            <strong id="statContent">0</strong>
+            <small>Not posted</small>
+          </article>
+        
+          <article class="stat card">
+            <span>Revenue</span>
+            <strong id="statRevenue">$0</strong>
+            <small>This month</small>
+          </article>
         </div>
 
         <div class="two-col">
@@ -348,7 +381,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=3"></script>
   <script src="auth.js"></script>
   <script>
     if ("serviceWorker" in navigator) {

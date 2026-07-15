@@ -327,21 +327,58 @@ function function renderStats() {
     })
     .reduce((total, item) => total + Number(item.amount || 0), 0);
 
-  document.getElementById("statArtists").textContent =
-    state.artists.length;
+  const statArtists = document.getElementById("statArtists");
+  const statProjects = document.getElementById("statProjects");
+  const statContent = document.getElementById("statContent");
+  const statRevenue = document.getElementById("statRevenue");
 
-  document.getElementById("statProjects").textContent =
-    state.projects.filter(project => Number(project.progress || 0) < 100).length;
+  const snapshotArtists = document.getElementById("snapshotArtists");
+  const snapshotProjects = document.getElementById("snapshotProjects");
+  const snapshotContent = document.getElementById("snapshotContent");
+  const snapshotRevenue = document.getElementById("snapshotRevenue");
 
-  document.getElementById("statContent").textContent =
-    state.content.filter(item => item.stage !== "Posted").length;
+  if (statArtists) {
+    statArtists.textContent = state.artists.length;
+  }
 
-  document.getElementById("statRevenue").textContent =
-    "$" + monthlyRevenue.toLocaleString();
-} {
-  const weekAgo = new Date();
-  weekAgo.setDate(weekAgo.getDate() - 7);
+  if (statProjects) {
+    statProjects.textContent =
+      state.projects.filter(
+        project => Number(project.progress || 0) < 100
+      ).length;
+  }
 
+  if (statContent) {
+    statContent.textContent =
+      state.content.filter(item => item.stage !== "Posted").length;
+  }
+
+  if (statRevenue) {
+    statRevenue.textContent =
+      "$" + monthlyRevenue.toLocaleString();
+  }
+
+  if (snapshotArtists) {
+    snapshotArtists.textContent = state.artists.length;
+  }
+
+  if (snapshotProjects) {
+    snapshotProjects.textContent =
+      state.projects.filter(
+        project => Number(project.progress || 0) < 100
+      ).length;
+  }
+
+  if (snapshotContent) {
+    snapshotContent.textContent =
+      state.content.filter(item => item.stage !== "Posted").length;
+  }
+
+  if (snapshotRevenue) {
+    snapshotRevenue.textContent =
+      "$" + monthlyRevenue.toLocaleString();
+  }
+}
   // Artists contacted this week
   document.getElementById("statContacted").textContent =
     state.artists.filter(a =>
