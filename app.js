@@ -1,4 +1,4 @@
-const STORAGE_KEY = "senturyStatusOS_v2";
+﻿const STORAGE_KEY = "senturyStatusOS_v2";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -17,7 +17,7 @@ const money = value =>
 const fmtDate = value =>
   value
     ? new Date(`${value}T12:00:00`).toLocaleDateString()
-    : "—";
+    : "â€”";
 
 const clone = value => JSON.parse(JSON.stringify(value));
 
@@ -664,7 +664,7 @@ function renderCRM() {
               <strong>${artist.name}</strong><br>
               <small>${artist.contact || ""}</small>
             </td>
-            <td>${artist.genre || "—"}</td>
+            <td>${artist.genre || "â€”"}</td>
             <td><span class="status">${artist.status}</span></td>
             <td>${fmtDate(artist.lastContact)}</td>
             <td>${fmtDate(artist.followUp)}</td>
@@ -723,7 +723,7 @@ function renderProjects() {
               <span style="width:${Number(project.progress || 0)}%"></span>
             </div>
             <small>
-              ${Number(project.progress || 0)}% •
+              ${Number(project.progress || 0)}% â€¢
               ${project.deadline ? fmtDate(project.deadline) : "No deadline"}
             </small>
             <div class="card-actions">
@@ -798,7 +798,7 @@ function renderRevenue() {
           <tr>
             <td>${fmtDate(item.date)}</td>
             <td>${item.source}</td>
-            <td>${item.name || "—"}</td>
+            <td>${item.name || "â€”"}</td>
             <td>${money(item.amount)}</td>
             <td>
               <button
@@ -1036,7 +1036,7 @@ function renderAll() {
       <p>${item.platform}</p>
       <small>
         ${item.hook || "No hook yet"}
-        ${item.date ? ` • ${fmtDate(item.date)}` : ""}
+        ${item.date ? ` â€¢ ${fmtDate(item.date)}` : ""}
       </small>
       <div class="card-actions">
         <button
@@ -1057,7 +1057,7 @@ function renderAll() {
       <strong>${item.name}</strong>
       <p>${item.offer || "Opportunity"}</p>
       <small>
-        ${money(item.value)} • ${item.nextAction || "No next action"}
+        ${money(item.value)} â€¢ ${item.nextAction || "No next action"}
       </small>
       <div class="card-actions">
         <button
@@ -1153,7 +1153,7 @@ function bindAssistant() {
 
   if (!input || !sendButton || !messages) return;
 
-  function sendAssistantMessage() {
+  async function sendAssistantMessage() {
     const message = input.value.trim();
 
     if (!message) return;
@@ -1165,11 +1165,30 @@ function bindAssistant() {
 
     const assistantReply = document.createElement("div");
     assistantReply.className = "assistant-message ai";
-    assistantReply.textContent =
-      "StatusOS AI received your message. The real AI connection will be added next.";
+    assistantReply.textContent = "StatusOS AI is thinking...";
     messages.appendChild(assistantReply);
 
     input.value = "";
+    messages.scrollTop = messages.scrollHeight;
+
+    try {
+      const { data, error } = await window.statusOSSupabase.functions.invoke(
+        "statusos-ai",
+        {
+          body: { message }
+        }
+      );
+
+      if (error) throw error;
+
+      assistantReply.textContent =
+        data?.reply || "StatusOS AI did not return a response.";
+    } catch (error) {
+      console.error("StatusOS AI request failed:", error);
+      assistantReply.textContent =
+        error?.message || "StatusOS AI could not complete the request.";
+    }
+
     input.focus();
     messages.scrollTop = messages.scrollHeight;
   }
