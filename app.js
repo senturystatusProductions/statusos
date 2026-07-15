@@ -313,11 +313,44 @@ function renderRevenue(){
 }
 function renderGoals(){document.getElementById("goalList").innerHTML=state.goals.map(g=>{const pct=Math.min(100,Math.round((g.current/g.target)*100));return `<article class="card goal-card"><h3>${g.name}</h3><div class="meter"><span style="width:${pct}%"></span></div><p>${g.current} / ${g.target}</p><small class="muted">${g.deadline?fmtDate(g.deadline):"No deadline"}</small><div class="card-actions"><button class="mini-btn" onclick="incrementGoal('${g.id}')">Add Progress</button><button class="mini-btn delete" onclick="removeItem('goals','${g.id}')">Delete</button></div></article>`}).join("")}
 function renderTemplates(){document.getElementById("templateList").innerHTML=state.templates.map(t=>`<article class="card template-card"><h3>${t.name}</h3><p class="muted">${t.message}</p><div class="card-actions"><button class="mini-btn" onclick="copyTemplate('${t.id}')">Copy</button><button class="mini-btn delete" onclick="removeItem('templates','${t.id}')">Delete</button></div></article>`).join("")}
-function renderStats(){
-  const weekAgo=new Date();weekAgo.setDate(weekAgo.getDate()-7);
-  document.getElementById("statContacted").textContent=state.artists.filter(a=>a.lastContact&&new Date(a.lastContact)>=weekAgo).length;
-  document.getElementById("statFollowups").textContent=state.artists.filter(a=>a.followUp&&a.followUp<=today()).length;
-  document.getElementById("statPosts").textContent=state.content.filter(c=>c.stage==="Posted"&&(!c.date||new Date(c.date)>=weekAgo)).length;
+function renderStats() {
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+
+  // Artists contacted this week
+  document.getElementById("statContacted").textContent =
+    state.artists.filter(a =>
+      a.lastContact && new Date(a.lastContact) >= weekAgo
+    ).length;
+
+  // Follow-ups due
+  document.getElementById("statFollowups").textContent =
+    state.artists.filter(a =>
+      a.followUp && a.followUp <= today()
+    ).length;
+
+  // Content posted this week
+  document.getElementById("statPosts").textContent =
+    state.content.filter(c =>
+      c.stage === "Posted" &&
+      (!c.date || new Date(c.date) >= weekAgo)
+    ).length;
+
+  // Revenue this month
+  const now = new Date();
+
+  const revenue = state.revenue
+    .filter(r => {
+      const d = new Date(r.date);
+      return (
+        d.getMonth() === now.getMonth() &&
+        d.getFullYear() === now.getFullYear()
+      );
+    })
+    .reduce((total, r) => total + Number(r.amount || 0), 0);
+
+  document.getElementById("statRevenue").textContent =
+    "$" + revenue.toLocaleString();
 }
 function renderSettings(){document.getElementById("businessName").value=state.settings.businessName;document.getElementById("weeklyOutreachGoal").value=state.settings.weeklyOutreachGoal;document.getElementById("monthlyRevenueGoal").value=state.settings.monthlyRevenueGoal}
 
