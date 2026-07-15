@@ -315,6 +315,45 @@ function renderGoals(){document.getElementById("goalList").innerHTML=state.goals
 function renderTemplates(){document.getElementById("templateList").innerHTML=state.templates.map(t=>`<article class="card template-card"><h3>${t.name}</h3><p class="muted">${t.message}</p><div class="card-actions"><button class="mini-btn" onclick="copyTemplate('${t.id}')">Copy</button><button class="mini-btn delete" onclick="removeItem('templates','${t.id}')">Delete</button></div></article>`).join("")}
 function function renderStats() {
   const now = new Date();
+  function renderStats() {
+    const now = new Date();
+  
+    const monthlyRevenue = state.revenue
+      .filter(item => {
+        const date = new Date(item.date);
+  
+        return (
+          date.getMonth() === now.getMonth() &&
+          date.getFullYear() === now.getFullYear()
+        );
+      })
+      .reduce((total, item) => total + Number(item.amount || 0), 0);
+  
+    const statArtists = document.getElementById("statArtists");
+    const statProjects = document.getElementById("statProjects");
+    const statContent = document.getElementById("statContent");
+    const statRevenue = document.getElementById("statRevenue");
+  
+    if (statArtists) {
+      statArtists.textContent = state.artists.length;
+    }
+  
+    if (statProjects) {
+      statProjects.textContent =
+        state.projects.filter(project => Number(project.progress || 0) < 100).length;
+    }
+  
+    if (statContent) {
+      statContent.textContent =
+        state.content.filter(item => item.stage !== "Posted").length;
+    }
+  
+    if (statRevenue) {
+      statRevenue.textContent =
+        "$" + monthlyRevenue.toLocaleString();
+    }
+  }
+  
   function renderAIBrief() {
     const aiBrief = document.getElementById("aiBrief");
     if (!aiBrief) return;
@@ -339,67 +378,6 @@ function function renderStats() {
       <div>You have <strong>${contentWaiting}</strong> content items waiting.</div>
     `;
   }
-  const monthlyRevenue = state.revenue
-    .filter(item => {
-      const date = new Date(item.date);
-
-      return (
-        date.getMonth() === now.getMonth() &&
-        date.getFullYear() === now.getFullYear()
-      );
-    })
-    .reduce((total, item) => total + Number(item.amount || 0), 0);
-
-  document.getElementById("statArtists").textContent =
-    state.artists.length;
-
-  document.getElementById("statProjects").textContent =
-    state.projects.filter(project => Number(project.progress || 0) < 100).length;
-
-  document.getElementById("statContent").textContent =
-    state.content.filter(item => item.stage !== "Posted").length;
-
-  document.getElementById("statRevenue").textContent =
-    "$" + monthlyRevenue.toLocaleString();
-} {
-  const weekAgo = new Date();
-  weekAgo.setDate(weekAgo.getDate() - 7);
-
-  // Artists contacted this week
-  document.getElementById("statContacted").textContent =
-    state.artists.filter(a =>
-      a.lastContact && new Date(a.lastContact) >= weekAgo
-    ).length;
-
-  // Follow-ups due
-  document.getElementById("statFollowups").textContent =
-    state.artists.filter(a =>
-      a.followUp && a.followUp <= today()
-    ).length;
-
-  // Content posted this week
-  document.getElementById("statPosts").textContent =
-    state.content.filter(c =>
-      c.stage === "Posted" &&
-      (!c.date || new Date(c.date) >= weekAgo)
-    ).length;
-
-  // Revenue this month
-  const now = new Date();
-
-  const revenue = state.revenue
-    .filter(r => {
-      const d = new Date(r.date);
-      return (
-        d.getMonth() === now.getMonth() &&
-        d.getFullYear() === now.getFullYear()
-      );
-    })
-    .reduce((total, r) => total + Number(r.amount || 0), 0);
-
-  document.getElementById("statRevenue").textContent =
-    "$" + revenue.toLocaleString();
-}
 function renderSettings(){document.getElementById("businessName").value=state.settings.businessName;document.getElementById("weeklyOutreachGoal").value=state.settings.weeklyOutreachGoal;document.getElementById("monthlyRevenueGoal").value=state.settings.monthlyRevenueGoal}
 
 window.removeItem=(key,id)=>{state[key]=state[key].filter(x=>x.id!==id);save()}
