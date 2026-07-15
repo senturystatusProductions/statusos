@@ -315,7 +315,30 @@ function renderGoals(){document.getElementById("goalList").innerHTML=state.goals
 function renderTemplates(){document.getElementById("templateList").innerHTML=state.templates.map(t=>`<article class="card template-card"><h3>${t.name}</h3><p class="muted">${t.message}</p><div class="card-actions"><button class="mini-btn" onclick="copyTemplate('${t.id}')">Copy</button><button class="mini-btn delete" onclick="removeItem('templates','${t.id}')">Delete</button></div></article>`).join("")}
 function function renderStats() {
   const now = new Date();
-
+  function renderAIBrief() {
+    const aiBrief = document.getElementById("aiBrief");
+    if (!aiBrief) return;
+  
+    const todayDate = today();
+  
+    const followUpsDue = state.artists.filter(
+      artist => artist.followUp && artist.followUp <= todayDate
+    ).length;
+  
+    const activeProjects = state.projects.filter(
+      project => Number(project.progress || 0) < 100
+    ).length;
+  
+    const contentWaiting = state.content.filter(
+      item => item.stage !== "Posted"
+    ).length;
+  
+    aiBrief.innerHTML = `
+      <div>You have <strong>${followUpsDue}</strong> artist follow-ups due.</div>
+      <div>You have <strong>${activeProjects}</strong> active projects.</div>
+      <div>You have <strong>${contentWaiting}</strong> content items waiting.</div>
+    `;
+  }
   const monthlyRevenue = state.revenue
     .filter(item => {
       const date = new Date(item.date);
@@ -327,58 +350,21 @@ function function renderStats() {
     })
     .reduce((total, item) => total + Number(item.amount || 0), 0);
 
-  const statArtists = document.getElementById("statArtists");
-  const statProjects = document.getElementById("statProjects");
-  const statContent = document.getElementById("statContent");
-  const statRevenue = document.getElementById("statRevenue");
+  document.getElementById("statArtists").textContent =
+    state.artists.length;
 
-  const snapshotArtists = document.getElementById("snapshotArtists");
-  const snapshotProjects = document.getElementById("snapshotProjects");
-  const snapshotContent = document.getElementById("snapshotContent");
-  const snapshotRevenue = document.getElementById("snapshotRevenue");
+  document.getElementById("statProjects").textContent =
+    state.projects.filter(project => Number(project.progress || 0) < 100).length;
 
-  if (statArtists) {
-    statArtists.textContent = state.artists.length;
-  }
+  document.getElementById("statContent").textContent =
+    state.content.filter(item => item.stage !== "Posted").length;
 
-  if (statProjects) {
-    statProjects.textContent =
-      state.projects.filter(
-        project => Number(project.progress || 0) < 100
-      ).length;
-  }
+  document.getElementById("statRevenue").textContent =
+    "$" + monthlyRevenue.toLocaleString();
+} {
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
 
-  if (statContent) {
-    statContent.textContent =
-      state.content.filter(item => item.stage !== "Posted").length;
-  }
-
-  if (statRevenue) {
-    statRevenue.textContent =
-      "$" + monthlyRevenue.toLocaleString();
-  }
-
-  if (snapshotArtists) {
-    snapshotArtists.textContent = state.artists.length;
-  }
-
-  if (snapshotProjects) {
-    snapshotProjects.textContent =
-      state.projects.filter(
-        project => Number(project.progress || 0) < 100
-      ).length;
-  }
-
-  if (snapshotContent) {
-    snapshotContent.textContent =
-      state.content.filter(item => item.stage !== "Posted").length;
-  }
-
-  if (snapshotRevenue) {
-    snapshotRevenue.textContent =
-      "$" + monthlyRevenue.toLocaleString();
-  }
-}
   // Artists contacted this week
   document.getElementById("statContacted").textContent =
     state.artists.filter(a =>
@@ -455,7 +441,7 @@ function renderAll(){
   renderDaily();renderCRM();
   renderBoard("content",["Ideas","Writing","Filming","Ready","Posted"],"contentBoard",x=>`<strong>${x.title}</strong><p>${x.platform}</p><small>${x.hook||"No hook yet"} ${x.date?"• "+fmtDate(x.date):""}</small><div class="card-actions"><button class="mini-btn delete" onclick="removeItem('content','${x.id}')">Delete</button></div>`);
   renderBoard("sales",["Lead","Contacted","Conversation","Proposal","Won","Lost"],"salesBoard",x=>`<strong>${x.name}</strong><p>${x.offer||"Opportunity"}</p><small>${money(x.value)} • ${x.nextAction||"No next action"}</small><div class="card-actions"><button class="mini-btn delete" onclick="removeItem('sales','${x.id}')">Delete</button></div>`);
-  renderProjects();renderRevenue();renderGoals();renderTemplates();renderStats();renderSettings();
+  renderProjects();renderRevenue();renderGoals();renderTemplates();renderStats()renderAIBrief();;renderSettings();
 }
 window.initStatusOSApp = async function () {
   if(!appInitialized){
