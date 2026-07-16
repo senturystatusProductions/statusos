@@ -1205,6 +1205,7 @@ function initializeInterface() {
   bindControls();
   bindStartWork();
   bindAssistant();
+  bindDailyReset();
 }
 
 window.initStatusOSApp = async function initStatusOSApp() {
@@ -1217,6 +1218,92 @@ window.initStatusOSApp = async function initStatusOSApp() {
 
   renderAll();
 };
+
+
+function bindDailyReset() {
+  const thoughts = [
+    "Focus on the next important thing.",
+    "Finish one thing before starting another.",
+    "Your attention creates your direction.",
+    "See the result clearly, then begin.",
+    "Calm work creates strong results.",
+    "Small consistent actions build the vision.",
+    "Keep your word to yourself today."
+  ];
+
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const storageKey = `statusos-reset-${todayKey}`;
+  let resetState = {};
+
+  try {
+    resetState = JSON.parse(localStorage.getItem(storageKey) || "{}");
+  } catch {
+    resetState = {};
+  }
+
+  const dailyThought = document.getElementById("dailyThought");
+  const morningResetDone = document.getElementById("morningResetDone");
+  const startMyDayBtn = document.getElementById("startMyDayBtn");
+  const eveningWins = document.getElementById("eveningWins");
+  const eveningLesson = document.getElementById("eveningLesson");
+  const tomorrowPriority = document.getElementById("tomorrowPriority");
+  const saveEveningResetBtn = document.getElementById("saveEveningResetBtn");
+  const eveningResetStatus = document.getElementById("eveningResetStatus");
+
+  if (dailyThought) {
+    const dayIndex = Math.floor(Date.now() / 86400000) % thoughts.length;
+    dailyThought.textContent = thoughts[dayIndex];
+  }
+
+  if (morningResetDone) morningResetDone.checked = Boolean(resetState.morningDone);
+  if (eveningWins) eveningWins.value = resetState.wins || "";
+  if (eveningLesson) eveningLesson.value = resetState.lesson || "";
+  if (tomorrowPriority) tomorrowPriority.value = resetState.tomorrow || "";
+
+  function saveResetState() {
+    localStorage.setItem(storageKey, JSON.stringify(resetState));
+  }
+
+  if (morningResetDone) {
+    morningResetDone.addEventListener("change", () => {
+      resetState.morningDone = morningResetDone.checked;
+      saveResetState();
+    });
+  }
+
+  if (startMyDayBtn) {
+    startMyDayBtn.addEventListener("click", () => {
+      resetState.morningDone = true;
+      if (morningResetDone) morningResetDone.checked = true;
+      saveResetState();
+
+      const dashboardButton = document.querySelector('[data-view="dashboard"]');
+      if (dashboardButton) dashboardButton.click();
+    });
+  }
+
+  if (saveEveningResetBtn) {
+    saveEveningResetBtn.addEventListener("click", () => {
+      resetState.wins = eveningWins?.value.trim() || "";
+      resetState.lesson = eveningLesson?.value.trim() || "";
+      resetState.tomorrow = tomorrowPriority?.value.trim() || "";
+      resetState.eveningDone = true;
+      saveResetState();
+
+      if (eveningResetStatus) {
+        eveningResetStatus.textContent = "Evening reset saved.";
+      }
+    });
+  }
+
+  document.querySelectorAll("[data-view-jump]").forEach(button => {
+    button.addEventListener("click", () => {
+      const view = button.dataset.viewJump;
+      const navButton = document.querySelector(`[data-view="${view}"]`);
+      if (navButton) navButton.click();
+    });
+  });
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   renderDashboardHeader();

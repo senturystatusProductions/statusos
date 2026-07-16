@@ -1,0 +1,12 @@
+STATUSOS v0.4.0 INSTALL
+
+1. Back up your current working StatusOS folder.
+2. Copy every file from this release into your existing statusos-clone folder.
+3. Choose Replace All when Windows asks.
+4. Open the site and hard refresh with Ctrl + Shift + R.
+5. Test Dashboard, Daily Reset, Command Center, and navigation.
+6. Deploy:
+
+git add .
+git commit -m "StatusOS v0.4.0 - Daily Reset"
+git push origin main

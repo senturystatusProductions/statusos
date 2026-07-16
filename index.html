@@ -62,6 +62,7 @@
         <button class="nav-item" data-view="goals">Goals</button>
         <button class="nav-item" data-view="templates">DM Templates</button>
         <button class="nav-item" data-view="assistant">Command Center</button>
+        <button class="nav-item" data-view="reset">Daily Reset</button>
         <button class="nav-item" data-view="settings">Settings</button>
         
       </nav>
@@ -321,6 +322,45 @@
           </div>
         </div>
       </section>
+
+      <section id="reset" class="view">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Mind + Direction</p>
+            <h2>Daily Reset</h2>
+          </div>
+        </div>
+
+        <div class="reset-grid">
+          <article class="card reset-card">
+            <p class="eyebrow">Morning Reset</p>
+            <h3>Set your mind before you work</h3>
+            <ol class="reset-steps">
+              <li><strong>Be still.</strong><span>Sit quietly and take five slow breaths.</span></li>
+              <li><strong>Visualize.</strong><span>See yourself finishing today's Top 3.</span></li>
+              <li><strong>Feel grateful.</strong><span>Name three things you appreciate.</span></li>
+              <li><strong>Read your purpose.</strong><span>Build Sentury Status. Create freedom. Help artists.</span></li>
+            </ol>
+            <label class="reset-check">
+              <input id="morningResetDone" type="checkbox">
+              <span>Morning reset complete</span>
+            </label>
+            <button id="startMyDayBtn" class="button">Start My Day</button>
+          </article>
+
+          <article class="card reset-card">
+            <p class="eyebrow">Evening Reset</p>
+            <h3>Close the day with intention</h3>
+            <label>Three wins<textarea id="eveningWins" placeholder="What went well today?"></textarea></label>
+            <label>One lesson<textarea id="eveningLesson" placeholder="What did today teach you?"></textarea></label>
+            <label>Tomorrow's first priority<input id="tomorrowPriority" placeholder="What comes first tomorrow?"></label>
+            <p class="muted small">Take 30 seconds to picture tomorrow going smoothly.</p>
+            <button id="saveEveningResetBtn" class="button">Save Evening Reset</button>
+            <p id="eveningResetStatus" class="small muted"></p>
+          </article>
+        </div>
+      </section>
+
       <section id="settings" class="view">
         <div class="card">
           <p class="eyebrow">Customize</p>

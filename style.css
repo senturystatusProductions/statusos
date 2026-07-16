@@ -232,3 +232,67 @@ h1,h2,h3,p{margin-top:0}.eyebrow{color:var(--gold);font-size:.72rem;letter-spaci
 .supporting-stats{margin-top:14px!important}
 @media(max-width:1000px){.morning-summary-grid{grid-template-columns:repeat(2,1fr)}.morning-main-grid{grid-template-columns:1fr}.priorities-card{grid-row:auto}}
 @media(max-width:620px){.morning-summary-grid{grid-template-columns:1fr 1fr;gap:10px}.morning-summary-card{min-height:112px;padding:15px}.morning-summary-card strong{font-size:1.55rem}.morning-actions{grid-template-columns:1fr!important}.work-session-actions{flex-direction:column}.work-session-actions .button{width:100%}}
+
+
+/* StatusOS v0.4.0 Daily Reset */
+.daily-thought-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.reset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.reset-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reset-steps {
+  display: grid;
+  gap: 12px;
+  padding-left: 22px;
+  margin: 0;
+}
+
+.reset-steps li {
+  padding-left: 4px;
+}
+
+.reset-steps strong,
+.reset-steps span {
+  display: block;
+}
+
+.reset-steps span {
+  margin-top: 3px;
+  color: var(--muted);
+}
+
+.reset-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0;
+}
+
+.reset-check input {
+  width: auto;
+}
+
+@media (max-width: 760px) {
+  .reset-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .daily-thought-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
