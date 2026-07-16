@@ -56,6 +56,7 @@
         <button class="nav-item active" data-view="dashboard">Mission Control</button>
         <button class="nav-item" data-view="tasks">Task Engine</button>
         <button class="nav-item" data-view="habits">Habit Engine</button>
+        <button class="nav-item" data-view="music">Music OS</button>
         <button class="nav-item" data-view="crm">Artist CRM</button>
         <button class="nav-item" data-view="content">Content Planner</button>
         <button class="nav-item" data-view="sales">Sales Pipeline</button>
@@ -72,7 +73,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v0.8.0</small>
+        <small id="appVersionLabel" class="version-label">v0.9.0</small>
       </div>
     </aside>
 
@@ -257,6 +258,19 @@
           <div class="mission-progress-track"><span id="dashboardHabitBar"></span></div>
         </article>
 
+        <article class="card dashboard-music-card">
+          <div class="section-head">
+            <div><p class="eyebrow">MUSIC OS</p><h3>Production pipeline</h3></div>
+            <button class="text-button" type="button" data-view-jump="music">Open Music OS</button>
+          </div>
+          <div class="music-dashboard-stats">
+            <div><strong id="musicDashboardActive">0</strong><span>Active</span></div>
+            <div><strong id="musicDashboardDue">0</strong><span>Due Soon</span></div>
+            <div><strong id="musicDashboardComplete">0</strong><span>Complete</span></div>
+          </div>
+          <div id="musicDashboardNext" class="muted">No music projects yet.</div>
+        </article>
+
         <div id="dailySections"></div>
 
         <article class="card">
@@ -316,6 +330,40 @@
       <strong>Build consistency.</strong>
       <span>Add your first daily habit above.</span>
     </div>
+  </article>
+</section>
+
+
+<section id="music" class="view">
+  <div class="section-head">
+    <div><p class="eyebrow">CREATIVE BUSINESS</p><h2>Music OS</h2></div>
+    <button id="openMusicProjectForm" class="button" type="button">New Music Project</button>
+  </div>
+  <section class="music-summary-grid" aria-label="Music project summary">
+    <article class="card music-summary-card"><span>Active Projects</span><strong id="musicActiveCount">0</strong><small>In production</small></article>
+    <article class="card music-summary-card"><span>Due Soon</span><strong id="musicDueSoonCount">0</strong><small>Next 7 days</small></article>
+    <article class="card music-summary-card"><span>Completed</span><strong id="musicCompletedCount">0</strong><small>Total delivered</small></article>
+    <article class="card music-summary-card"><span>Total Projects</span><strong id="musicTotalCount">0</strong><small>All music work</small></article>
+  </section>
+  <article id="musicProjectFormCard" class="card music-project-form-card hidden">
+    <div class="section-head"><div><p class="eyebrow">NEW PROJECT</p><h3>Add to production queue</h3></div><button id="closeMusicProjectForm" class="text-button" type="button">Close</button></div>
+    <div class="music-form-grid">
+      <label>Project title<input id="musicTitle" placeholder="Rob Whiskey album mix"></label>
+      <label>Client / artist<input id="musicClient" placeholder="Artist name"></label>
+      <label>Type<select id="musicType"><option>Beat</option><option>Mix</option><option>Master</option><option>Album</option><option>Sound Kit</option><option>VST / Expansion</option><option>Other</option></select></label>
+      <label>Status<select id="musicStatus"><option>Idea</option><option>In Progress</option><option>Waiting on Client</option><option>Revisions</option><option>Ready to Deliver</option><option>Complete</option></select></label>
+      <label>Deadline<input id="musicDeadline" type="date"></label>
+      <label>Priority<select id="musicPriority"><option>High</option><option selected>Medium</option><option>Low</option></select></label>
+    </div>
+    <label>Notes<textarea id="musicNotes" placeholder="What needs to happen next?"></textarea></label>
+    <button id="saveMusicProjectBtn" class="button" type="button">Save Project</button>
+  </article>
+  <article class="card music-pipeline-card">
+    <div class="section-head"><div><p class="eyebrow">PRODUCTION QUEUE</p><h3>Current music projects</h3></div>
+      <select id="musicFilter"><option value="">All statuses</option><option>Idea</option><option>In Progress</option><option>Waiting on Client</option><option>Revisions</option><option>Ready to Deliver</option><option>Complete</option></select>
+    </div>
+    <div id="musicProjectList" class="music-project-list"></div>
+    <div id="musicEmptyState" class="task-empty-state"><strong>Your production queue is clear.</strong><span>Add your first music project above.</span></div>
   </article>
 </section>
 
@@ -493,8 +541,8 @@
           <article class="card developer-panel">
             <div class="section-head"><div><p class="eyebrow">BUILD</p><h3>Application</h3></div></div>
             <dl class="diagnostic-list">
-              <div><dt>Version</dt><dd id="devVersion">v0.8.0</dd></div>
-              <div><dt>Codename</dt><dd id="devCodename">Habit Engine</dd></div>
+              <div><dt>Version</dt><dd id="devVersion">v0.9.0</dd></div>
+              <div><dt>Codename</dt><dd id="devCodename">Music OS</dd></div>
               <div><dt>Build Date</dt><dd id="devBuildDate">2026-07-16</dd></div>
               <div><dt>Service Worker</dt><dd id="devServiceWorker">Checking…</dd></div>
               <div><dt>Cache Stores</dt><dd id="devCacheCount">0</dd></div>
@@ -621,6 +669,7 @@
   <script src="sync-service.js"></script>
   <script src="foundation.js"></script>
   <script src="habits-service.js"></script>
+  <script src="music-service.js"></script>
   <script src="app.js"></script>
   <script src="auth.js"></script>
   <script>

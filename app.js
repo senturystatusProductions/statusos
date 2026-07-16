@@ -1627,3 +1627,108 @@ function bindAssistant() {
     renderHabits();
   });
 })();
+
+// v0.9.0 Music OS
+(function () {
+  const api = () => window.StatusOS?.Music;
+  const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+  const escapeText = value => String(value || "");
+  const activeStatuses = new Set(["Idea", "In Progress", "Waiting on Client", "Revisions", "Ready to Deliver"]);
+
+  function daysUntil(date) {
+    if (!date) return null;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const target = new Date(`${date}T00:00:00`);
+    return Math.ceil((target - today) / 86400000);
+  }
+
+  function stats(items) {
+    const active = items.filter(item => activeStatuses.has(item.status)).length;
+    const complete = items.filter(item => item.status === "Complete").length;
+    const due = items.filter(item => { const days = daysUntil(item.deadline); return item.status !== "Complete" && days !== null && days >= 0 && days <= 7; }).length;
+    return { active, complete, due, total: items.length };
+  }
+
+  function render() {
+    const items = api()?.list?.() || [];
+    const summary = stats(items);
+    setText("musicActiveCount", summary.active);
+    setText("musicDueSoonCount", summary.due);
+    setText("musicCompletedCount", summary.complete);
+    setText("musicTotalCount", summary.total);
+    setText("musicDashboardActive", summary.active);
+    setText("musicDashboardDue", summary.due);
+    setText("musicDashboardComplete", summary.complete);
+
+    const next = items.filter(item => item.status !== "Complete").sort((a,b) => {
+      const pa = {High:0,Medium:1,Low:2}[a.priority] ?? 1;
+      const pb = {High:0,Medium:1,Low:2}[b.priority] ?? 1;
+      if (pa !== pb) return pa-pb;
+      return (a.deadline || "9999-12-31").localeCompare(b.deadline || "9999-12-31");
+    })[0];
+    setText("musicDashboardNext", next ? `Next: ${next.title}${next.client ? ` · ${next.client}` : ""}` : "No active music projects.");
+
+    const filter = document.getElementById("musicFilter")?.value || "";
+    const shown = filter ? items.filter(item => item.status === filter) : items;
+    const list = document.getElementById("musicProjectList");
+    const empty = document.getElementById("musicEmptyState");
+    if (!list) return;
+    list.innerHTML = "";
+    if (empty) empty.classList.toggle("hidden", shown.length > 0);
+
+    shown.sort((a,b) => (a.status === "Complete") - (b.status === "Complete") || (a.deadline || "9999").localeCompare(b.deadline || "9999")).forEach(item => {
+      const row = document.createElement("div"); row.className = "music-project-item";
+      const main = document.createElement("div"); main.className = "music-project-main";
+      const title = document.createElement("strong"); title.textContent = escapeText(item.title);
+      const subtitle = document.createElement("small"); subtitle.textContent = [item.client, item.notes].filter(Boolean).join(" · ") || "No client or notes";
+      main.append(title, subtitle);
+
+      const tags = document.createElement("div"); tags.className = "music-project-tags";
+      [item.type, item.status].forEach(text => { const tag=document.createElement("span"); tag.className="music-tag"; tag.textContent=text; tags.append(tag); });
+      const priority = document.createElement("span"); priority.className = `music-tag music-priority-${item.priority.toLowerCase()}`; priority.textContent = `${item.priority} priority`; tags.append(priority);
+
+      const meta = document.createElement("div"); meta.className = "music-project-meta";
+      const days = daysUntil(item.deadline);
+      meta.textContent = item.deadline ? (days < 0 ? `Overdue by ${Math.abs(days)} day${Math.abs(days)===1?'':'s'}` : days === 0 ? "Due today" : `Due in ${days} day${days===1?'':'s'}`) : "No deadline";
+
+      const actions = document.createElement("div"); actions.className = "music-project-actions";
+      const advance = document.createElement("button"); advance.className = "text-button"; advance.type="button";
+      const flow = ["Idea","In Progress","Waiting on Client","Revisions","Ready to Deliver","Complete"];
+      const idx = flow.indexOf(item.status); advance.textContent = item.status === "Complete" ? "Reopen" : "Next Stage";
+      advance.addEventListener("click", async () => { item.status = item.status === "Complete" ? "In Progress" : flow[Math.min(idx+1, flow.length-1)]; await api().save(item); render(); });
+      const del = document.createElement("button"); del.className="task-delete-button"; del.type="button"; del.textContent="Delete";
+      del.addEventListener("click", async () => { await api().delete(item.id); render(); });
+      actions.append(advance, del);
+      row.append(main, tags, meta, actions); list.append(row);
+    });
+  }
+
+  async function addProject() {
+    const title = document.getElementById("musicTitle")?.value.trim();
+    if (!title) return;
+    const item = api().normalize({
+      title,
+      client: document.getElementById("musicClient")?.value.trim(),
+      type: document.getElementById("musicType")?.value,
+      status: document.getElementById("musicStatus")?.value,
+      deadline: document.getElementById("musicDeadline")?.value || null,
+      priority: document.getElementById("musicPriority")?.value,
+      notes: document.getElementById("musicNotes")?.value.trim()
+    });
+    await api().save(item);
+    ["musicTitle","musicClient","musicDeadline","musicNotes"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
+    document.getElementById("musicProjectFormCard")?.classList.add("hidden");
+    render();
+  }
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    document.getElementById("openMusicProjectForm")?.addEventListener("click", () => document.getElementById("musicProjectFormCard")?.classList.remove("hidden"));
+    document.getElementById("closeMusicProjectForm")?.addEventListener("click", () => document.getElementById("musicProjectFormCard")?.classList.add("hidden"));
+    document.getElementById("saveMusicProjectBtn")?.addEventListener("click", addProject);
+    document.getElementById("musicFilter")?.addEventListener("change", render);
+    window.addEventListener("statusos:music-updated", render);
+    render();
+    await api()?.pull?.();
+    render();
+  });
+})();

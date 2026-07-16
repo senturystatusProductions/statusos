@@ -35,3 +35,10 @@ All notable StatusOS changes are documented here.
 
 ## v0.8.0 - Habit Engine
 - Added daily habits, streaks, daily score, Mission Control habit progress, local-first storage, and optional Supabase sync.
+
+
+## v0.9.0 - Music OS
+- Added cloud-ready Music OS production queue.
+- Added project types, clients, statuses, deadlines, priorities, and notes.
+- Added Mission Control music pipeline widget.
+- Added Supabase migration 0003_create_music_projects.sql.

@@ -54,3 +54,7 @@
 - File uploads
 - Long-term memory
 - Multi-user release
+
+
+## v0.9.0 - Music OS
+Production queue, project deadlines, client context, and cloud synchronization.

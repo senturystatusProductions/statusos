@@ -1,6 +1,6 @@
-# StatusOS Version
+# Current Version
 
-- Version: v0.8.0
-- Codename: Habit Engine
-- Status: Testing
-- Build date: 2026-07-16
+- Version: v0.9.0
+- Codename: Music OS
+- Status: Test build
+- Updated: 2026-07-16
