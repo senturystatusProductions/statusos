@@ -105,6 +105,29 @@
           </div>
         </article>
 
+        <article class="card daily-briefing-card" aria-labelledby="dailyBriefingTitle">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">DAILY BRIEFING</p>
+              <h3 id="dailyBriefingTitle">Your plan for today</h3>
+            </div>
+            <button id="refreshDailyBriefingBtn" class="text-button" type="button">Refresh Briefing</button>
+          </div>
+          <p id="dailyBriefingIntro" class="daily-briefing-intro">Preparing your briefing...</p>
+          <div class="daily-briefing-grid">
+            <section>
+              <span class="daily-briefing-label">Recommended order</span>
+              <div id="dailyBriefingPriorities" class="daily-briefing-list"></div>
+            </section>
+            <section>
+              <span class="daily-briefing-label">Status check</span>
+              <div id="dailyBriefingStatus" class="daily-briefing-list"></div>
+            </section>
+          </div>
+          <div id="dailyBriefingInsight" class="daily-briefing-insight">StatusOS is reviewing your day.</div>
+          <p id="dailyBriefingUpdated" class="muted small"></p>
+        </article>
+
         <section class="mission-control-grid" aria-label="Mission Control overview">
           <article class="card mission-overview-card">
             <div class="section-head">
@@ -707,6 +730,7 @@
   <script src="habits-service.js"></script>
   <script src="music-service.js"></script>
   <script src="public-beta.js"></script>
+  <script src="daily-briefing.js"></script>
   <script src="app.js"></script>
   <script src="auth.js"></script>
   <script>

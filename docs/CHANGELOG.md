@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.0 – Daily Briefing
+- Added a live cross-engine daily plan to Mission Control.
+- Added priority, status, deadline, and habit insights.
+- Added automatic briefing refresh events.
+
 All notable StatusOS changes are documented here.
 
 ## v0.2.3
