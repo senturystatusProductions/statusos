@@ -1,3 +1,8 @@
+# v1.4.1 – Navigation Cleanup
+- Grouped sidebar navigation.
+- Settings moved to Profile menu.
+- Developer Console hidden behind Ctrl + Shift + D.
+
 ## v1.1.1 – UX Polish
 
 - Fixed modal X buttons across desktop and mobile.

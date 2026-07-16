@@ -442,3 +442,36 @@ input:focus,select:focus,textarea:focus{border-color:rgba(215,182,91,.65);box-sh
 /* v1.4.0 Habit Calendar */
 .habit-calendar-card{max-width:980px;margin-top:14px}.habit-calendar-card .section-head select{min-width:180px}.habit-calendar-toolbar{display:grid;grid-template-columns:48px 1fr 48px;align-items:center;gap:10px;margin:8px 0 14px}.habit-calendar-toolbar strong{text-align:center;font-size:1.05rem}.habit-calendar-weekdays,.habit-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}.habit-calendar-weekdays{margin-bottom:7px;color:var(--muted);font-size:.72rem;font-weight:800;text-transform:uppercase;text-align:center}.habit-calendar-day{aspect-ratio:1/1;min-height:48px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:linear-gradient(145deg,#151a20,#0f1216);color:var(--text);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}.habit-calendar-day:hover{border-color:rgba(242,217,139,.45);transform:translateY(-1px)}.habit-calendar-day.checked{background:linear-gradient(145deg,rgba(80,205,137,.22),rgba(20,70,48,.42));border-color:rgba(80,205,137,.55)}.habit-calendar-day.checked small{position:absolute;right:6px;bottom:4px;color:#73e6aa;font-weight:900}.habit-calendar-day.outside{opacity:.35}.habit-calendar-day.future{opacity:.22;cursor:not-allowed}.habit-calendar-day:disabled:hover{transform:none;border-color:rgba(255,255,255,.08)}
 @media(max-width:700px){.habit-calendar-card .section-head{align-items:stretch}.habit-calendar-card .section-head select{width:100%}.habit-calendar-weekdays,.habit-calendar-grid{gap:4px}.habit-calendar-day{min-height:38px;border-radius:9px;font-size:.82rem}.habit-calendar-day.checked small{right:4px;bottom:2px;font-size:.68rem}}
+
+/* StatusOS v1.4.1 Navigation Cleanup */
+.nav-groups{display:flex;flex-direction:column;gap:7px;min-height:0;overflow-y:auto;padding-right:2px}
+.nav-group{border:1px solid transparent;border-radius:14px}
+.nav-group[open]{background:rgba(255,255,255,.025);border-color:rgba(255,255,255,.055);padding-bottom:5px}
+.nav-group summary{list-style:none;color:var(--muted);font-size:.73rem;font-weight:900;letter-spacing:.09em;text-transform:uppercase;padding:11px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.nav-group summary::-webkit-details-marker{display:none}
+.nav-group summary::after{content:'›';font-size:1rem;transition:transform .18s ease}
+.nav-group[open] summary::after{transform:rotate(90deg)}
+.nav-group-items{display:grid;gap:3px;padding:0 5px}
+.nav-group-items .nav-item{padding:10px 12px;font-size:.9rem}
+.developer-nav{border:1px dashed rgba(213,180,108,.35)}
+.profile-menu-wrap{position:relative}
+.profile-menu-btn{height:42px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;padding:0 13px;font-weight:800;display:flex;align-items:center;gap:8px}
+.profile-menu-btn:hover,.profile-menu-btn[aria-expanded="true"]{border-color:rgba(213,180,108,.6);background:var(--panel2)}
+.profile-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:80;width:210px;padding:7px;border:1px solid var(--line);border-radius:15px;background:#151517;box-shadow:0 20px 55px rgba(0,0,0,.48)}
+.profile-menu button,.profile-import{width:100%;border:0;background:transparent;color:var(--text);padding:11px 12px;border-radius:10px;text-align:left;font-weight:750;display:block;cursor:pointer;margin:0}
+.profile-menu button:hover,.profile-import:hover{background:var(--panel2);color:var(--gold)}
+@media(min-width:981px){.utility-action{display:none!important}}
+@media(max-width:980px){
+  .nav-groups{display:flex;flex-direction:row;overflow-x:auto;overflow-y:hidden;align-items:center}
+  .nav-group{display:contents}
+  .nav-group summary{display:none}
+  .nav-group-items{display:flex;gap:4px;padding:0}
+  .profile-menu-wrap{margin-left:auto}
+  .profile-menu{position:fixed;right:12px;top:auto;bottom:76px;width:min(260px,calc(100vw - 24px))}
+  .profile-menu-btn{white-space:nowrap}
+}
+@media(max-width:620px){
+  .top-actions{align-items:center}
+  .command-button{display:none}
+  .profile-menu-btn{height:40px;padding:0 11px}
+}

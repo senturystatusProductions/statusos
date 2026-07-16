@@ -1721,3 +1721,75 @@ function bindAssistant() {
     render();
   });
 })();
+
+/* StatusOS v1.4.1 Navigation Cleanup */
+(function bindNavigationCleanup(){
+  function init(){
+    const profileButton = document.getElementById('profileMenuBtn');
+    const profileMenu = document.getElementById('profileMenu');
+    const developerNav = document.getElementById('developerNav');
+    const exportButton = document.getElementById('exportBtn');
+    const importInput = document.getElementById('importInput');
+    const profileExport = document.getElementById('profileExportBtn');
+    const profileImport = document.getElementById('profileImportBtn');
+    const aboutButton = document.getElementById('profileAboutBtn');
+
+    const closeProfile = () => {
+      if (!profileMenu || !profileButton) return;
+      profileMenu.classList.add('hidden');
+      profileButton.setAttribute('aria-expanded', 'false');
+    };
+
+    profileButton?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const opening = profileMenu?.classList.contains('hidden');
+      profileMenu?.classList.toggle('hidden');
+      profileButton.setAttribute('aria-expanded', opening ? 'true' : 'false');
+    });
+
+    profileMenu?.addEventListener('click', (event) => event.stopPropagation());
+    document.addEventListener('click', closeProfile);
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeProfile();
+
+      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'd') {
+        event.preventDefault();
+        developerNav?.classList.remove('hidden');
+        developerNav?.click();
+        closeProfile();
+      }
+    });
+
+    document.querySelectorAll('#profileMenu [data-view]').forEach((button) => {
+      button.addEventListener('click', closeProfile);
+    });
+
+    profileExport?.addEventListener('click', () => {
+      closeProfile();
+      exportButton?.click();
+    });
+
+    profileImport?.addEventListener('click', () => {
+      closeProfile();
+      importInput?.click();
+    });
+
+    aboutButton?.addEventListener('click', () => {
+      closeProfile();
+      alert('StatusOS v1.4.1\nYour Personal Operating System\n\nSimple. Fast. Intentional.');
+    });
+
+    document.querySelectorAll('.nav-group .nav-item').forEach((button) => {
+      button.addEventListener('click', () => {
+        const group = button.closest('details');
+        if (group) group.open = true;
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();

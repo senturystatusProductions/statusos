@@ -52,24 +52,35 @@
         </div>
       </div>
 
-      <nav id="nav">
+      <nav id="nav" class="nav-groups">
         <button class="nav-item active" data-view="dashboard">Mission Control</button>
-        <button class="nav-item" data-view="tasks">Task Engine</button>
-        <button class="nav-item" data-view="habits">Habit Engine</button>
-        <button class="nav-item" data-view="music">Music OS</button>
-        <button class="nav-item" data-view="review">Weekly Review</button>
-        <button class="nav-item" data-view="crm">Artist CRM</button>
-        <button class="nav-item" data-view="content">Content Planner</button>
-        <button class="nav-item" data-view="sales">Sales Pipeline</button>
-        <button class="nav-item" data-view="projects">Projects</button>
-        <button class="nav-item" data-view="revenue">Revenue</button>
-        <button class="nav-item" data-view="goals">Goals</button>
-        <button class="nav-item" data-view="templates">DM Templates</button>
+
+        <details class="nav-group" open>
+          <summary>Productivity</summary>
+          <div class="nav-group-items">
+            <button class="nav-item" data-view="tasks">Task Engine</button>
+            <button class="nav-item" data-view="habits">Habit Engine</button>
+            <button class="nav-item" data-view="review">Weekly Review</button>
+            <button class="nav-item" data-view="goals">Goals</button>
+            <button class="nav-item" data-view="reset">Daily Reset</button>
+          </div>
+        </details>
+
+        <details class="nav-group">
+          <summary>Music & Business</summary>
+          <div class="nav-group-items">
+            <button class="nav-item" data-view="music">Music OS</button>
+            <button class="nav-item" data-view="crm">Artist CRM</button>
+            <button class="nav-item" data-view="content">Content Planner</button>
+            <button class="nav-item" data-view="sales">Sales Pipeline</button>
+            <button class="nav-item" data-view="projects">Projects</button>
+            <button class="nav-item" data-view="revenue">Revenue</button>
+            <button class="nav-item" data-view="templates">DM Templates</button>
+          </div>
+        </details>
+
         <button class="nav-item" data-view="assistant">Command Center</button>
-        <button class="nav-item" data-view="reset">Daily Reset</button>
-        <button class="nav-item" data-view="settings">Settings</button>
-        <button class="nav-item developer-nav" data-view="developer">Developer</button>
-        
+        <button id="developerNav" class="nav-item developer-nav hidden" data-view="developer">Developer</button>
       </nav>
 
       <div class="sidebar-footer">
@@ -87,8 +98,17 @@
         <div class="top-actions">
           <button id="openCommandPaletteBtn" class="button secondary command-button" type="button">Quick Launch <kbd>Ctrl K</kbd></button>
           <div id="syncIndicator" class="sync-indicator" data-status="local" role="status" aria-live="polite"><i></i><span>Local only</span></div>
-          <button id="exportBtn" class="button secondary">Export Backup</button>
-          <label class="button secondary file-label">Import Backup<input id="importInput" type="file" accept=".json" hidden></label>
+          <div class="profile-menu-wrap">
+            <button id="profileMenuBtn" class="profile-menu-btn" type="button" aria-expanded="false" aria-controls="profileMenu">Profile <span aria-hidden="true">▾</span></button>
+            <div id="profileMenu" class="profile-menu hidden" role="menu">
+              <button type="button" data-view="settings" role="menuitem">Settings</button>
+              <button id="profileExportBtn" type="button" role="menuitem">Export Backup</button>
+              <button id="profileImportBtn" type="button" role="menuitem">Import Backup</button>
+              <button id="profileAboutBtn" type="button" role="menuitem">About StatusOS</button>
+            </div>
+          </div>
+          <button id="exportBtn" class="button secondary utility-action">Export Backup</button>
+          <label class="button secondary file-label utility-action">Import Backup<input id="importInput" type="file" accept=".json" hidden></label>
         </div>
       </header>
 
@@ -359,21 +379,6 @@
       <span>Add a realistic daily, weekly, or monthly commitment above.</span>
     </div>
   </article>
-  <article class="card habit-calendar-card">
-    <div class="section-head">
-      <div><p class="eyebrow">HABIT TIMELINE</p><h3>Calendar</h3></div>
-      <select id="habitCalendarSelect" aria-label="Choose habit"></select>
-    </div>
-    <div class="habit-calendar-toolbar">
-      <button id="habitCalendarPrev" class="button secondary" type="button" aria-label="Previous month">‹</button>
-      <strong id="habitCalendarMonth">Month</strong>
-      <button id="habitCalendarNext" class="button secondary" type="button" aria-label="Next month">›</button>
-    </div>
-    <div class="habit-calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
-    <div id="habitCalendarGrid" class="habit-calendar-grid" aria-label="Habit calendar"></div>
-    <p id="habitCalendarSummary" class="muted">Choose a habit to view its history.</p>
-  </article>
-
 </section>
 
 
@@ -800,7 +805,6 @@
   <script src="public-beta.js"></script>
   <script src="daily-briefing.js"></script>
   <script src="weekly-review.js"></script>
-  <script src="habit-calendar.js"></script>
   <script src="ux-polish.js"></script>
   <script src="app.js"></script>
   <script src="auth.js"></script>
