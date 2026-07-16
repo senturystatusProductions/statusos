@@ -1365,3 +1365,37 @@ function bindAssistant() {
     }
   });
 }
+
+// Release 005 Task Engine
+(function(){
+const KEY='statusos_tasks_v1';
+function load(){
+ const list=document.getElementById('taskList');
+ if(!list)return;
+ const tasks=JSON.parse(localStorage.getItem(KEY)||'[]');
+ list.innerHTML='';
+ tasks.forEach((t,i)=>{
+  const li=document.createElement('li');
+  li.style.cssText='display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #333;';
+  li.innerHTML=`<label><input type="checkbox" ${t.done?'checked':''}> ${t.text}</label><button>x</button>`;
+  li.querySelector('input').onchange=e=>{tasks[i].done=e.target.checked;localStorage.setItem(KEY,JSON.stringify(tasks));};
+  li.querySelector('button').onclick=()=>{tasks.splice(i,1);localStorage.setItem(KEY,JSON.stringify(tasks));load();};
+  list.appendChild(li);
+ });
+}
+window.addEventListener('load',()=>{
+ const b=document.getElementById('addTaskBtn');
+ if(b){
+  b.onclick=()=>{
+   const inp=document.getElementById('taskInput');
+   if(!inp.value.trim())return;
+   const tasks=JSON.parse(localStorage.getItem(KEY)||'[]');
+   tasks.push({text:inp.value.trim(),done:false});
+   localStorage.setItem(KEY,JSON.stringify(tasks));
+   inp.value='';
+   load();
+  };
+  load();
+ }
+});
+})();

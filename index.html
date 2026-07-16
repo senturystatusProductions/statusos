@@ -54,6 +54,7 @@
 
       <nav id="nav">
         <button class="nav-item active" data-view="dashboard">Dashboard</button>
+        <button class="nav-item" data-view="tasks">Task Engine</button>
         <button class="nav-item" data-view="crm">Artist CRM</button>
         <button class="nav-item" data-view="content">Content Planner</button>
         <button class="nav-item" data-view="sales">Sales Pipeline</button>
@@ -217,7 +218,19 @@
         </article>
       </section>
 
-      <section id="crm" class="view">
+      
+<section id="tasks" class="view">
+<div class="card">
+<h2>Task Engine</h2>
+<div style="display:flex;gap:8px;margin:10px 0;">
+<input id="taskInput" placeholder="New task" style="flex:1;padding:10px;">
+<button id="addTaskBtn" class="button">Add</button>
+</div>
+<ul id="taskList"></ul>
+</div>
+</section>
+
+<section id="crm" class="view">
         <div class="section-head">
           <div><p class="eyebrow">Relationships</p><h2>Artist CRM</h2></div>
           <button class="button" data-open="artistModal">Add Artist</button>
