@@ -39,6 +39,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (typeof window.initStatusOSApp === "function") {
       await window.initStatusOSApp();
     }
+
+    if (window.StatusOS?.Sync?.initialize) {
+      await window.StatusOS.Sync.initialize();
+    }
   }
 
   try {

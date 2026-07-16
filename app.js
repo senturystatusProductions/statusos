@@ -1366,21 +1366,19 @@ function bindAssistant() {
   });
 }
 
-// Release 006 Mission Control + Task Engine
+// Release 007 Mission Control + Cloud Task Engine
 (function () {
-  const KEY = "statusos_tasks_v1";
-
   function getTasks() {
-    try {
-      const tasks = JSON.parse(localStorage.getItem(KEY) || "[]");
-      return Array.isArray(tasks) ? tasks : [];
-    } catch {
-      return [];
-    }
+    return window.StatusOS?.Storage?.getTasks?.() || [];
   }
 
   function saveTasks(tasks) {
-    localStorage.setItem(KEY, JSON.stringify(tasks));
+    window.StatusOS?.Storage?.saveTasks?.(tasks);
+  }
+
+  function persistTask(task) {
+    task.updatedAt = new Date().toISOString();
+    window.StatusOS?.Sync?.queueUpsert?.(task);
   }
 
   function setNodeText(id, value) {
@@ -1405,13 +1403,10 @@ function bindAssistant() {
     if (bar) bar.style.width = `${percent}%`;
 
     const completeState = document.getElementById("missionCompleteState");
-    if (completeState) {
-      completeState.classList.toggle("hidden", total === 0 || completed !== total);
-    }
+    if (completeState) completeState.classList.toggle("hidden", total === 0 || completed !== total);
 
     const focusList = document.getElementById("missionFocusList");
     if (!focusList) return;
-
     focusList.innerHTML = "";
     const focusTasks = tasks.filter(task => !task.done).slice(0, 5);
 
@@ -1428,18 +1423,19 @@ function bindAssistant() {
     focusTasks.forEach(task => {
       const row = document.createElement("label");
       row.className = "mission-focus-item";
-
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.checked = Boolean(task.done);
       checkbox.addEventListener("change", () => {
         const current = getTasks();
         const match = current.find(item => item.id === task.id);
-        if (match) match.done = checkbox.checked;
+        if (match) {
+          match.done = checkbox.checked;
+          persistTask(match);
+        }
         saveTasks(current);
         renderTasks();
       });
-
       const text = document.createElement("span");
       text.textContent = task.text;
       row.append(checkbox, text);
@@ -1452,7 +1448,6 @@ function bindAssistant() {
     const list = document.getElementById("taskList");
     const emptyState = document.getElementById("taskEmptyState");
     const completed = tasks.filter(task => task.done).length;
-
     setNodeText("taskEngineSummary", `${tasks.length} task${tasks.length === 1 ? "" : "s"} · ${completed} complete`);
     if (emptyState) emptyState.classList.toggle("hidden", tasks.length > 0);
 
@@ -1461,35 +1456,32 @@ function bindAssistant() {
       tasks.forEach(task => {
         const li = document.createElement("li");
         li.className = `task-engine-item${task.done ? " completed" : ""}`;
-
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.checked = Boolean(task.done);
         checkbox.setAttribute("aria-label", `Mark ${task.text} complete`);
         checkbox.addEventListener("change", () => {
           task.done = checkbox.checked;
+          persistTask(task);
           saveTasks(tasks);
           renderTasks();
         });
-
         const text = document.createElement("span");
         text.className = "task-engine-text";
         text.textContent = task.text;
-
         const remove = document.createElement("button");
         remove.type = "button";
         remove.className = "task-delete-button";
         remove.textContent = "Delete";
         remove.addEventListener("click", () => {
           saveTasks(tasks.filter(item => item.id !== task.id));
+          window.StatusOS?.Sync?.queueDelete?.(task.id);
           renderTasks();
         });
-
         li.append(checkbox, text, remove);
         list.appendChild(li);
       });
     }
-
     renderMissionControl(tasks);
   }
 
@@ -1498,39 +1490,53 @@ function bindAssistant() {
     if (!input) return;
     const text = input.value.trim();
     if (!text) return;
-
+    const now = new Date().toISOString();
     const tasks = getTasks();
-    tasks.push({
+    const task = window.StatusOS.Storage.normalizeTask({
       id: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
       text,
       done: false,
-      createdAt: new Date().toISOString()
+      createdAt: now,
+      updatedAt: now
     });
+    tasks.push(task);
     saveTasks(tasks);
+    window.StatusOS?.Sync?.queueUpsert?.(task);
     input.value = "";
     renderTasks();
     input.focus();
   }
 
-  window.addEventListener("DOMContentLoaded", () => {
+  function updateSyncIndicator(event) {
+    const status = event?.detail?.status || window.StatusOS?.Sync?.status?.() || "local";
+    const detail = event?.detail?.detail || "";
+    const indicator = document.getElementById("syncIndicator");
+    if (!indicator) return;
+    const labels = { synced: "Synced", syncing: "Syncing…", offline: "Offline", pending: "Pending", setup: "Cloud setup needed", local: "Local only" };
+    indicator.dataset.status = status;
+    indicator.querySelector("span").textContent = labels[status] || "Local only";
+    indicator.title = detail || labels[status] || "Sync status";
+  }
+
+  window.addEventListener("DOMContentLoaded", async () => {
     const addButton = document.getElementById("addTaskBtn");
     const input = document.getElementById("taskInput");
     const clearButton = document.getElementById("clearCompletedTasksBtn");
-
     if (addButton) addButton.addEventListener("click", addTask);
-    if (input) {
-      input.addEventListener("keydown", event => {
-        if (event.key === "Enter") addTask();
-      });
-    }
-    if (clearButton) {
-      clearButton.addEventListener("click", () => {
-        saveTasks(getTasks().filter(task => !task.done));
-        renderTasks();
-      });
-    }
-
+    if (input) input.addEventListener("keydown", event => { if (event.key === "Enter") addTask(); });
+    if (clearButton) clearButton.addEventListener("click", () => {
+      const tasks = getTasks();
+      tasks.filter(task => task.done).forEach(task => window.StatusOS?.Sync?.queueDelete?.(task.id));
+      saveTasks(tasks.filter(task => !task.done));
+      renderTasks();
+    });
+    window.addEventListener("statusos:sync-status", updateSyncIndicator);
+    window.addEventListener("statusos:tasks-updated", renderTasks);
     renderTasks();
+    updateSyncIndicator();
+    await window.StatusOS?.Sync?.initialize?.();
   });
-})();
 
+  window.StatusOS = window.StatusOS || {};
+  window.StatusOS.Tasks = { list: getTasks, render: renderTasks, add: addTask };
+})();

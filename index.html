@@ -69,7 +69,7 @@
       </nav>
 
       <div class="sidebar-footer">
-        <small>Data saves on this device.</small>
+        <small>Local-first. Cloud sync when connected.</small>
       </div>
     </aside>
 
@@ -80,6 +80,7 @@
           <h1 id="pageTitle">Mission Control</h1>
         </div>
         <div class="top-actions">
+          <div id="syncIndicator" class="sync-indicator" data-status="local" role="status" aria-live="polite"><i></i><span>Local only</span></div>
           <button id="exportBtn" class="button secondary">Export Backup</button>
           <label class="button secondary file-label">Import Backup<input id="importInput" type="file" accept=".json" hidden></label>
         </div>
@@ -525,6 +526,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
+  <script src="storage-service.js"></script>
+  <script src="sync-service.js"></script>
   <script src="app.js"></script>
   <script src="auth.js"></script>
   <script>
