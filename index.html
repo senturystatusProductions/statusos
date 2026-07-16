@@ -65,11 +65,13 @@
         <button class="nav-item" data-view="assistant">Command Center</button>
         <button class="nav-item" data-view="reset">Daily Reset</button>
         <button class="nav-item" data-view="settings">Settings</button>
+        <button class="nav-item developer-nav" data-view="developer">Developer</button>
         
       </nav>
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
+        <small id="appVersionLabel" class="version-label">v0.7.5</small>
       </div>
     </aside>
 
@@ -438,6 +440,57 @@
           <button id="resetAllBtn" class="button danger">Reset Everything</button>
         </div>
       </section>
+
+      <section id="developer" class="view">
+        <article class="card developer-hero">
+          <div>
+            <p class="eyebrow">STATUSOS FOUNDATION</p>
+            <h2>Developer Console</h2>
+            <p class="muted">Inspect application health, sync state, storage, cache, and diagnostic events.</p>
+          </div>
+          <button id="refreshDiagnosticsBtn" class="button secondary" type="button">Refresh Diagnostics</button>
+        </article>
+
+        <div class="developer-grid">
+          <article class="card developer-panel">
+            <div class="section-head"><div><p class="eyebrow">BUILD</p><h3>Application</h3></div></div>
+            <dl class="diagnostic-list">
+              <div><dt>Version</dt><dd id="devVersion">v0.7.5</dd></div>
+              <div><dt>Codename</dt><dd id="devCodename">Foundation</dd></div>
+              <div><dt>Build Date</dt><dd id="devBuildDate">2026-07-16</dd></div>
+              <div><dt>Service Worker</dt><dd id="devServiceWorker">Checking…</dd></div>
+              <div><dt>Cache Stores</dt><dd id="devCacheCount">0</dd></div>
+            </dl>
+          </article>
+
+          <article class="card developer-panel">
+            <div class="section-head"><div><p class="eyebrow">HEALTH</p><h3>Runtime</h3></div></div>
+            <dl class="diagnostic-list">
+              <div><dt>Connection</dt><dd id="devConnection">Checking…</dd></div>
+              <div><dt>Cloud Sync</dt><dd id="devSync">Checking…</dd></div>
+              <div><dt>Signed In</dt><dd id="devAuth">Checking…</dd></div>
+              <div><dt>Task Records</dt><dd id="devTaskCount">0</dd></div>
+              <div><dt>Pending Changes</dt><dd id="devPending">0</dd></div>
+              <div><dt>Local Storage</dt><dd id="devStorage">0 KB</dd></div>
+            </dl>
+          </article>
+        </div>
+
+        <article class="card developer-tools">
+          <div class="section-head"><div><p class="eyebrow">MAINTENANCE</p><h3>Safe Tools</h3></div></div>
+          <div class="developer-action-grid">
+            <button id="exportDiagnosticsBtn" class="button secondary" type="button">Export Diagnostics</button>
+            <button id="clearDiagnosticLogsBtn" class="button secondary" type="button">Clear Diagnostic Logs</button>
+            <button id="clearAppCachesBtn" class="button secondary" type="button">Clear App Cache</button>
+          </div>
+          <p class="small muted">These controls do not delete your tasks, projects, clients, or cloud data.</p>
+        </article>
+
+        <article class="card developer-tools">
+          <div class="section-head"><div><p class="eyebrow">EVENT LOG</p><h3>Recent diagnostics</h3></div></div>
+          <div id="developerLogs" class="developer-logs"></div>
+        </article>
+      </section>
     </main>
   </div>
 
@@ -528,6 +581,7 @@
   <script src="config.js"></script>
   <script src="storage-service.js"></script>
   <script src="sync-service.js"></script>
+  <script src="foundation.js"></script>
   <script src="app.js"></script>
   <script src="auth.js"></script>
   <script>

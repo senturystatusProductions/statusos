@@ -21,3 +21,13 @@ All notable StatusOS changes are documented here.
 - Repaired `app.js` and `index.html`.
 - Restored authentication and app initialization.
 - Confirmed working Supabase account creation and email confirmation.
+
+## v0.7.5 — Foundation — 2026-07-16
+
+### Added
+- `StatusOS.Meta`, `StatusOS.Logger`, and `StatusOS.Diagnostics` internal APIs.
+- Developer Console and safe maintenance controls.
+- Build/version label and enhanced service-worker cache versioning.
+
+### Changed
+- Established a low-risk internal foundation without rewriting stable Cloud Sync modules.
