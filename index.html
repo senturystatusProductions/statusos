@@ -337,13 +337,15 @@
     <div><p class="eyebrow">CONSISTENCY</p><h2>Habit Engine</h2></div>
   </div>
   <section class="habit-summary-grid" aria-label="Habit summary">
-    <article class="card habit-summary-card"><span>Completed Today</span><strong id="habitCompletedToday">0</strong><small id="habitCompletedLabel">of 0 habits</small></article>
-    <article class="card habit-summary-card"><span>Daily Score</span><strong id="habitDailyScore">0%</strong><small>Today</small></article>
-    <article class="card habit-summary-card"><span>Best Streak</span><strong id="habitBestStreak">0</strong><small>days</small></article>
+    <article class="card habit-summary-card"><span>Commitments Met</span><strong id="habitCompletedToday">0</strong><small id="habitCompletedLabel">of 0 on track</small></article>
+    <article class="card habit-summary-card"><span>Overall Progress</span><strong id="habitDailyScore">0%</strong><small>Current periods</small></article>
+    <article class="card habit-summary-card"><span>Best Streak</span><strong id="habitBestStreak">0</strong><small>completed periods</small></article>
   </section>
   <article class="card habit-engine-card">
-    <div class="task-compose">
-      <input id="habitInput" placeholder="Add a daily habit" autocomplete="off">
+    <div class="habit-compose">
+      <input id="habitInput" placeholder="Habit name, such as Workout" autocomplete="off">
+      <label><span>Schedule</span><select id="habitPeriod"><option value="weekly" selected>Weekly</option><option value="daily">Daily</option><option value="monthly">Monthly</option></select></label>
+      <label><span>Target</span><input id="habitTarget" type="number" min="1" max="31" value="3"></label>
       <button id="addHabitBtn" class="button" type="button">Add Habit</button>
     </div>
     <div class="habit-engine-summary">
@@ -353,7 +355,7 @@
     <ul id="habitList" class="habit-list"></ul>
     <div id="habitEmptyState" class="task-empty-state">
       <strong>Build consistency.</strong>
-      <span>Add your first daily habit above.</span>
+      <span>Add a realistic daily, weekly, or monthly commitment above.</span>
     </div>
   </article>
 </section>
@@ -545,35 +547,6 @@
           <label>Business Name<input id="businessName" value="Sentury Status Productions" /></label>
           <label>Weekly Artist Outreach Goal<input id="weeklyOutreachGoal" type="number" min="1" value="50" /></label>
           <label>Monthly Revenue Goal<input id="monthlyRevenueGoal" type="number" min="0" value="2000" /></label>
-          <div class="settings-divider"></div>
-          <p class="eyebrow">Appearance & Behavior</p>
-          <div class="settings-grid">
-            <label>Appearance
-              <select id="appearancePreference">
-                <option value="system">Match Device</option>
-                <option value="dark">Dark</option>
-                <option value="light">Light</option>
-              </select>
-            </label>
-            <label>Accent Color
-              <select id="accentPreference">
-                <option value="gold">Status Gold</option>
-                <option value="green">Focus Green</option>
-                <option value="blue">Studio Blue</option>
-              </select>
-            </label>
-            <label>Default Start Page
-              <select id="startViewPreference">
-                <option value="dashboard">Mission Control</option>
-                <option value="tasks">Task Engine</option>
-                <option value="habits">Habit Engine</option>
-                <option value="music">Music OS</option>
-                <option value="assistant">Command Center</option>
-              </select>
-            </label>
-          </div>
-          <label class="setting-toggle"><input id="compactModePreference" type="checkbox" /> <span>Compact layout</span></label>
-          <label class="setting-toggle"><input id="reducedMotionPreference" type="checkbox" /> <span>Reduce animations</span></label>
           <div class="settings-actions">
             <button id="saveSettingsBtn" class="button">Save Settings</button>
             <button id="showOnboardingBtn" class="button secondary" type="button">Replay Welcome Tour</button>
@@ -761,7 +734,6 @@
   <script src="public-beta.js"></script>
   <script src="daily-briefing.js"></script>
   <script src="ux-polish.js"></script>
-  <script src="settings-service.js"></script>
   <script src="app.js"></script>
   <script src="auth.js"></script>
   <script>

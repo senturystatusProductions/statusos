@@ -1541,91 +1541,56 @@ function bindAssistant() {
   window.StatusOS.Tasks = { list: getTasks, render: renderTasks, add: addTask };
 })();
 
-// v0.8.0 Habit Engine
+// v1.2.1 Flexible Habit Goals
 (function () {
   const api = () => window.StatusOS?.Habits;
-  const today = () => api()?.todayKey?.() || new Date().toISOString().slice(0, 10);
-
-  function setText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value; }
-
+  const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+  const periodWord = (habit, count = 1) => habit.period === "daily" ? (count === 1 ? "day" : "days") : habit.period === "monthly" ? (count === 1 ? "month" : "months") : (count === 1 ? "week" : "weeks");
   function renderHabits() {
     const habits = api()?.list?.() || [];
-    const done = habits.filter(h => api().isDoneToday(h)).length;
-    const score = habits.length ? Math.round(done / habits.length * 100) : 0;
-    const best = habits.reduce((max, h) => Math.max(max, Number(h.streak || 0)), 0);
-
-    setText('habitCompletedToday', String(done));
-    setText('habitCompletedLabel', `of ${habits.length} habit${habits.length === 1 ? '' : 's'}`);
-    setText('habitDailyScore', `${score}%`);
-    setText('habitBestStreak', String(best));
-    setText('habitEngineSummary', `${habits.length} habit${habits.length === 1 ? '' : 's'} · ${done} complete today`);
+    const states = habits.map(h => ({ habit: h, progress: api().progress(h), streak: api().streak(h) }));
+    const met = states.filter(s => s.progress.complete).length;
+    const score = states.length ? Math.round(states.reduce((n,s)=>n+s.progress.percent,0)/states.length) : 0;
+    const best = states.reduce((max,s)=>Math.max(max,s.streak),0);
+    setText('habitCompletedToday', String(met));
+    setText('habitCompletedLabel', `of ${habits.length} commitment${habits.length === 1 ? '' : 's'} met`);
+    setText('habitDailyScore', `${score}%`); setText('habitBestStreak', String(best));
+    setText('habitEngineSummary', `${habits.length} commitment${habits.length === 1 ? '' : 's'} · ${met} target${met === 1 ? '' : 's'} met`);
     setText('dashboardHabitScore', `${score}%`);
-    setText('dashboardHabitText', habits.length ? `${done} of ${habits.length} habits complete today` : 'No habits added yet');
-    const bar = document.getElementById('dashboardHabitBar');
-    if (bar) bar.style.width = `${score}%`;
-
-    const empty = document.getElementById('habitEmptyState');
-    if (empty) empty.classList.toggle('hidden', habits.length > 0);
-    const list = document.getElementById('habitList');
-    if (!list) return;
-    list.innerHTML = '';
-
-    habits.forEach(habit => {
-      const doneToday = api().isDoneToday(habit);
-      const li = document.createElement('li');
-      li.className = `habit-item${doneToday ? ' completed' : ''}`;
-      const check = document.createElement('input');
-      check.type = 'checkbox'; check.className = 'habit-check'; check.checked = doneToday;
-      check.setAttribute('aria-label', `Complete ${habit.name}`);
-      check.addEventListener('change', async () => {
-        if (check.checked) {
-          const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-          const y = yesterday.toISOString().slice(0, 10);
-          habit.streak = habit.completedDate === y ? Number(habit.streak || 0) + 1 : (habit.completedDate === today() ? Number(habit.streak || 0) : 1);
-          habit.completedDate = today();
-        } else {
-          habit.completedDate = null;
-          habit.streak = Math.max(0, Number(habit.streak || 0) - 1);
-        }
-        await api().save(habit);
-        renderHabits();
-      });
-      const main = document.createElement('div'); main.className = 'habit-main';
-      const name = document.createElement('strong'); name.textContent = habit.name;
-      const meta = document.createElement('small'); meta.textContent = doneToday ? 'Completed today' : 'Ready for today';
-      main.append(name, meta);
-      const streak = document.createElement('span'); streak.className = 'habit-streak'; streak.textContent = `🔥 ${habit.streak || 0} day${habit.streak === 1 ? '' : 's'}`;
-      const remove = document.createElement('button'); remove.className = 'task-delete-button'; remove.type = 'button'; remove.textContent = 'Delete';
-      remove.addEventListener('click', async () => { await api().delete(habit.id); renderHabits(); });
-      li.append(check, main, streak, remove); list.appendChild(li);
+    setText('dashboardHabitText', habits.length ? `${met} of ${habits.length} current commitments met` : 'No habits added yet');
+    const bar = document.getElementById('dashboardHabitBar'); if (bar) bar.style.width = `${score}%`;
+    const empty = document.getElementById('habitEmptyState'); if (empty) empty.classList.toggle('hidden', habits.length > 0);
+    const list = document.getElementById('habitList'); if (!list) return; list.innerHTML = '';
+    states.forEach(({habit, progress, streak}) => {
+      const doneToday = api().isDoneToday(habit); const li = document.createElement('li'); li.className = `habit-item${progress.complete ? ' completed' : ''}`;
+      const check = document.createElement('input'); check.type='checkbox'; check.className='habit-check'; check.checked=doneToday;
+      check.setAttribute('aria-label', `Log ${habit.name} today`);
+      check.addEventListener('change', async()=>{ await api().save(api().toggleToday(habit, check.checked)); renderHabits(); });
+      const main=document.createElement('div'); main.className='habit-main';
+      const name=document.createElement('strong'); name.textContent=habit.name;
+      const detail=document.createElement('small'); detail.textContent=`${progress.count} / ${progress.target} this ${periodWord(habit)} · ${progress.percent}%`;
+      const track=document.createElement('div'); track.className='habit-progress-track'; const fill=document.createElement('span'); fill.style.width=`${progress.percent}%`; track.append(fill);
+      main.append(name,detail,track);
+      const streakEl=document.createElement('span'); streakEl.className='habit-streak'; streakEl.textContent=`🔥 ${streak} ${periodWord(habit, streak)}`;
+      const remove=document.createElement('button'); remove.className='task-delete-button'; remove.type='button'; remove.textContent='Delete';
+      remove.addEventListener('click', async()=>{ await api().delete(habit.id); renderHabits(); });
+      li.append(check,main,streakEl,remove); list.append(li);
     });
   }
-
   async function addHabit() {
-    const input = document.getElementById('habitInput');
-    if (!input || !input.value.trim()) return;
-    const habit = api().normalize({ name: input.value.trim(), streak: 0 });
-    input.value = '';
-    await api().save(habit);
-    renderHabits(); input.focus();
+    const input=document.getElementById('habitInput'); const period=document.getElementById('habitPeriod'); const target=document.getElementById('habitTarget');
+    if (!input?.value.trim()) return;
+    const habit=api().normalize({name:input.value.trim(),period:period?.value||'weekly',target:Number(target?.value||1),completionDates:[]});
+    input.value=''; await api().save(habit); renderHabits(); input.focus();
   }
-
-  window.addEventListener('DOMContentLoaded', async () => {
-    const add = document.getElementById('addHabitBtn');
-    const input = document.getElementById('habitInput');
-    const reset = document.getElementById('resetHabitsTodayBtn');
-    if (add) add.addEventListener('click', addHabit);
-    if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') addHabit(); });
-    if (reset) reset.addEventListener('click', async () => {
-      const habits = api()?.list?.() || [];
-      for (const habit of habits) { habit.completedDate = null; await api().save(habit); }
-      renderHabits();
-    });
-    window.addEventListener('statusos:habits-updated', renderHabits);
-    renderHabits();
-    await api()?.pull?.();
-    renderHabits();
+  window.addEventListener('DOMContentLoaded',()=>{
+    document.getElementById('addHabitBtn')?.addEventListener('click',addHabit);
+    document.getElementById('habitInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')addHabit();});
+    document.getElementById('habitPeriod')?.addEventListener('change',e=>{const t=document.getElementById('habitTarget'); if(t) t.value=e.target.value==='daily'?'1':e.target.value==='monthly'?'4':'3';});
+    document.getElementById('resetHabitsTodayBtn')?.addEventListener('click',async()=>{for(const h of api()?.list?.()||[]) if(api().isDoneToday(h)) await api().save(api().toggleToday(h,false)); renderHabits();});
+    window.addEventListener('statusos:habits-updated',renderHabits); renderHabits(); api()?.pull?.().then(renderHabits);
   });
+  window.addEventListener('statusos:view-change',renderHabits);
 })();
 
 // v0.9.0 Music OS

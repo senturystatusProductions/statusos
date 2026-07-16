@@ -1,6 +1,6 @@
 # Current Version
 
-- Version: v1.2.0
-- Codename: Settings & Personalization
+- Version: v1.2.1
+- Codename: Premium UI + Flexible Habits
 - Status: Stable candidate
-- Build date: 2026-07-16
+- Updated: 2026-07-16

@@ -1,7 +1,7 @@
 (function () {
   const KEY = "statusos_preferences_v1";
   const defaults = {
-    appearance: "system",
+    appearance: "dark",
     accent: "gold",
     startView: "dashboard",
     compact: false,
@@ -16,8 +16,8 @@
   const write = value => localStorage.setItem(KEY, JSON.stringify(value));
 
   function resolvedAppearance(value) {
-    if (value !== "system") return value;
-    return window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    if (value === "light") return "dark";
+    return "dark";
   }
 
   function apply(preferences = read()) {
