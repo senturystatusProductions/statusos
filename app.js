@@ -1540,3 +1540,90 @@ function bindAssistant() {
   window.StatusOS = window.StatusOS || {};
   window.StatusOS.Tasks = { list: getTasks, render: renderTasks, add: addTask };
 })();
+
+// v0.8.0 Habit Engine
+(function () {
+  const api = () => window.StatusOS?.Habits;
+  const today = () => api()?.todayKey?.() || new Date().toISOString().slice(0, 10);
+
+  function setText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value; }
+
+  function renderHabits() {
+    const habits = api()?.list?.() || [];
+    const done = habits.filter(h => api().isDoneToday(h)).length;
+    const score = habits.length ? Math.round(done / habits.length * 100) : 0;
+    const best = habits.reduce((max, h) => Math.max(max, Number(h.streak || 0)), 0);
+
+    setText('habitCompletedToday', String(done));
+    setText('habitCompletedLabel', `of ${habits.length} habit${habits.length === 1 ? '' : 's'}`);
+    setText('habitDailyScore', `${score}%`);
+    setText('habitBestStreak', String(best));
+    setText('habitEngineSummary', `${habits.length} habit${habits.length === 1 ? '' : 's'} · ${done} complete today`);
+    setText('dashboardHabitScore', `${score}%`);
+    setText('dashboardHabitText', habits.length ? `${done} of ${habits.length} habits complete today` : 'No habits added yet');
+    const bar = document.getElementById('dashboardHabitBar');
+    if (bar) bar.style.width = `${score}%`;
+
+    const empty = document.getElementById('habitEmptyState');
+    if (empty) empty.classList.toggle('hidden', habits.length > 0);
+    const list = document.getElementById('habitList');
+    if (!list) return;
+    list.innerHTML = '';
+
+    habits.forEach(habit => {
+      const doneToday = api().isDoneToday(habit);
+      const li = document.createElement('li');
+      li.className = `habit-item${doneToday ? ' completed' : ''}`;
+      const check = document.createElement('input');
+      check.type = 'checkbox'; check.className = 'habit-check'; check.checked = doneToday;
+      check.setAttribute('aria-label', `Complete ${habit.name}`);
+      check.addEventListener('change', async () => {
+        if (check.checked) {
+          const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+          const y = yesterday.toISOString().slice(0, 10);
+          habit.streak = habit.completedDate === y ? Number(habit.streak || 0) + 1 : (habit.completedDate === today() ? Number(habit.streak || 0) : 1);
+          habit.completedDate = today();
+        } else {
+          habit.completedDate = null;
+          habit.streak = Math.max(0, Number(habit.streak || 0) - 1);
+        }
+        await api().save(habit);
+        renderHabits();
+      });
+      const main = document.createElement('div'); main.className = 'habit-main';
+      const name = document.createElement('strong'); name.textContent = habit.name;
+      const meta = document.createElement('small'); meta.textContent = doneToday ? 'Completed today' : 'Ready for today';
+      main.append(name, meta);
+      const streak = document.createElement('span'); streak.className = 'habit-streak'; streak.textContent = `🔥 ${habit.streak || 0} day${habit.streak === 1 ? '' : 's'}`;
+      const remove = document.createElement('button'); remove.className = 'task-delete-button'; remove.type = 'button'; remove.textContent = 'Delete';
+      remove.addEventListener('click', async () => { await api().delete(habit.id); renderHabits(); });
+      li.append(check, main, streak, remove); list.appendChild(li);
+    });
+  }
+
+  async function addHabit() {
+    const input = document.getElementById('habitInput');
+    if (!input || !input.value.trim()) return;
+    const habit = api().normalize({ name: input.value.trim(), streak: 0 });
+    input.value = '';
+    await api().save(habit);
+    renderHabits(); input.focus();
+  }
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    const add = document.getElementById('addHabitBtn');
+    const input = document.getElementById('habitInput');
+    const reset = document.getElementById('resetHabitsTodayBtn');
+    if (add) add.addEventListener('click', addHabit);
+    if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') addHabit(); });
+    if (reset) reset.addEventListener('click', async () => {
+      const habits = api()?.list?.() || [];
+      for (const habit of habits) { habit.completedDate = null; await api().save(habit); }
+      renderHabits();
+    });
+    window.addEventListener('statusos:habits-updated', renderHabits);
+    renderHabits();
+    await api()?.pull?.();
+    renderHabits();
+  });
+})();

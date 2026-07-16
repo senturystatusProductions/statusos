@@ -1,7 +1,6 @@
-# Current Version
+# StatusOS Version
 
-- Version: v0.7.5
-- Codename: Foundation
-- Status: Stable candidate
+- Version: v0.8.0
+- Codename: Habit Engine
+- Status: Testing
 - Build date: 2026-07-16
-- Previous stable release: v0.7.0 Cloud Sync

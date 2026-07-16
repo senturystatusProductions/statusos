@@ -31,3 +31,7 @@ All notable StatusOS changes are documented here.
 
 ### Changed
 - Established a low-risk internal foundation without rewriting stable Cloud Sync modules.
+
+
+## v0.8.0 - Habit Engine
+- Added daily habits, streaks, daily score, Mission Control habit progress, local-first storage, and optional Supabase sync.
