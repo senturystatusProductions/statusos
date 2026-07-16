@@ -106,13 +106,18 @@
     for (const h of habits) if (!(data || []).some(row => row.id === h.id)) await ctx.client.from(TABLE).upsert(toRow(h, ctx.user.id), { onConflict: "id" });
     window.dispatchEvent(new CustomEvent("statusos:habits-updated")); return habits;
   }
-  function toggleToday(habit, force) {
-    habit = normalizeHabit(habit); const today = localDateKey(); const has = habit.completionDates.includes(today);
+  function toggleDate(habit, dateKey, force) {
+    habit = normalizeHabit(habit);
+    const key = /^\d{4}-\d{2}-\d{2}$/.test(String(dateKey || "")) ? String(dateKey) : localDateKey();
+    const has = habit.completionDates.includes(key);
     const shouldAdd = typeof force === "boolean" ? force : !has;
-    habit.completionDates = shouldAdd ? [...new Set([...habit.completionDates, today])].sort() : habit.completionDates.filter(d => d !== today);
+    habit.completionDates = shouldAdd
+      ? [...new Set([...habit.completionDates, key])].sort()
+      : habit.completionDates.filter(d => d !== key);
     return habit;
   }
+  function toggleToday(habit, force) { return toggleDate(habit, localDateKey(), force); }
   window.StatusOS = window.StatusOS || {};
   window.StatusOS.Habits = { list: readLocal, save: saveHabit, delete: deleteHabit, pull: pullHabits, normalize: normalizeHabit,
-    isDoneToday, todayKey: localDateKey, toggleToday, progress, streak, countInPeriod };
+    isDoneToday, todayKey: localDateKey, toggleToday, toggleDate, progress, streak, countInPeriod };
 })();

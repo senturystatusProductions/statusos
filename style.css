@@ -429,3 +429,8 @@ input:focus,select:focus,textarea:focus{border-color:rgba(215,182,91,.65);box-sh
 .habit-progress-track span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--gold),#f2d687);transition:width .25s ease}
 .habit-streak{min-width:100px}
 @media(max-width:760px){.habit-compose{grid-template-columns:1fr 1fr}.habit-compose>input:first-child,.habit-compose>.button{grid-column:1/-1}.habit-compose>.button{width:100%}}
+
+
+/* v1.2.2 Backdated Habit Check-ins */
+.habit-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.habit-log-date{padding:8px 12px;font-size:.82rem}.modal-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:18px}.muted{color:var(--muted,#9ca3af)}
+@media(max-width:700px){.habit-item{align-items:flex-start}.habit-actions{width:100%;padding-left:38px}.habit-actions button{min-height:44px}.modal-actions{display:grid;grid-template-columns:1fr}.modal-actions .button{width:100%;min-height:46px}}

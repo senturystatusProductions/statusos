@@ -70,3 +70,7 @@ All notable StatusOS changes are documented here.
 
 ## v1.2.1
 - Added premium dark UI and flexible daily, weekly, and monthly habit commitments.
+
+
+## v1.2.2
+- Added backdated habit check-ins and historical correction controls.

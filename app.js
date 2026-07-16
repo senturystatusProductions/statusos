@@ -1572,10 +1572,31 @@ function bindAssistant() {
       const track=document.createElement('div'); track.className='habit-progress-track'; const fill=document.createElement('span'); fill.style.width=`${progress.percent}%`; track.append(fill);
       main.append(name,detail,track);
       const streakEl=document.createElement('span'); streakEl.className='habit-streak'; streakEl.textContent=`🔥 ${streak} ${periodWord(habit, streak)}`;
+      const actions=document.createElement('div'); actions.className='habit-actions';
+      const logDate=document.createElement('button'); logDate.className='button secondary habit-log-date'; logDate.type='button'; logDate.textContent='Log Date';
+      logDate.addEventListener('click',()=>openHabitLog(habit));
       const remove=document.createElement('button'); remove.className='task-delete-button'; remove.type='button'; remove.textContent='Delete';
       remove.addEventListener('click', async()=>{ await api().delete(habit.id); renderHabits(); });
-      li.append(check,main,streakEl,remove); list.append(li);
+      actions.append(logDate,remove);
+      li.append(check,main,streakEl,actions); list.append(li);
     });
+  }
+  let activeHabitLogId = null;
+  function openHabitLog(habit) {
+    activeHabitLogId = habit.id;
+    const modal=document.getElementById('habitLogModal'); const date=document.getElementById('habitLogDate');
+    setText('habitLogName', habit.name);
+    if (date) { date.value=api().todayKey(); date.max=api().todayKey(); }
+    modal?.showModal();
+    setTimeout(()=>date?.focus(),0);
+  }
+  async function saveHabitDate(remove=false) {
+    const habit=(api()?.list?.()||[]).find(h=>h.id===activeHabitLogId);
+    const date=document.getElementById('habitLogDate')?.value;
+    if (!habit || !date) return;
+    await api().save(api().toggleDate(habit,date,!remove));
+    document.getElementById('habitLogModal')?.close();
+    renderHabits();
   }
   async function addHabit() {
     const input=document.getElementById('habitInput'); const period=document.getElementById('habitPeriod'); const target=document.getElementById('habitTarget');
@@ -1588,6 +1609,9 @@ function bindAssistant() {
     document.getElementById('habitInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')addHabit();});
     document.getElementById('habitPeriod')?.addEventListener('change',e=>{const t=document.getElementById('habitTarget'); if(t) t.value=e.target.value==='daily'?'1':e.target.value==='monthly'?'4':'3';});
     document.getElementById('resetHabitsTodayBtn')?.addEventListener('click',async()=>{for(const h of api()?.list?.()||[]) if(api().isDoneToday(h)) await api().save(api().toggleToday(h,false)); renderHabits();});
+    document.getElementById('habitLogForm')?.addEventListener('submit',e=>{e.preventDefault(); saveHabitDate(false);});
+    document.getElementById('habitLogRemove')?.addEventListener('click',()=>saveHabitDate(true));
+    document.getElementById('habitLogCancel')?.addEventListener('click',()=>document.getElementById('habitLogModal')?.close());
     window.addEventListener('statusos:habits-updated',renderHabits); renderHabits(); api()?.pull?.().then(renderHabits);
   });
   window.addEventListener('statusos:view-change',renderHabits);

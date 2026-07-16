@@ -704,6 +704,19 @@
     </form>
   </dialog>
 
+  <dialog id="habitLogModal" class="modal">
+    <form method="dialog" id="habitLogForm">
+      <div class="section-head"><h3>Log Habit Date</h3><button class="icon-btn" value="cancel" aria-label="Close">×</button></div>
+      <p id="habitLogName" class="muted"></p>
+      <label>Date<input id="habitLogDate" name="date" type="date" required></label>
+      <div class="modal-actions">
+        <button id="habitLogCancel" class="button secondary" value="cancel" type="button">Cancel</button>
+        <button id="habitLogRemove" class="button secondary" value="cancel" type="button">Remove Check-in</button>
+        <button id="habitLogSave" class="button" value="default" type="submit">Save Check-in</button>
+      </div>
+    </form>
+  </dialog>
+
   <dialog id="goalModal" class="modal">
     <form method="dialog" id="goalForm">
       <div class="section-head"><h3>Add Goal</h3><button class="icon-btn" value="cancel">×</button></div>
