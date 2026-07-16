@@ -53,7 +53,7 @@
       </div>
 
       <nav id="nav">
-        <button class="nav-item active" data-view="dashboard">Dashboard</button>
+        <button class="nav-item active" data-view="dashboard">Mission Control</button>
         <button class="nav-item" data-view="tasks">Task Engine</button>
         <button class="nav-item" data-view="crm">Artist CRM</button>
         <button class="nav-item" data-view="content">Content Planner</button>
@@ -77,7 +77,7 @@
       <header class="topbar">
         <div>
           <p id="todayDate" class="eyebrow"></p>
-          <h1 id="pageTitle">Dashboard</h1>
+          <h1 id="pageTitle">Mission Control</h1>
         </div>
         <div class="top-actions">
           <button id="exportBtn" class="button secondary">Export Backup</button>
@@ -97,6 +97,44 @@
             <span id="dashboardFullDate"></span>
           </div>
         </article>
+
+        <section class="mission-control-grid" aria-label="Mission Control overview">
+          <article class="card mission-overview-card">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">MISSION CONTROL</p>
+                <h3>Today’s mission</h3>
+              </div>
+              <strong id="missionPercent" class="mission-percent">0%</strong>
+            </div>
+            <div class="mission-progress-track" aria-label="Mission progress">
+              <span id="missionProgressBar"></span>
+            </div>
+            <p id="missionProgressText" class="muted">0 of 0 tasks complete</p>
+            <div id="missionCompleteState" class="mission-complete-state hidden">
+              <strong>Mission Complete</strong>
+              <span>Everything on today’s task list is complete.</span>
+            </div>
+          </article>
+
+          <article class="card mission-focus-card">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">TODAY’S FOCUS</p>
+                <h3>What to do next</h3>
+              </div>
+              <button class="text-button" data-view="tasks">Open Tasks</button>
+            </div>
+            <div id="missionFocusList" class="mission-focus-list"></div>
+          </article>
+        </section>
+
+        <div class="mission-stats-grid">
+          <article class="card mission-stat"><span>Completed</span><strong id="missionCompleted">0</strong><small>Tasks finished</small></article>
+          <article class="card mission-stat"><span>Remaining</span><strong id="missionRemaining">0</strong><small>Tasks left</small></article>
+          <article class="card mission-stat"><span>Productivity</span><strong id="missionProductivity">0%</strong><small>Today’s completion</small></article>
+          <article class="card mission-stat"><span>Total Tasks</span><strong id="missionTotal">0</strong><small>Current mission</small></article>
+        </div>
 
         <div class="morning-summary-grid">
           <article class="card morning-summary-card">
@@ -220,14 +258,24 @@
 
       
 <section id="tasks" class="view">
-<div class="card">
-<h2>Task Engine</h2>
-<div style="display:flex;gap:8px;margin:10px 0;">
-<input id="taskInput" placeholder="New task" style="flex:1;padding:10px;">
-<button id="addTaskBtn" class="button">Add</button>
-</div>
-<ul id="taskList"></ul>
-</div>
+  <div class="section-head">
+    <div><p class="eyebrow">EXECUTION</p><h2>Task Engine</h2></div>
+  </div>
+  <article class="card task-engine-card">
+    <div class="task-compose">
+      <input id="taskInput" placeholder="Add a task to today’s mission" autocomplete="off">
+      <button id="addTaskBtn" class="button" type="button">Add Task</button>
+    </div>
+    <div class="task-engine-summary">
+      <span id="taskEngineSummary">0 tasks</span>
+      <button id="clearCompletedTasksBtn" class="text-button" type="button">Clear completed</button>
+    </div>
+    <ul id="taskList" class="task-engine-list"></ul>
+    <div id="taskEmptyState" class="task-empty-state">
+      <strong>Your mission is clear.</strong>
+      <span>Add your first task above.</span>
+    </div>
+  </article>
 </section>
 
 <section id="crm" class="view">

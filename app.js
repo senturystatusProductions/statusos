@@ -1366,36 +1366,171 @@ function bindAssistant() {
   });
 }
 
-// Release 005 Task Engine
-(function(){
-const KEY='statusos_tasks_v1';
-function load(){
- const list=document.getElementById('taskList');
- if(!list)return;
- const tasks=JSON.parse(localStorage.getItem(KEY)||'[]');
- list.innerHTML='';
- tasks.forEach((t,i)=>{
-  const li=document.createElement('li');
-  li.style.cssText='display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #333;';
-  li.innerHTML=`<label><input type="checkbox" ${t.done?'checked':''}> ${t.text}</label><button>x</button>`;
-  li.querySelector('input').onchange=e=>{tasks[i].done=e.target.checked;localStorage.setItem(KEY,JSON.stringify(tasks));};
-  li.querySelector('button').onclick=()=>{tasks.splice(i,1);localStorage.setItem(KEY,JSON.stringify(tasks));load();};
-  list.appendChild(li);
- });
-}
-window.addEventListener('load',()=>{
- const b=document.getElementById('addTaskBtn');
- if(b){
-  b.onclick=()=>{
-   const inp=document.getElementById('taskInput');
-   if(!inp.value.trim())return;
-   const tasks=JSON.parse(localStorage.getItem(KEY)||'[]');
-   tasks.push({text:inp.value.trim(),done:false});
-   localStorage.setItem(KEY,JSON.stringify(tasks));
-   inp.value='';
-   load();
-  };
-  load();
- }
-});
+// Release 006 Mission Control + Task Engine
+(function () {
+  const KEY = "statusos_tasks_v1";
+
+  function getTasks() {
+    try {
+      const tasks = JSON.parse(localStorage.getItem(KEY) || "[]");
+      return Array.isArray(tasks) ? tasks : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveTasks(tasks) {
+    localStorage.setItem(KEY, JSON.stringify(tasks));
+  }
+
+  function setNodeText(id, value) {
+    const node = document.getElementById(id);
+    if (node) node.textContent = value;
+  }
+
+  function renderMissionControl(tasks) {
+    const total = tasks.length;
+    const completed = tasks.filter(task => task.done).length;
+    const remaining = total - completed;
+    const percent = total ? Math.round((completed / total) * 100) : 0;
+
+    setNodeText("missionPercent", `${percent}%`);
+    setNodeText("missionProgressText", `${completed} of ${total} tasks complete`);
+    setNodeText("missionCompleted", String(completed));
+    setNodeText("missionRemaining", String(remaining));
+    setNodeText("missionProductivity", `${percent}%`);
+    setNodeText("missionTotal", String(total));
+
+    const bar = document.getElementById("missionProgressBar");
+    if (bar) bar.style.width = `${percent}%`;
+
+    const completeState = document.getElementById("missionCompleteState");
+    if (completeState) {
+      completeState.classList.toggle("hidden", total === 0 || completed !== total);
+    }
+
+    const focusList = document.getElementById("missionFocusList");
+    if (!focusList) return;
+
+    focusList.innerHTML = "";
+    const focusTasks = tasks.filter(task => !task.done).slice(0, 5);
+
+    if (!focusTasks.length) {
+      const empty = document.createElement("div");
+      empty.className = "mission-focus-empty";
+      empty.innerHTML = total
+        ? "<strong>Mission complete.</strong><span>Everything is finished for today.</span>"
+        : "<strong>No tasks yet.</strong><span>Add tasks in the Task Engine to build today’s mission.</span>";
+      focusList.appendChild(empty);
+      return;
+    }
+
+    focusTasks.forEach(task => {
+      const row = document.createElement("label");
+      row.className = "mission-focus-item";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = Boolean(task.done);
+      checkbox.addEventListener("change", () => {
+        const current = getTasks();
+        const match = current.find(item => item.id === task.id);
+        if (match) match.done = checkbox.checked;
+        saveTasks(current);
+        renderTasks();
+      });
+
+      const text = document.createElement("span");
+      text.textContent = task.text;
+      row.append(checkbox, text);
+      focusList.appendChild(row);
+    });
+  }
+
+  function renderTasks() {
+    const tasks = getTasks();
+    const list = document.getElementById("taskList");
+    const emptyState = document.getElementById("taskEmptyState");
+    const completed = tasks.filter(task => task.done).length;
+
+    setNodeText("taskEngineSummary", `${tasks.length} task${tasks.length === 1 ? "" : "s"} · ${completed} complete`);
+    if (emptyState) emptyState.classList.toggle("hidden", tasks.length > 0);
+
+    if (list) {
+      list.innerHTML = "";
+      tasks.forEach(task => {
+        const li = document.createElement("li");
+        li.className = `task-engine-item${task.done ? " completed" : ""}`;
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = Boolean(task.done);
+        checkbox.setAttribute("aria-label", `Mark ${task.text} complete`);
+        checkbox.addEventListener("change", () => {
+          task.done = checkbox.checked;
+          saveTasks(tasks);
+          renderTasks();
+        });
+
+        const text = document.createElement("span");
+        text.className = "task-engine-text";
+        text.textContent = task.text;
+
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "task-delete-button";
+        remove.textContent = "Delete";
+        remove.addEventListener("click", () => {
+          saveTasks(tasks.filter(item => item.id !== task.id));
+          renderTasks();
+        });
+
+        li.append(checkbox, text, remove);
+        list.appendChild(li);
+      });
+    }
+
+    renderMissionControl(tasks);
+  }
+
+  function addTask() {
+    const input = document.getElementById("taskInput");
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+
+    const tasks = getTasks();
+    tasks.push({
+      id: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+      text,
+      done: false,
+      createdAt: new Date().toISOString()
+    });
+    saveTasks(tasks);
+    input.value = "";
+    renderTasks();
+    input.focus();
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const addButton = document.getElementById("addTaskBtn");
+    const input = document.getElementById("taskInput");
+    const clearButton = document.getElementById("clearCompletedTasksBtn");
+
+    if (addButton) addButton.addEventListener("click", addTask);
+    if (input) {
+      input.addEventListener("keydown", event => {
+        if (event.key === "Enter") addTask();
+      });
+    }
+    if (clearButton) {
+      clearButton.addEventListener("click", () => {
+        saveTasks(getTasks().filter(task => !task.done));
+        renderTasks();
+      });
+    }
+
+    renderTasks();
+  });
 })();
+
