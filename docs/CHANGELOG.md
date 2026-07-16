@@ -42,3 +42,10 @@ All notable StatusOS changes are documented here.
 - Added project types, clients, statuses, deadlines, priorities, and notes.
 - Added Mission Control music pipeline widget.
 - Added Supabase migration 0003_create_music_projects.sql.
+
+## v1.0.0 — Public Beta
+- Added onboarding welcome tour.
+- Added Ctrl/Cmd + K Quick Launch command palette.
+- Added personal display name and daily focus preferences.
+- Added personalized Mission Control greeting.
+- Updated public beta branding, PWA metadata, and cache.

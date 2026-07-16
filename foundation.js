@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "0.9.0";
-  const CODENAME = "Music OS";
+  const VERSION = "1.0.0";
+  const CODENAME = "Public Beta";
   const BUILD_DATE = "2026-07-16";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

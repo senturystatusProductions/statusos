@@ -1,11 +1,11 @@
 {
-  "name": "Sentury Status Business OS",
-  "short_name": "Sentury OS",
+  "name": "StatusOS — Your Personal Operating System",
+  "short_name": "StatusOS",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0c0c0d",
   "theme_color": "#0c0c0d",
-  "description": "A private business dashboard for Sentury Status Productions.",
+  "description": "A personal operating system for tasks, habits, music projects, business, and AI-guided daily execution.",
   "icons": [
     {
       "src": "icon-192.png",

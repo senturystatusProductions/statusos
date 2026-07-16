@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="stylesheet" href="style.css" />
-  <title>Sentury Status OS</title>
+  <title>StatusOS — Your Personal Operating System</title>
 </head>
 <body>
   <div id="authScreen" class="auth-screen">
@@ -47,8 +47,8 @@
       <div class="brand">
         <div class="brand-mark">SS</div>
         <div>
-          <strong>Sentury Status</strong>
-          <span>Business OS</span>
+          <strong>StatusOS</strong>
+          <span>Your Personal Operating System</span>
         </div>
       </div>
 
@@ -73,7 +73,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v0.9.0</small>
+        <small id="appVersionLabel" class="version-label">v1.0.0 Public Beta</small>
       </div>
     </aside>
 
@@ -84,6 +84,7 @@
           <h1 id="pageTitle">Mission Control</h1>
         </div>
         <div class="top-actions">
+          <button id="openCommandPaletteBtn" class="button secondary command-button" type="button">Quick Launch <kbd>Ctrl K</kbd></button>
           <div id="syncIndicator" class="sync-indicator" data-status="local" role="status" aria-live="polite"><i></i><span>Local only</span></div>
           <button id="exportBtn" class="button secondary">Export Backup</button>
           <label class="button secondary file-label">Import Backup<input id="importInput" type="file" accept=".json" hidden></label>
@@ -94,8 +95,9 @@
         <article class="dashboard-welcome card morning-hero">
           <div>
             <p class="eyebrow">STATUSOS MORNING DASHBOARD</p>
+            <div class="beta-pill">PUBLIC BETA</div>
             <h2 id="welcomeHeading">Good morning, Sam.</h2>
-            <p class="muted">Your business, simplified. Finish the important work first.</p>
+            <p id="personalFocusLine" class="muted">Your Personal Operating System. Finish the important work first.</p>
           </div>
           <div class="dashboard-date">
             <strong id="dashboardDay"></strong>
@@ -515,10 +517,16 @@
         <div class="card">
           <p class="eyebrow">Customize</p>
           <h2>Settings</h2>
+          <label>Display Name<input id="profileDisplayName" value="Sam" placeholder="Your name" /></label>
+          <label>Daily Focus Statement<input id="profileFocusStatement" value="Finish the important work first." placeholder="What should StatusOS remind you to focus on?" /></label>
           <label>Business Name<input id="businessName" value="Sentury Status Productions" /></label>
           <label>Weekly Artist Outreach Goal<input id="weeklyOutreachGoal" type="number" min="1" value="50" /></label>
           <label>Monthly Revenue Goal<input id="monthlyRevenueGoal" type="number" min="0" value="2000" /></label>
-          <button id="saveSettingsBtn" class="button">Save Settings</button>
+          <div class="settings-actions">
+            <button id="saveSettingsBtn" class="button">Save Settings</button>
+            <button id="showOnboardingBtn" class="button secondary" type="button">Replay Welcome Tour</button>
+          </div>
+          <p id="profileSettingsStatus" class="small muted"></p>
         </div>
         <div class="card danger-zone">
           <h3>Reset All App Data</h3>
@@ -541,8 +549,8 @@
           <article class="card developer-panel">
             <div class="section-head"><div><p class="eyebrow">BUILD</p><h3>Application</h3></div></div>
             <dl class="diagnostic-list">
-              <div><dt>Version</dt><dd id="devVersion">v0.9.0</dd></div>
-              <div><dt>Codename</dt><dd id="devCodename">Music OS</dd></div>
+              <div><dt>Version</dt><dd id="devVersion">v1.0.0</dd></div>
+              <div><dt>Codename</dt><dd id="devCodename">Public Beta</dd></div>
               <div><dt>Build Date</dt><dd id="devBuildDate">2026-07-16</dd></div>
               <div><dt>Service Worker</dt><dd id="devServiceWorker">Checking…</dd></div>
               <div><dt>Cache Stores</dt><dd id="devCacheCount">0</dd></div>
@@ -581,6 +589,34 @@
   </div>
 
   <div id="modalBackdrop" class="modal-backdrop hidden"></div>
+  <dialog id="onboardingDialog" class="modal public-beta-dialog">
+    <div class="onboarding-shell">
+      <div class="beta-pill">STATUSOS 1.0</div>
+      <p class="eyebrow">WELCOME TO YOUR PERSONAL OPERATING SYSTEM</p>
+      <h2 id="onboardingTitle">Start every day with clarity.</h2>
+      <p id="onboardingText" class="muted">Mission Control brings your tasks, habits, music projects, and AI guidance into one focused starting point.</p>
+      <div class="onboarding-dots" aria-label="Welcome progress">
+        <span class="active"></span><span></span><span></span>
+      </div>
+      <div class="onboarding-actions">
+        <button id="onboardingSkip" class="button secondary" type="button">Skip</button>
+        <button id="onboardingNext" class="button" type="button">Next</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="commandPalette" class="modal command-palette">
+    <div class="command-shell">
+      <div class="command-search-row">
+        <span>⌘</span>
+        <input id="commandSearch" type="text" placeholder="Jump anywhere or take action…" autocomplete="off" />
+        <kbd>Esc</kbd>
+      </div>
+      <div id="commandResults" class="command-results"></div>
+      <p class="small muted command-hint">Use ↑ ↓ and Enter. Press Ctrl + K anywhere to open.</p>
+    </div>
+  </dialog>
+
 
   <dialog id="artistModal" class="modal">
     <form method="dialog" id="artistForm">
@@ -670,6 +706,7 @@
   <script src="foundation.js"></script>
   <script src="habits-service.js"></script>
   <script src="music-service.js"></script>
+  <script src="public-beta.js"></script>
   <script src="app.js"></script>
   <script src="auth.js"></script>
   <script>
