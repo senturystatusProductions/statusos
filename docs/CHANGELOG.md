@@ -90,3 +90,7 @@ All notable StatusOS changes are documented here.
 - Added visual Habit Calendar and Timeline.
 - Added tap-to-log and tap-to-remove past habit check-ins.
 - Added monthly habit history summaries.
+
+
+## v1.6.0 — Smart Alerts
+- Added actionable Mission Control alerts for tasks, habits, and music deadlines.

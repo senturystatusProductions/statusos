@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "1.4.0";
-  const CODENAME = "Habit Calendar";
+  const VERSION = "1.6.0";
+  const CODENAME = "Smart Alerts";
   const BUILD_DATE = "2026-07-16";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;
