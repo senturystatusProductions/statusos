@@ -1793,3 +1793,31 @@ function bindAssistant() {
     init();
   }
 })();
+
+// v1.5.0 Mission Control 2.0
+(function(){
+  const setHTML=(id,html)=>{const el=document.getElementById(id);if(el)el.innerHTML=html;};
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function renderTop3(){
+    const tasks=window.StatusOS?.Tasks?.list?.()||[];
+    const open=tasks.filter(t=>!t.done).slice(0,3);
+    if(!open.length){setHTML('missionV2Top3','<div class="mission-v2-empty">No unfinished tasks. Your mission is clear.</div>');return;}
+    setHTML('missionV2Top3',open.map((t,i)=>`<div class="mission-v2-row"><div class="mission-v2-taskline"><span class="mission-v2-rank">${i+1}</span><strong>${esc(t.text)}</strong></div><small>${i===0?'Start here':'Next priority'}</small></div>`).join(''));
+  }
+  function renderHabits(){
+    const api=window.StatusOS?.Habits; const habits=api?.list?.()||[];
+    if(!habits.length){setHTML('missionV2Habits','<div class="mission-v2-empty">No commitments added yet.</div>');return;}
+    setHTML('missionV2Habits',habits.slice(0,4).map(h=>{const p=api.progress(h);return `<div class="mission-v2-row"><div class="mission-v2-row-head"><strong>${esc(h.name)}</strong><small>${p.count} / ${p.target}</small></div><div class="mission-v2-mini-track"><span style="width:${p.percent}%"></span></div><small>${p.complete?'Commitment met':'Keep going'} · ${p.percent}%</small></div>`}).join(''));
+  }
+  function daysUntil(date){if(!date)return 9999;const a=new Date();a.setHours(0,0,0,0);return Math.ceil((new Date(date+'T00:00:00')-a)/86400000)}
+  function renderMusic(){
+    const items=window.StatusOS?.Music?.list?.()||[];
+    const active=items.filter(x=>x.status!=='Complete').sort((a,b)=>daysUntil(a.deadline)-daysUntil(b.deadline)).slice(0,4);
+    if(!active.length){setHTML('missionV2Music','<div class="mission-v2-empty">No active music projects.</div>');return;}
+    setHTML('missionV2Music',active.map(x=>{const d=daysUntil(x.deadline);const due=!x.deadline?'No deadline':d<0?`${Math.abs(d)} day${Math.abs(d)===1?'':'s'} overdue`:d===0?'Due today':`${d} day${d===1?'':'s'} left`;return `<div class="mission-v2-row"><div class="mission-v2-row-head"><strong>${esc(x.title||x.name||'Untitled project')}</strong><small>${esc(x.status||'Active')}</small></div><small>${esc(x.client||x.artist||'Independent')} · ${due}</small></div>`}).join(''));
+  }
+  function render(){renderTop3();renderHabits();renderMusic();}
+  window.addEventListener('DOMContentLoaded',render);
+  ['statusos:tasks-updated','statusos:habits-updated','statusos:music-updated','statusos:view-change'].forEach(e=>window.addEventListener(e,render));
+  window.StatusOS=window.StatusOS||{};window.StatusOS.MissionV2={render};
+})();

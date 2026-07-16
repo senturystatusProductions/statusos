@@ -187,6 +187,25 @@
           <article class="card mission-stat"><span>Total Tasks</span><strong id="missionTotal">0</strong><small>Current mission</small></article>
         </div>
 
+
+        <section class="mission-v2-grid" aria-label="Mission Control 2.0">
+          <article class="card mission-v2-priorities">
+            <div class="section-head"><div><p class="eyebrow">TODAY'S TOP 3</p><h3>Highest-impact actions</h3></div><button class="text-button" data-view="tasks">Manage Tasks</button></div>
+            <div id="missionV2Top3" class="mission-v2-list"></div>
+          </article>
+          <article class="card mission-v2-commitments">
+            <div class="section-head"><div><p class="eyebrow">WEEKLY COMMITMENTS</p><h3>Keep your promises</h3></div><button class="text-button" data-view-jump="habits">Open Habits</button></div>
+            <div id="missionV2Habits" class="mission-v2-list"></div>
+          </article>
+          <article class="card mission-v2-pipeline">
+            <div class="section-head"><div><p class="eyebrow">MUSIC PIPELINE</p><h3>Projects needing attention</h3></div><button class="text-button" data-view-jump="music">Open Music OS</button></div>
+            <div id="missionV2Music" class="mission-v2-list"></div>
+          </article>
+        </section>
+
+        <details class="mission-supporting-details">
+          <summary>More dashboard details</summary>
+          <div class="mission-supporting-body">
         <div class="morning-summary-grid">
           <article class="card morning-summary-card">
             <span>Revenue Today</span>
@@ -318,6 +337,9 @@
         </article>
 
         <div id="dailySections"></div>
+
+          </div>
+        </details>
 
         <article class="card">
           <div class="section-head">

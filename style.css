@@ -475,3 +475,21 @@ input:focus,select:focus,textarea:focus{border-color:rgba(215,182,91,.65);box-sh
   .command-button{display:none}
   .profile-menu-btn{height:40px;padding:0 11px}
 }
+
+/* v1.5.0 Mission Control 2.0 */
+.mission-v2-grid{display:grid;grid-template-columns:1.15fr .95fr .95fr;gap:14px;margin:0 0 14px}
+.mission-v2-grid>.card{min-height:230px}
+.mission-v2-list{display:grid;gap:10px}
+.mission-v2-row{display:grid;gap:7px;padding:12px 13px;border:1px solid var(--line);background:#111315;border-radius:13px}
+.mission-v2-row-head{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.mission-v2-row strong{font-size:.98rem}.mission-v2-row small{color:var(--muted)}
+.mission-v2-rank{width:26px;height:26px;border-radius:999px;display:inline-grid;place-items:center;background:rgba(213,180,108,.13);color:var(--gold);font-weight:800;flex:0 0 auto}
+.mission-v2-taskline{display:flex;align-items:center;gap:10px}
+.mission-v2-mini-track{height:7px;background:#26282d;border-radius:999px;overflow:hidden}.mission-v2-mini-track span{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#f2d98b);border-radius:inherit}
+.mission-v2-empty{padding:18px;border:1px dashed var(--line);border-radius:13px;color:var(--muted)}
+.mission-supporting-details{margin-top:8px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.015)}
+.mission-supporting-details>summary{cursor:pointer;list-style:none;padding:14px 16px;color:var(--muted);font-weight:800}.mission-supporting-details>summary::-webkit-details-marker{display:none}
+.mission-supporting-details>summary:after{content:'+';float:right;color:var(--gold)}.mission-supporting-details[open]>summary:after{content:'−'}
+.mission-supporting-body{padding:0 14px 14px}
+@media(max-width:1050px){.mission-v2-grid{grid-template-columns:1fr 1fr}.mission-v2-priorities{grid-column:1/-1}}
+@media(max-width:700px){.mission-v2-grid{grid-template-columns:1fr}.mission-v2-priorities{grid-column:auto}.mission-v2-grid>.card{min-height:auto}}
