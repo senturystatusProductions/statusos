@@ -80,3 +80,8 @@ All notable StatusOS changes are documented here.
 - Added Weekly Review and progress analytics.
 - Added reflection notes and next-week planning.
 - Combined Tasks, Habits, and Music OS into one weekly score.
+
+## v1.4.0
+- Added visual Habit Calendar and Timeline.
+- Added tap-to-log and tap-to-remove past habit check-ins.
+- Added monthly habit history summaries.

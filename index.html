@@ -359,6 +359,21 @@
       <span>Add a realistic daily, weekly, or monthly commitment above.</span>
     </div>
   </article>
+  <article class="card habit-calendar-card">
+    <div class="section-head">
+      <div><p class="eyebrow">HABIT TIMELINE</p><h3>Calendar</h3></div>
+      <select id="habitCalendarSelect" aria-label="Choose habit"></select>
+    </div>
+    <div class="habit-calendar-toolbar">
+      <button id="habitCalendarPrev" class="button secondary" type="button" aria-label="Previous month">‹</button>
+      <strong id="habitCalendarMonth">Month</strong>
+      <button id="habitCalendarNext" class="button secondary" type="button" aria-label="Next month">›</button>
+    </div>
+    <div class="habit-calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+    <div id="habitCalendarGrid" class="habit-calendar-grid" aria-label="Habit calendar"></div>
+    <p id="habitCalendarSummary" class="muted">Choose a habit to view its history.</p>
+  </article>
+
 </section>
 
 
@@ -785,6 +800,7 @@
   <script src="public-beta.js"></script>
   <script src="daily-briefing.js"></script>
   <script src="weekly-review.js"></script>
+  <script src="habit-calendar.js"></script>
   <script src="ux-polish.js"></script>
   <script src="app.js"></script>
   <script src="auth.js"></script>

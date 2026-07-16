@@ -1,6 +1,6 @@
 # StatusOS Version
 
-- Version: v1.3.0
-- Codename: Weekly Review
-- Status: Stable candidate
-- Build date: 2026-07-16
+- Version: v1.4.0
+- Codename: Habit Calendar
+- Status: Test Build
+- Date: 2026-07-16
