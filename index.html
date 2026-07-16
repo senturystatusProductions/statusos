@@ -57,6 +57,7 @@
         <button class="nav-item" data-view="tasks">Task Engine</button>
         <button class="nav-item" data-view="habits">Habit Engine</button>
         <button class="nav-item" data-view="music">Music OS</button>
+        <button class="nav-item" data-view="review">Weekly Review</button>
         <button class="nav-item" data-view="crm">Artist CRM</button>
         <button class="nav-item" data-view="content">Content Planner</button>
         <button class="nav-item" data-view="sales">Sales Pipeline</button>
@@ -391,6 +392,43 @@
     </div>
     <div id="musicProjectList" class="music-project-list"></div>
     <div id="musicEmptyState" class="task-empty-state"><strong>Your production queue is clear.</strong><span>Add your first music project above.</span></div>
+  </article>
+</section>
+
+
+<section id="review" class="view">
+  <div class="section-head">
+    <div><p class="eyebrow">PROGRESS ANALYTICS</p><h2>Weekly Review</h2></div>
+    <button id="refreshWeeklyReviewBtn" class="button secondary" type="button">Refresh Review</button>
+  </div>
+  <p id="weeklyReviewRange" class="muted"></p>
+  <section class="review-score-grid" aria-label="Weekly review summary">
+    <article class="card review-score-card"><span>Weekly Score</span><strong id="weeklyReviewScore">0%</strong><small id="weeklyReviewScoreLabel">Building your review</small></article>
+    <article class="card review-score-card"><span>Tasks</span><strong id="weeklyReviewTasks">0 / 0</strong><small>Current task completion</small></article>
+    <article class="card review-score-card"><span>Habits</span><strong id="weeklyReviewHabits">0 / 0</strong><small>Commitments met</small></article>
+    <article class="card review-score-card"><span>Music</span><strong id="weeklyReviewMusic">0 active</strong><small id="weeklyReviewMusicMeta">0 due soon</small></article>
+  </section>
+  <div class="review-main-grid">
+    <article class="card">
+      <div class="section-head"><div><p class="eyebrow">AUTOMATIC SUMMARY</p><h3>This week at a glance</h3></div></div>
+      <div id="weeklyReviewSummary" class="review-summary-list"></div>
+    </article>
+    <article class="card">
+      <div class="section-head"><div><p class="eyebrow">NEXT WEEK</p><h3>Recommended priorities</h3></div></div>
+      <div id="weeklyReviewPriorities" class="review-summary-list"></div>
+    </article>
+  </div>
+  <article class="card weekly-reflection-card">
+    <div class="section-head"><div><p class="eyebrow">REFLECTION</p><h3>Capture the week</h3></div><span id="weeklyReviewSaved" class="muted small"></span></div>
+    <div class="review-form-grid">
+      <label>Biggest wins<textarea id="weeklyWinsInput" rows="4" placeholder="What went well this week?"></textarea></label>
+      <label>Lessons and adjustments<textarea id="weeklyLessonsInput" rows="4" placeholder="What should change next week?"></textarea></label>
+      <label>Top focus for next week<textarea id="weeklyFocusInput" rows="4" placeholder="What matters most next week?"></textarea></label>
+    </div>
+    <div class="review-actions">
+      <button id="saveWeeklyReviewBtn" class="button" type="button">Save Weekly Review</button>
+      <button id="copyWeeklyReviewBtn" class="button secondary" type="button">Copy Summary</button>
+    </div>
   </article>
 </section>
 
@@ -746,6 +784,7 @@
   <script src="music-service.js"></script>
   <script src="public-beta.js"></script>
   <script src="daily-briefing.js"></script>
+  <script src="weekly-review.js"></script>
   <script src="ux-polish.js"></script>
   <script src="app.js"></script>
   <script src="auth.js"></script>

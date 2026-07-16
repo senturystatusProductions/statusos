@@ -74,3 +74,9 @@ All notable StatusOS changes are documented here.
 
 ## v1.2.2
 - Added backdated habit check-ins and historical correction controls.
+
+
+## v1.3.0
+- Added Weekly Review and progress analytics.
+- Added reflection notes and next-week planning.
+- Combined Tasks, Habits, and Music OS into one weekly score.

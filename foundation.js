@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "1.2.2";
-  const CODENAME = "Habit History";
+  const VERSION = "1.3.0";
+  const CODENAME = "Weekly Review";
   const BUILD_DATE = "2026-07-16";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

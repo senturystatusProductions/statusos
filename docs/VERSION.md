@@ -1,6 +1,6 @@
-# Current Version
+# StatusOS Version
 
-- Version: v1.2.2
-- Codename: Habit History
+- Version: v1.3.0
+- Codename: Weekly Review
 - Status: Stable candidate
-- Updated: 2026-07-16
+- Build date: 2026-07-16
