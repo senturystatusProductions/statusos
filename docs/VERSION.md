@@ -1,6 +1,6 @@
-# StatusOS Version
+# Current Version
 
-- Current version: v1.1.1
-- Codename: UX Polish
+- Version: v1.2.0
+- Codename: Settings & Personalization
 - Status: Stable candidate
 - Build date: 2026-07-16

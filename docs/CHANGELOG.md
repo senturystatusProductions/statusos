@@ -63,3 +63,7 @@ All notable StatusOS changes are documented here.
 - Added personal display name and daily focus preferences.
 - Added personalized Mission Control greeting.
 - Updated public beta branding, PWA metadata, and cache.
+
+
+## v1.2.0
+- Added appearance, accent, compact mode, reduced motion, and start-page preferences.

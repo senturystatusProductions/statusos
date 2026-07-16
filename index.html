@@ -545,6 +545,35 @@
           <label>Business Name<input id="businessName" value="Sentury Status Productions" /></label>
           <label>Weekly Artist Outreach Goal<input id="weeklyOutreachGoal" type="number" min="1" value="50" /></label>
           <label>Monthly Revenue Goal<input id="monthlyRevenueGoal" type="number" min="0" value="2000" /></label>
+          <div class="settings-divider"></div>
+          <p class="eyebrow">Appearance & Behavior</p>
+          <div class="settings-grid">
+            <label>Appearance
+              <select id="appearancePreference">
+                <option value="system">Match Device</option>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+              </select>
+            </label>
+            <label>Accent Color
+              <select id="accentPreference">
+                <option value="gold">Status Gold</option>
+                <option value="green">Focus Green</option>
+                <option value="blue">Studio Blue</option>
+              </select>
+            </label>
+            <label>Default Start Page
+              <select id="startViewPreference">
+                <option value="dashboard">Mission Control</option>
+                <option value="tasks">Task Engine</option>
+                <option value="habits">Habit Engine</option>
+                <option value="music">Music OS</option>
+                <option value="assistant">Command Center</option>
+              </select>
+            </label>
+          </div>
+          <label class="setting-toggle"><input id="compactModePreference" type="checkbox" /> <span>Compact layout</span></label>
+          <label class="setting-toggle"><input id="reducedMotionPreference" type="checkbox" /> <span>Reduce animations</span></label>
           <div class="settings-actions">
             <button id="saveSettingsBtn" class="button">Save Settings</button>
             <button id="showOnboardingBtn" class="button secondary" type="button">Replay Welcome Tour</button>
@@ -732,6 +761,7 @@
   <script src="public-beta.js"></script>
   <script src="daily-briefing.js"></script>
   <script src="ux-polish.js"></script>
+  <script src="settings-service.js"></script>
   <script src="app.js"></script>
   <script src="auth.js"></script>
   <script>
