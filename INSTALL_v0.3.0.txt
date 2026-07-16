@@ -1,0 +1,8 @@
+STATUSOS v0.3.0 INSTALL
+
+1. Back up your current folder.
+2. Extract this ZIP into a separate folder first.
+3. Copy index.html, app.js, style.css, and service-worker.js into your StatusOS project.
+4. Refresh the browser with Ctrl+Shift+R.
+5. Test navigation, dashboard quick actions, login, and Command Center.
+6. Commit only after all tests pass.

@@ -1,0 +1,16 @@
+STATUSOS v0.3.1 INSTALL
+
+1. Keep a backup of your current working folder.
+2. Copy the contents of this ZIP into the ROOT of your StatusOS repository.
+3. Confirm index.html, app.js, style.css and service-worker.js are directly in the repository root.
+4. Commit and push.
+5. Open the site and press Ctrl + Shift + R.
+6. On iPhone, close and reopen the installed app. If needed, open the site once in Safari.
+
+TEST
+- Sign in
+- Click all navigation buttons
+- Edit Top 3 priorities
+- Click Start Work
+- Mark a task complete
+- Open Command Center and send a message

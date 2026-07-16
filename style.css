@@ -200,3 +200,35 @@ h1,h2,h3,p{margin-top:0}.eyebrow{color:var(--gold);font-size:.72rem;letter-spaci
   cursor:pointer;
   font-weight:600;
 }
+
+/* StatusOS v0.3.0 Morning Dashboard */
+.morning-actions .quick-action{display:flex;align-items:center;justify-content:flex-start;gap:10px;min-height:62px;text-align:left}
+.morning-actions .quick-action span{font-size:1.15rem}
+#dashboard .mission-card{background:linear-gradient(135deg,rgba(213,180,108,.12),transparent 58%),linear-gradient(180deg,var(--panel2),var(--panel))}
+#dashboard .ai-brief-card{border-color:rgba(213,180,108,.28)}
+@media(max-width:620px){.morning-actions{grid-template-columns:1fr 1fr!important}.morning-actions .quick-action{min-height:58px;padding:12px 10px}}
+
+
+/* StatusOS v0.3.1 Morning Dashboard */
+.hidden{display:none!important}
+.morning-hero{margin-bottom:16px}
+.morning-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.morning-summary-card{padding:20px;min-height:138px;display:flex;flex-direction:column;justify-content:center}
+.morning-summary-card span,.morning-summary-card small{color:var(--muted)}
+.morning-summary-card span{font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800}
+.morning-summary-card strong{font-size:2rem;margin:8px 0 4px}
+.morning-main-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;margin-bottom:14px}
+.priorities-card{grid-row:span 2}
+.start-work-button{width:100%;margin-top:16px;padding:14px;font-size:1rem}
+.work-session-card{border-color:rgba(139,196,138,.55);background:linear-gradient(135deg,rgba(139,196,138,.12),transparent 58%),linear-gradient(180deg,var(--panel2),var(--panel))}
+.work-session-card h3{font-size:1.45rem;margin-bottom:8px}
+.work-session-actions{display:flex;gap:10px;margin-top:18px}
+.focus-card{min-height:180px}
+.morning-actions .quick-action{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:11px;row-gap:2px;align-items:center;justify-content:stretch;min-height:76px;text-align:left}
+.morning-actions .quick-action span{grid-row:1 / span 2;font-size:1.35rem}
+.morning-actions .quick-action b{font-size:.95rem}
+.morning-actions .quick-action small{color:var(--muted);font-weight:500}
+.compact-progress-grid{margin-bottom:14px}
+.supporting-stats{margin-top:14px!important}
+@media(max-width:1000px){.morning-summary-grid{grid-template-columns:repeat(2,1fr)}.morning-main-grid{grid-template-columns:1fr}.priorities-card{grid-row:auto}}
+@media(max-width:620px){.morning-summary-grid{grid-template-columns:1fr 1fr;gap:10px}.morning-summary-card{min-height:112px;padding:15px}.morning-summary-card strong{font-size:1.55rem}.morning-actions{grid-template-columns:1fr!important}.work-session-actions{flex-direction:column}.work-session-actions .button{width:100%}}

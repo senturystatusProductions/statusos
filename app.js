@@ -1,4 +1,4 @@
-﻿const STORAGE_KEY = "senturyStatusOS_v2";
+const STORAGE_KEY = "senturyStatusOS_v2";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -321,7 +321,7 @@ function setText(id, value) {
 }
 
 function bindNavigation() {
-  document.querySelectorAll(".nav-item").forEach(button => {
+  document.querySelectorAll("[data-view]").forEach(button => {
     button.addEventListener("click", () => {
       document
         .querySelectorAll(".nav-item")
@@ -331,12 +331,13 @@ function bindNavigation() {
         .querySelectorAll(".view")
         .forEach(view => view.classList.remove("active"));
 
-      button.classList.add("active");
+      const matchingNav = document.querySelector(`.nav-item[data-view="${button.dataset.view}"]`);
+      if (matchingNav) matchingNav.classList.add("active");
 
       const target = byId(button.dataset.view);
       if (target) target.classList.add("active");
 
-      setText("pageTitle", button.textContent.trim());
+      setText("pageTitle", matchingNav ? matchingNav.textContent.trim() : button.textContent.trim());
     });
   });
 }
@@ -626,6 +627,8 @@ function renderDaily() {
       314.159 - (percentage / 100) * 314.159;
   }
 
+  renderMorningSummary();
+
   const weekday = new Date().toLocaleDateString("en-US", {
     weekday: "long"
   });
@@ -639,6 +642,79 @@ function renderDaily() {
     taskContainer.innerHTML = theme[1]
       .map(task => `<div>${task}</div>`)
       .join("");
+  }
+}
+
+
+function renderMorningSummary() {
+  const sums = getRevenueSums();
+  const activeProjects = state.projects.filter(
+    project => Number(project.progress || 0) < 100
+  ).length;
+  const followups = state.artists.filter(
+    artist => artist.followUp && artist.followUp <= today()
+  ).length;
+
+  setText("morningRevenueToday", money(sums.today));
+  setText("morningRevenueMonth", money(sums.month));
+  setText(
+    "morningRevenueGoal",
+    `Goal: ${money(state.settings.monthlyRevenueGoal)}`
+  );
+  setText("morningActiveProjects", String(activeProjects));
+  setText("morningFollowups", String(followups));
+}
+
+function bindStartWork() {
+  const startButton = byId("startWorkBtn");
+  const sessionCard = byId("workSessionCard");
+  const taskTitle = byId("currentWorkTask");
+  const taskMessage = byId("currentWorkMessage");
+  const completeButton = byId("completeCurrentTaskBtn");
+  const closeButton = byId("closeWorkSessionBtn");
+
+  if (!startButton || !sessionCard || !taskTitle) return;
+
+  const showNextTask = () => {
+    const nextTask = state.daily.priorities.find(item => !item.done);
+    sessionCard.classList.remove("hidden");
+
+    if (!nextTask) {
+      taskTitle.textContent = "Top 3 complete.";
+      if (taskMessage) {
+        taskMessage.textContent =
+          "Great work. Your most important tasks are finished for today.";
+      }
+      if (completeButton) completeButton.disabled = true;
+      return;
+    }
+
+    taskTitle.textContent = nextTask.title || "Untitled priority";
+    if (taskMessage) {
+      const remaining = state.daily.priorities.filter(item => !item.done).length;
+      taskMessage.textContent = `${remaining} priority${remaining === 1 ? "" : "ies"} remaining. Focus only on this task.`;
+    }
+    if (completeButton) completeButton.disabled = false;
+    sessionCard.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  startButton.addEventListener("click", showNextTask);
+
+  if (completeButton) {
+    completeButton.addEventListener("click", () => {
+      const nextTask = state.daily.priorities.find(item => !item.done);
+      if (nextTask) {
+        nextTask.done = true;
+        save();
+      }
+      showNextTask();
+    });
+  }
+
+  if (closeButton) {
+    closeButton.addEventListener("click", () => {
+      sessionCard.classList.add("hidden");
+    });
   }
 }
 
@@ -1127,6 +1203,7 @@ function initializeInterface() {
   bindModals();
   bindForms();
   bindControls();
+  bindStartWork();
   bindAssistant();
 }
 

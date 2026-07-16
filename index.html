@@ -61,7 +61,9 @@
         <button class="nav-item" data-view="revenue">Revenue</button>
         <button class="nav-item" data-view="goals">Goals</button>
         <button class="nav-item" data-view="templates">DM Templates</button>
+        <button class="nav-item" data-view="assistant">Command Center</button>
         <button class="nav-item" data-view="settings">Settings</button>
+        
       </nav>
 
       <div class="sidebar-footer">
@@ -82,11 +84,11 @@
       </header>
 
       <section id="dashboard" class="view active">
-        <article class="dashboard-welcome card">
+        <article class="dashboard-welcome card morning-hero">
           <div>
-            <p class="eyebrow">MISSION CONTROL</p>
-            <h2 id="welcomeHeading">Welcome back, Sam.</h2>
-            <p class="muted">Here is what needs your attention today.</p>
+            <p class="eyebrow">STATUSOS MORNING DASHBOARD</p>
+            <h2 id="welcomeHeading">Good morning, Sam.</h2>
+            <p class="muted">Your business, simplified. Finish the important work first.</p>
           </div>
           <div class="dashboard-date">
             <strong id="dashboardDay"></strong>
@@ -94,26 +96,78 @@
           </div>
         </article>
 
+        <div class="morning-summary-grid">
+          <article class="card morning-summary-card">
+            <span>Revenue Today</span>
+            <strong id="morningRevenueToday">$0</strong>
+            <small>Money collected today</small>
+          </article>
+          <article class="card morning-summary-card">
+            <span>This Month</span>
+            <strong id="morningRevenueMonth">$0</strong>
+            <small id="morningRevenueGoal">Goal: $2,000</small>
+          </article>
+          <article class="card morning-summary-card">
+            <span>Active Projects</span>
+            <strong id="morningActiveProjects">0</strong>
+            <small>Still in progress</small>
+          </article>
+          <article class="card morning-summary-card">
+            <span>Follow-ups Due</span>
+            <strong id="morningFollowups">0</strong>
+            <small>People needing attention</small>
+          </article>
+        </div>
+
+        <div class="morning-main-grid">
+          <article class="card priorities-card">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">TODAY'S TOP 3</p>
+                <h3>What matters most today</h3>
+              </div>
+              <button id="resetDailyBtn" class="text-button">Reset Today</button>
+            </div>
+            <div id="priorityList"></div>
+            <button id="startWorkBtn" class="button start-work-button" type="button">▶ Start Work</button>
+          </article>
+
+          <article class="card work-session-card hidden" id="workSessionCard">
+            <p class="eyebrow">NOW WORKING ON</p>
+            <h3 id="currentWorkTask">Choose Start Work to begin.</h3>
+            <p class="muted" id="currentWorkMessage">StatusOS will guide you through your Top 3 one task at a time.</p>
+            <div class="work-session-actions">
+              <button id="completeCurrentTaskBtn" class="button" type="button">Mark Complete</button>
+              <button id="closeWorkSessionBtn" class="button secondary" type="button">Close</button>
+            </div>
+          </article>
+
+          <article class="card focus-card">
+            <p class="eyebrow">TODAY'S DEPARTMENT</p>
+            <h3 id="dayThemeTitle">Today's Focus</h3>
+            <div id="dayThemeTasks" class="simple-list"></div>
+          </article>
+        </div>
+
         <div class="quick-actions card">
           <div class="section-head">
             <div>
-              <p class="eyebrow">Quick Actions</p>
+              <p class="eyebrow">QUICK ACTIONS</p>
               <h3>Move the business forward</h3>
             </div>
           </div>
-          <div class="quick-action-grid">
-            <button class="quick-action" data-open="artistModal">+ New Artist</button>
-            <button class="quick-action" data-open="projectModal">+ New Project</button>
-            <button class="quick-action" data-open="contentModal">+ New Content</button>
-            <button class="quick-action" data-open="revenueModal">+ Add Revenue</button>
+          <div class="quick-action-grid morning-actions">
+            <button class="quick-action" data-open="projectModal"><span>🎵</span><b>New Project</b><small>Beat, mix, kit, or release</small></button>
+            <button class="quick-action" data-open="artistModal"><span>👤</span><b>New Artist</b><small>Add a lead or client</small></button>
+            <button class="quick-action" data-open="contentModal"><span>📣</span><b>Marketing</b><small>Plan today's content</small></button>
+            <button class="quick-action" data-view="assistant"><span>🤖</span><b>Command Center</b><small>Ask StatusOS AI</small></button>
           </div>
         </div>
 
-        <div class="hero-grid">
+        <div class="hero-grid compact-progress-grid">
           <article class="card mission-card">
-            <p class="eyebrow">Today's Mission</p>
-            <h2>Grow the business without feeling overwhelmed.</h2>
-            <p class="muted">Complete the important work first. Everything else is optional.</p>
+            <p class="eyebrow">DAILY PROGRESS</p>
+            <h2>Complete your Top 3. Everything else is optional.</h2>
             <div class="progress-line"><span id="dailyProgressBar"></span></div>
             <p id="dailyProgressText" class="small muted"></p>
           </article>
@@ -129,27 +183,24 @@
           </article>
         </div>
 
-        <div class="stats-grid">
+        <article class="card ai-brief-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">COMMAND CENTER</p>
+              <h3>Daily Business Brief</h3>
+            </div>
+            <button class="text-button" data-view="assistant">Open Command Center</button>
+          </div>
+          <div id="aiBrief" class="simple-list">
+            <div>Preparing your business brief...</div>
+          </div>
+        </article>
+
+        <div class="stats-grid supporting-stats">
           <article class="stat card"><span>Artists Contacted</span><strong id="statContacted">0</strong><small>This week</small></article>
           <article class="stat card"><span>Follow-ups Due</span><strong id="statFollowups">0</strong><small>Needs attention</small></article>
           <article class="stat card"><span>Content Posted</span><strong id="statPosts">0</strong><small>This week</small></article>
           <article class="stat card"><span>Revenue</span><strong id="statRevenue">$0</strong><small>This month</small></article>
-        </div>
-
-        <div class="two-col">
-          <article class="card">
-            <div class="section-head">
-              <div><p class="eyebrow">Daily Routine</p><h3>Top 3 Priorities</h3></div>
-              <button id="resetDailyBtn" class="text-button">Reset Today</button>
-            </div>
-            <div id="priorityList"></div>
-          </article>
-
-          <article class="card">
-            <p class="eyebrow">Focus</p>
-            <h3 id="dayThemeTitle">Today's Department</h3>
-            <div id="dayThemeTasks" class="simple-list"></div>
-          </article>
         </div>
 
         <div id="dailySections"></div>
@@ -157,7 +208,7 @@
         <article class="card">
           <div class="section-head">
             <div>
-              <p class="eyebrow">Recent Activity</p>
+              <p class="eyebrow">RECENT ACTIVITY</p>
               <h3>Latest business updates</h3>
             </div>
           </div>
@@ -244,7 +295,32 @@
         </div>
         <div id="templateList" class="template-grid"></div>
       </section>
-
+      <section id="assistant" class="view">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">STATUSOS AI</p>
+            <h2>Command Center</h2>
+          </div>
+        </div>
+      
+        <div class="card">
+          <div id="assistantMessages" class="assistant-messages">
+            <div class="assistant-message ai">
+              Welcome to your Command Center. Ask what to work on next, create outreach, plan content, organize projects, or solve a music-business problem.
+            </div>
+          </div>
+      
+          <div class="assistant-input-row">
+            <input
+              id="assistantInput"
+              type="text"
+              placeholder="What should I work on next?"
+            >
+      
+            <button id="assistantSend">Send</button>
+          </div>
+        </div>
+      </section>
       <section id="settings" class="view">
         <div class="card">
           <p class="eyebrow">Customize</p>
