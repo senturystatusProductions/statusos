@@ -1,3 +1,12 @@
+## v1.1.1 – UX Polish
+
+- Fixed modal X buttons across desktop and mobile.
+- Added visible Cancel buttons to data-entry dialogs.
+- Added reliable Escape-key closing and outside-click closing.
+- Improved touch targets and mobile dialog layout.
+- Added automatic focus when dialogs open.
+- Added the StatusOS.Modal internal API.
+
 # Changelog
 
 ## v1.1.0 – Daily Briefing

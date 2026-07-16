@@ -380,3 +380,6 @@ h1,h2,h3,p{margin-top:0}.eyebrow{color:var(--gold);font-size:.72rem;letter-spaci
 .daily-briefing-empty { color: var(--muted, #9aa4ad); padding: 8px 0; }
 #dailyBriefingUpdated { margin: 9px 0 0; text-align: right; }
 @media (max-width: 760px) { .daily-briefing-grid { grid-template-columns: 1fr; } .daily-briefing-card .section-head { align-items: flex-start; gap: 10px; } }
+
+/* v1.1.1 UX Polish */
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}.modal-actions .button{min-width:110px}.modal .section-head .icon-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;border-radius:12px;cursor:pointer;touch-action:manipulation}.modal .section-head .icon-btn:hover,.modal .section-head .icon-btn:focus-visible{background:rgba(255,255,255,.08);outline:2px solid var(--gold);outline-offset:2px}@media(max-width:600px){.modal{width:calc(100vw - 24px);max-height:calc(100dvh - 24px);overflow:auto;padding:18px}.modal-actions{position:sticky;bottom:-18px;background:var(--panel);padding:14px 0 18px;z-index:2}.modal-actions .button{flex:1;min-height:46px}.modal .section-head{align-items:center}.modal .section-head .icon-btn{width:48px;height:48px;min-width:48px;font-size:1.8rem}}

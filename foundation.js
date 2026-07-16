@@ -1,5 +1,5 @@
 (function () {
-  const VERSION = "1.1.0";
+  const VERSION = "1.1.1";
   const CODENAME = "Daily Briefing";
   const BUILD_DATE = "2026-07-16";
   const LOG_KEY = "statusos_diagnostic_log_v1";
