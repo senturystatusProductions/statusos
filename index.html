@@ -70,7 +70,7 @@
           <summary>Music & Business</summary>
           <div class="nav-group-items">
             <button class="nav-item" data-view="music">Music OS</button>
-            <button class="nav-item" data-view="crm">Artist CRM</button>
+            <button class="nav-item" data-view="crm">Artist OS</button>
             <button class="nav-item" data-view="content">Content Planner</button>
             <button class="nav-item" data-view="sales">Sales Pipeline</button>
             <button class="nav-item" data-view="projects">Projects</button>
@@ -484,28 +484,37 @@
   </article>
 </section>
 
-<section id="crm" class="view">
-        <div class="section-head">
-          <div><p class="eyebrow">Relationships</p><h2>Artist CRM</h2></div>
-          <button class="button" data-open="artistModal">Add Artist</button>
-        </div>
-        <div class="card toolbar">
-          <input id="crmSearch" placeholder="Search artists, genre, status..." />
-          <select id="crmFilter">
-            <option value="">All statuses</option>
-            <option>New Lead</option><option>Engaged</option><option>Interested</option>
-            <option>Client</option><option>Cold</option>
-          </select>
-        </div>
-        <div class="card table-wrap">
-          <table>
-            <thead><tr><th>Artist</th><th>Genre</th><th>Status</th><th>Last Contact</th><th>Follow-up</th><th></th></tr></thead>
-            <tbody id="crmTable"></tbody>
-          </table>
-        </div>
-      </section>
+<section id="crm" class="view artist-os-view">
+  <div class="section-head">
+    <div><p class="eyebrow">RELATIONSHIP ENGINE</p><h2>Artist OS</h2></div>
+    <button class="button" data-open="artistModal">Add Artist</button>
+  </div>
+  <section class="artist-stats-grid">
+    <article class="card artist-stat"><span>Total Artists</span><strong id="artistTotalCount">0</strong><small>Your relationship network</small></article>
+    <article class="card artist-stat"><span>Contacted</span><strong id="artistContactedCount">0</strong><small>Outreach completed</small></article>
+    <article class="card artist-stat"><span>Interested</span><strong id="artistInterestedCount">0</strong><small>Positive responses</small></article>
+    <article class="card artist-stat"><span>Follow-ups Due</span><strong id="artistFollowupCount">0</strong><small>Needs attention</small></article>
+  </section>
+  <div class="card toolbar artist-toolbar">
+    <input id="crmSearch" placeholder="Search artists, handles, genres, songs or notes..." />
+    <select id="crmFilter">
+      <option value="">All statuses</option><option>New Lead</option><option>Contacted</option><option>Replied</option><option>Interested</option><option>Free Beat Sent</option><option>Negotiating</option><option>Client</option><option>Inactive</option>
+    </select>
+  </div>
+  <div class="artist-os-layout">
+    <article class="card artist-directory-card">
+      <div class="section-head"><div><p class="eyebrow">ARTIST DIRECTORY</p><h3>Relationships</h3></div><span id="artistDirectoryCount" class="muted small">0 artists</span></div>
+      <div id="artistDirectory" class="artist-directory"></div>
+      <div id="artistEmptyState" class="task-empty-state"><strong>No artists added yet.</strong><span>Add the six artists you contacted and record what happened.</span></div>
+    </article>
+    <article id="artistWorkspace" class="card artist-workspace">
+      <div id="artistWorkspaceEmpty" class="artist-workspace-empty"><span class="artist-empty-icon">◎</span><h3>Select an artist</h3><p class="muted">Open an artist to record songs researched, messages, emails, beats sent, replies, and follow-ups.</p></div>
+      <div id="artistWorkspaceContent" class="hidden"></div>
+    </article>
+  </div>
+</section>
 
-      <section id="content" class="view">
+<section id="content" class="view">
         <div class="section-head">
           <div><p class="eyebrow">Marketing</p><h2>Content Planner</h2></div>
           <button class="button" data-open="contentModal">Add Content</button>
@@ -733,21 +742,23 @@
   </dialog>
 
 
-  <dialog id="artistModal" class="modal">
-    <form method="dialog" id="artistForm">
-      <div class="section-head"><h3>Add Artist</h3><button class="icon-btn" value="cancel">×</button></div>
-      <label>Name<input name="name" required></label>
-      <label>Instagram / Contact<input name="contact"></label>
-      <label>Genre<input name="genre"></label>
-      <label>Status<select name="status"><option>New Lead</option><option>Engaged</option><option>Interested</option><option>Client</option><option>Cold</option></select></label>
-      <label>Last Contact<input name="lastContact" type="date"></label>
+  <dialog id="artistModal" class="modal artist-modal">
+  <form method="dialog" id="artistForm">
+    <div class="section-head"><div><p class="eyebrow">ARTIST OS</p><h3>Add Artist</h3></div><button class="icon-btn" value="cancel">×</button></div>
+    <div class="artist-form-grid">
+      <label>Name<input name="name" required placeholder="Artist name"></label>
+      <label>Instagram Handle<input name="contact" placeholder="@artist"></label>
+      <label>Email<input name="email" type="email" placeholder="artist@email.com"></label>
+      <label>Genre / Style<input name="genre" placeholder="Boom bap, R&B..."></label>
+      <label>Status<select name="status"><option>New Lead</option><option>Contacted</option><option>Replied</option><option>Interested</option><option>Free Beat Sent</option><option>Negotiating</option><option>Client</option><option>Inactive</option></select></label>
       <label>Follow-up Date<input name="followUp" type="date"></label>
-      <label>Notes<textarea name="notes"></textarea></label>
-      <button class="button" value="default">Save Artist</button>
-    </form>
-  </dialog>
+    </div>
+    <label>Initial Notes<textarea name="notes" placeholder="What stood out about their music?"></textarea></label>
+    <button class="button" value="default">Save Artist</button>
+  </form>
+</dialog>
 
-  <dialog id="contentModal" class="modal">
+<dialog id="contentModal" class="modal">
     <form method="dialog" id="contentForm">
       <div class="section-head"><h3>Add Content</h3><button class="icon-btn" value="cancel">×</button></div>
       <label>Title<input name="title" required></label>
@@ -840,6 +851,7 @@
   <script src="weekly-review.js"></script>
   <script src="ux-polish.js"></script>
   <script src="app.js"></script>
+  <script src="artist-os.js"></script>
   <script src="auth.js"></script>
   <script>
     if ("serviceWorker" in navigator) {

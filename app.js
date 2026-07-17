@@ -379,9 +379,7 @@ function bindForm(id, handler) {
 }
 
 function bindForms() {
-  bindForm("artistForm", data => {
-    state.artists.push({ id: uid(), ...data });
-  });
+  // Artist OS owns the artist form in v1.7.0.
 
   bindForm("contentForm", data => {
     state.content.push({ id: uid(), ...data });
@@ -718,7 +716,7 @@ function bindStartWork() {
   }
 }
 
-function renderCRM() {
+function renderLegacyCRM() {
   const query = (byId("crmSearch")?.value || "").toLowerCase();
   const filter = byId("crmFilter")?.value || "";
 
@@ -1101,7 +1099,7 @@ function renderRecentActivity() {
 function renderAll() {
   renderDashboardHeader();
   renderDaily();
-  renderCRM();
+  window.StatusOS?.ArtistOS?.render?.();
 
   renderBoard(
     "content",
