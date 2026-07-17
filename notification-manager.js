@@ -1,4 +1,4 @@
-/* StatusOS v2.2.0 Notification Manager */
+/* StatusOS v2.6.1 Quiet Sync Notification Manager */
 (function(){
   "use strict";
   let host=null;
@@ -45,8 +45,7 @@
       const s=e.detail?.status||"";
       if(s===taskStatus)return;
       taskStatus=s;
-      if(s==="synced")notify("Tasks synced",{type:"success",key:"tasks-synced"});
-      else if(s==="offline")notify("Offline. Changes will sync later.",{type:"warning",key:"offline",duration:3200});
+      if(s==="offline")notify("Offline. Changes will sync later.",{type:"warning",key:"offline",duration:3200});
       else if(s==="setup")notify("Task cloud setup is required",{type:"error",key:"task-setup",duration:4500});
     });
     let artistStatus="";
@@ -54,9 +53,10 @@
       const s=e.detail?.status||"";
       if(s===artistStatus)return;
       artistStatus=s;
-      if(s==="synced")notify("Artist OS synced",{type:"success",key:"artists-synced"});
-      else if(s==="pending"&&e.detail?.pending)notify(`${e.detail.pending} artist change${e.detail.pending===1?"":"s"} saved locally`,{type:"info",key:"artists-pending"});
+      if(s==="pending"&&e.detail?.pending)notify(`${e.detail.pending} artist change${e.detail.pending===1?"":"s"} saved locally`,{type:"info",key:"artists-pending"});
     });
+    window.addEventListener("statusos:manual-sync-complete",()=>notify("StatusOS synced",{type:"success",key:`manual-sync-${Date.now()}`,duration:2600}));
+    window.addEventListener("statusos:manual-sync-error",e=>notify(e.detail?.message||"Manual sync could not finish",{type:"error",key:`manual-sync-error-${Date.now()}`,duration:4200}));
   }
   window.StatusOS=window.StatusOS||{};
   window.StatusOS.Notify={show:notify,success:(m,o={})=>notify(m,{...o,type:"success"}),error:(m,o={})=>notify(m,{...o,type:"error"}),warning:(m,o={})=>notify(m,{...o,type:"warning"})};
