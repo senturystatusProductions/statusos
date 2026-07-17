@@ -1,84 +1,10 @@
-/* StatusOS v1.7.3 Data Integrity & Sync Protection */
-(function () {
-  const api = () => window.StatusOS?.DataProtection;
-  const downloadJSON = (name, value) => {
-    const blob = new Blob([JSON.stringify(value, null, 2)], { type: "application/json" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = name;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(link.href), 0);
-  };
-  const closeProfile = () => {
-    document.getElementById("profileMenu")?.classList.add("hidden");
-    document.getElementById("profileMenuBtn")?.setAttribute("aria-expanded", "false");
-  };
-  const formatTime = value => new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
-
-  function restoreRecent() {
-    closeProfile();
-    const backups = api()?.listBackups?.() || [];
-    if (!backups.length) return alert("No StatusOS backups are available yet.");
-    const lines = backups.slice(0, 10).map((b, i) => `${i + 1}. ${formatTime(b.createdAt)} — ${b.reason}`).join("\n");
-    const choice = prompt(`Choose a backup number to restore:\n\n${lines}`);
-    if (!choice) return;
-    const backup = backups[Number(choice) - 1];
-    if (!backup) return alert("That backup number is not available.");
-    if (!confirm(`Restore the backup from ${formatTime(backup.createdAt)}?\n\nYour current workspace will be backed up first.`)) return;
-    try {
-      api().restoreBackup(backup.id);
-      alert("Backup restored successfully. StatusOS will now sync the recovered workspace.");
-    } catch (error) {
-      console.error(error);
-      alert("StatusOS could not restore that backup.");
-    }
-  }
-
-  function bind() {
-    document.getElementById("profileRestoreBtn")?.addEventListener("click", restoreRecent);
-    document.getElementById("profileArtistExportBtn")?.addEventListener("click", () => {
-      closeProfile();
-      const artists = api()?.exportArtists?.() || [];
-      downloadJSON(`statusos-artists-${new Date().toISOString().slice(0, 10)}.json`, { version: "1.7.3", exportedAt: new Date().toISOString(), artists });
-    });
-    const input = document.getElementById("artistImportInput");
-    document.getElementById("profileArtistImportBtn")?.addEventListener("click", () => { closeProfile(); input?.click(); });
-    input?.addEventListener("change", event => {
-      const file = event.target.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const parsed = JSON.parse(reader.result);
-          const artists = Array.isArray(parsed) ? parsed : parsed.artists;
-          api().importArtists(artists);
-          alert("Artist OS import complete. Existing artists were merged, not replaced.");
-        } catch (error) {
-          console.error(error);
-          alert("That Artist OS backup could not be imported.");
-        } finally {
-          input.value = "";
-        }
-      };
-      reader.readAsText(file);
-    });
-    document.getElementById("profileSyncNowBtn")?.addEventListener("click", async () => {
-      closeProfile();
-      const button = document.getElementById("profileSyncNowBtn");
-      if (button) button.disabled = true;
-      try {
-        await api()?.syncNow?.();
-        alert("StatusOS sync completed. Local and cloud artist records were merged safely.");
-      } catch (error) {
-        console.error(error);
-        alert("Sync could not finish. Your local data and backup remain safe.");
-      } finally {
-        if (button) button.disabled = false;
-      }
-    });
-    api()?.createBackup?.("v1.7.3 safety checkpoint");
-  }
-
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bind, { once: true });
-  else bind();
+/* StatusOS v2.0.0 Recovery Center */
+(function(){
+ const repo=()=>window.StatusOS?.ArtistRepository, dp=()=>window.StatusOS?.DataProtection;
+ const fmt=v=>new Date(v).toLocaleString(undefined,{dateStyle:"medium",timeStyle:"short"});
+ const close=()=>{document.getElementById("profileMenu")?.classList.add("hidden");document.getElementById("profileMenuBtn")?.setAttribute("aria-expanded","false")};
+ function download(name,value){const b=new Blob([JSON.stringify(value,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),0)}
+ function openRecovery(){close();const artist=repo()?.backups?.()||[],workspace=dp()?.listBackups?.()||[];const modal=document.getElementById("recoveryCenterModal"),body=document.getElementById("recoveryCenterBody");if(!modal||!body)return;body.innerHTML=`<div class="recovery-section"><h3>Artist OS Backups</h3>${artist.length?artist.map(b=>`<button class="recovery-row" data-artist-backup="${b.id}"><span><strong>${b.reason}</strong><small>${fmt(b.createdAt)}</small></span><b>Restore</b></button>`).join(""):"<p class=muted>No artist backups yet.</p>"}</div><div class="recovery-section"><h3>Workspace Backups</h3>${workspace.length?workspace.map(b=>`<button class="recovery-row" data-workspace-backup="${b.id}"><span><strong>${b.reason}</strong><small>${fmt(b.createdAt)}</small></span><b>Restore</b></button>`).join(""):"<p class=muted>No workspace backups yet.</p>"}</div>`;body.querySelectorAll("[data-artist-backup]").forEach(x=>x.onclick=()=>{if(confirm("Restore this Artist OS backup? Your current artists will be backed up first.")){repo().restoreBackup(x.dataset.artistBackup);modal.close();alert("Artist OS restored.")}});body.querySelectorAll("[data-workspace-backup]").forEach(x=>x.onclick=()=>{if(confirm("Restore this workspace backup?")){dp().restoreBackup(x.dataset.workspaceBackup);modal.close();alert("Workspace restored.")}});modal.showModal()}
+ function bind(){document.getElementById("profileRestoreBtn")?.addEventListener("click",openRecovery);document.getElementById("profileArtistExportBtn")?.addEventListener("click",()=>{close();download(`statusos-artists-${new Date().toISOString().slice(0,10)}.json`,{version:"2.0.0",exportedAt:new Date().toISOString(),artists:repo()?.export?.()||[]})});const input=document.getElementById("artistImportInput");document.getElementById("profileArtistImportBtn")?.addEventListener("click",()=>{close();input?.click()});input?.addEventListener("change",e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result),rows=Array.isArray(p)?p:p.artists;repo().import(rows);alert("Artist OS import complete. Existing records were merged.")}catch(err){console.error(err);alert("Import failed. Your current data was not replaced.")}input.value=""};r.readAsText(f)});document.getElementById("profileSyncNowBtn")?.addEventListener("click",async()=>{close();try{await repo()?.sync?.();await dp()?.syncNow?.();alert("StatusOS sync completed safely.")}catch(e){console.error(e);alert("Sync did not finish. Local data and backups remain safe.")}});repo()?.backup?.("v2.0.0 safety checkpoint")}
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bind,{once:true});else bind();
 })();

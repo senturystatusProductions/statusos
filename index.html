@@ -493,7 +493,7 @@
 <section id="crm" class="view artist-os-view">
   <div class="section-head">
     <div><p class="eyebrow">RELATIONSHIP ENGINE</p><h2>Artist OS</h2></div>
-    <button class="button" data-open="artistModal">Add Artist</button>
+    <div class="artist-head-actions"><span id="artistSyncBadge" class="artist-sync-badge">Saved locally</span><button class="button" data-open="artistModal">Add Artist</button></div>
   </div>
   <section class="artist-stats-grid">
     <article class="card artist-stat"><span>Total Artists</span><strong id="artistTotalCount">0</strong><small>Your relationship network</small></article>
@@ -844,6 +844,8 @@
     </form>
   </dialog>
 
+
+<dialog id="recoveryCenterModal" class="modal recovery-modal"><div class="modal-card"><div class="section-head"><div><p class="eyebrow">DATA PROTECTION</p><h2>Recovery Center</h2></div><button class="mini-btn" type="button" onclick="document.getElementById('recoveryCenterModal').close()">Close</button></div><p class="muted">Restore Artist OS or the rest of your StatusOS workspace from a protected snapshot.</p><div id="recoveryCenterBody"></div></div></dialog>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script src="storage-service.js"></script>
@@ -857,6 +859,7 @@
   <script src="weekly-review.js"></script>
   <script src="ux-polish.js"></script>
   <script src="app.js"></script>
+  <script src="artist-repository.js"></script>
   <script src="artist-os.js"></script>
   <script src="data-protection.js"></script>
   <script src="auth.js"></script>

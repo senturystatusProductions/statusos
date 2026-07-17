@@ -521,3 +521,6 @@ input:focus,select:focus,textarea:focus{border-color:rgba(215,182,91,.65);box-sh
   .artist-activity-form{grid-template-columns:1fr!important}
   .artist-profile-controls{grid-template-columns:1fr!important}
 }
+
+/* StatusOS v2 Artist reliability UI */
+.artist-head-actions{display:flex;align-items:center;gap:10px}.artist-sync-badge{border:1px solid var(--line);border-radius:999px;padding:7px 10px;font-size:.78rem;font-weight:800;color:var(--muted);background:var(--panel)}.artist-sync-badge[data-status="synced"],.artist-sync-badge[data-status="saved"]{color:#9ce6b3}.artist-sync-badge[data-status="pending"]{color:#ffd27a}.artist-sync-badge[data-status="syncing"]{color:var(--gold)}.recovery-modal .modal-card{width:min(720px,calc(100vw - 24px));max-height:82vh;overflow:auto}.recovery-section{margin-top:18px}.recovery-section h3{margin-bottom:9px}.recovery-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:13px 14px;border-radius:12px;margin:8px 0;text-align:left;cursor:pointer}.recovery-row:hover{border-color:rgba(213,180,108,.6)}.recovery-row span{display:flex;flex-direction:column;gap:4px}.recovery-row small{color:var(--muted)}.recovery-row b{color:var(--gold)}

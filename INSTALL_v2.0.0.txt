@@ -1,0 +1,11 @@
+STATUSOS v2.0.0 INSTALL
+
+1. In Supabase, open SQL Editor.
+2. Paste and run SUPABASE_MIGRATION_v2.0.0.sql.
+3. Replace the website files with this release.
+4. Commit and push the files to GitHub.
+5. Open StatusOS on desktop first and sign in.
+6. Confirm Artist OS shows “Artist OS synced”.
+7. Add one test artist, refresh desktop, then open the phone and confirm the same artist appears.
+
+Do not enter a large artist list until this one-record cross-device test passes.

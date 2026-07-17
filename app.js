@@ -153,8 +153,12 @@ function mergeArtistRecords(localArtists = [], cloudArtists = []) {
 }
 
 function mergeCloudState(localState, cloudState) {
-  const merged = normalizeState({ ...localState, ...cloudState });
-  merged.artists = mergeArtistRecords(localState?.artists, cloudState?.artists);
+  const cloudWithoutArtists = { ...(cloudState || {}) };
+  delete cloudWithoutArtists.artists;
+  const merged = normalizeState({ ...localState, ...cloudWithoutArtists });
+  // Artist OS v2 is stored in dedicated per-record tables and must never be
+  // overwritten by the legacy whole-workspace record.
+  merged.artists = Array.isArray(localState?.artists) ? localState.artists : [];
   return merged;
 }
 
@@ -169,7 +173,7 @@ function loadLocal() {
 }
 
 const WORKSPACE_BACKUPS_KEY = "statusos_workspace_backups_v1";
-const MAX_WORKSPACE_BACKUPS = 10;
+const MAX_WORKSPACE_BACKUPS = 20;
 let lastAutomaticBackupAt = 0;
 
 function readWorkspaceBackups() {
@@ -254,7 +258,7 @@ async function saveCloud() {
     .upsert(
       {
         user_id: user.id,
-        app_state: state,
+        app_state: (() => { const workspace = clone(state); delete workspace.artists; return workspace; })(),
         updated_at: new Date().toISOString()
       },
       { onConflict: "user_id" }
@@ -305,7 +309,7 @@ async function loadCloud() {
     .from("statusos_workspaces")
     .insert({
       user_id: user.id,
-      app_state: state,
+      app_state: (() => { const workspace = clone(state); delete workspace.artists; return workspace; })(),
       updated_at: new Date().toISOString()
     });
 

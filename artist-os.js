@@ -11,7 +11,7 @@
   function getDraft(id){ return readDrafts()[id]||{}; }
   function setDraft(id,draft){ const all=readDrafts(); all[id]=draft; localStorage.setItem(DRAFT_KEY,JSON.stringify(all)); }
   function clearDraft(id){ const all=readDrafts(); delete all[id]; localStorage.setItem(DRAFT_KEY,JSON.stringify(all)); }
-  function schedulePersist(){ clearTimeout(saveTimer); saveTimer=setTimeout(()=>persist(),250); }
+  function schedulePersist(artist){ clearTimeout(saveTimer); saveTimer=setTimeout(()=>persistArtist(artist),700); }
 
 
   function normalizeArtist(artist) {
@@ -26,9 +26,10 @@
     return artist;
   }
 
-  function all() { state.artists.forEach(normalizeArtist); return state.artists; }
+  const repo=()=>window.StatusOS?.ArtistRepository;
+  function all() { const rows=repo()?.list?.() || state.artists || []; rows.forEach(normalizeArtist); state.artists=rows; return rows; }
   function selected() { return all().find(a => a.id === selectedArtistId); }
-  function persist() { save(); window.dispatchEvent(new CustomEvent("statusos:artists-updated")); render(); }
+  function persistArtist(artist) { repo()?.save?.(artist); state.artists=repo()?.list?.()||state.artists; window.dispatchEvent(new CustomEvent("statusos:artists-updated")); render(); }
   function addActivity(artist, type, title, details, date) {
     artist.activities.unshift({ id: uid(), type, title, details: details || "", date: date || isoToday(), createdAt: new Date().toISOString() });
     artist.lastContact = ["DM Sent","Email Sent","Follow-up","Reply Received","Beat Sent"].includes(type) ? (date || isoToday()) : artist.lastContact;
@@ -94,28 +95,28 @@
   }
 
   function bindWorkspace(a){
-    document.getElementById("artistStatusSelect")?.addEventListener("change",e=>{a.status=e.target.value;a.updatedAt=new Date().toISOString();persist();});
-    document.getElementById("artistFollowupInput")?.addEventListener("change",e=>{a.followUp=e.target.value;a.updatedAt=new Date().toISOString();persist();});
-    document.getElementById("artistContactInput")?.addEventListener("input",e=>{a.contact=e.target.value.trim();a.updatedAt=new Date().toISOString();schedulePersist();});
-    document.getElementById("artistEmailInput")?.addEventListener("input",e=>{a.email=e.target.value.trim();a.updatedAt=new Date().toISOString();schedulePersist();});
-    document.getElementById("artistNotesInput")?.addEventListener("input",e=>{a.notes=e.target.value;a.updatedAt=new Date().toISOString();clearTimeout(saveTimer);saveTimer=setTimeout(()=>{save();window.dispatchEvent(new CustomEvent("statusos:artists-updated"));},300);});
-    document.getElementById("saveArtistNotesBtn")?.addEventListener("click",()=>{a.notes=document.getElementById("artistNotesInput").value.trim();a.updatedAt=new Date().toISOString();persist();});
+    document.getElementById("artistStatusSelect")?.addEventListener("change",e=>{a.status=e.target.value;a.updatedAt=new Date().toISOString();persistArtist(a);});
+    document.getElementById("artistFollowupInput")?.addEventListener("change",e=>{a.followUp=e.target.value;a.updatedAt=new Date().toISOString();persistArtist(a);});
+    document.getElementById("artistContactInput")?.addEventListener("input",e=>{a.contact=e.target.value.trim();a.updatedAt=new Date().toISOString();schedulePersist(a);});
+    document.getElementById("artistEmailInput")?.addEventListener("input",e=>{a.email=e.target.value.trim();a.updatedAt=new Date().toISOString();schedulePersist(a);});
+    document.getElementById("artistNotesInput")?.addEventListener("input",e=>{a.notes=e.target.value;a.updatedAt=new Date().toISOString();clearTimeout(saveTimer);saveTimer=setTimeout(()=>persistArtist(a),700);});
+    document.getElementById("saveArtistNotesBtn")?.addEventListener("click",()=>{a.notes=document.getElementById("artistNotesInput").value.trim();a.updatedAt=new Date().toISOString();persistArtist(a);});
     const activityForm=document.getElementById("artistActivityForm");
     activityForm?.addEventListener("input",()=>setDraft(a.id,Object.fromEntries(new FormData(activityForm))));
     activityForm?.addEventListener("change",()=>setDraft(a.id,Object.fromEntries(new FormData(activityForm))));
-    activityForm?.addEventListener("submit",e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget));addActivity(a,d.type,d.title,d.details,d.date); clearDraft(a.id); if(d.type==="Reply Received"&&["New Lead","Contacted"].includes(a.status))a.status="Replied"; if(d.type==="Beat Sent")a.status="Free Beat Sent"; persist();});
-    document.querySelectorAll("[data-delete-activity]").forEach(btn=>btn.addEventListener("click",()=>{a.activities=a.activities.filter(x=>x.id!==btn.dataset.deleteActivity);persist();}));
-    document.getElementById("deleteArtistBtn")?.addEventListener("click",()=>{if(confirm(`Delete ${a.name} and their complete history?`)){state.artists=state.artists.filter(x=>x.id!==a.id);selectedArtistId=null;persist();}});
+    activityForm?.addEventListener("submit",e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget));addActivity(a,d.type,d.title,d.details,d.date); clearDraft(a.id); if(d.type==="Reply Received"&&["New Lead","Contacted"].includes(a.status))a.status="Replied"; if(d.type==="Beat Sent")a.status="Free Beat Sent"; persistArtist(a);});
+    document.querySelectorAll("[data-delete-activity]").forEach(btn=>btn.addEventListener("click",()=>{a.activities=a.activities.filter(x=>x.id!==btn.dataset.deleteActivity);persistArtist(a);}));
+    document.getElementById("deleteArtistBtn")?.addEventListener("click",()=>{if(confirm(`Move ${a.name} to the Recycle Bin?`)){repo()?.softDelete?.(a.id);selectedArtistId=null;state.artists=repo()?.list?.()||[];render();}});
   }
 
   function bindAddForm(){
     const form=document.getElementById("artistForm"); if(!form||form.dataset.artistOsBound)return; form.dataset.artistOsBound="1";
-    form.addEventListener("submit",e=>{if(e.submitter?.value==="cancel")return;e.preventDefault();e.stopImmediatePropagation();const d=Object.fromEntries(new FormData(form));const a=normalizeArtist({id:uid(),...d,lastContact:d.status==="New Lead"?"":isoToday()});state.artists.push(a); if(d.notes)addActivity(a,"Note","Artist added",d.notes,isoToday()); selectedArtistId=a.id;form.reset();form.closest("dialog")?.close();persist();},true);
+    form.addEventListener("submit",e=>{if(e.submitter?.value==="cancel")return;e.preventDefault();e.stopImmediatePropagation();const d=Object.fromEntries(new FormData(form));const a=normalizeArtist({id:uid(),...d,lastContact:d.status==="New Lead"?"":isoToday()});if(d.notes)addActivity(a,"Note","Artist added",d.notes,isoToday()); repo()?.save?.(a); state.artists=repo()?.list?.()||[]; selectedArtistId=a.id;form.reset();form.closest("dialog")?.close();render();},true);
   }
 
   function render(){renderStats();renderDirectory();renderWorkspace();}
-  function init(){all();bindAddForm();document.getElementById("crmSearch")?.addEventListener("input",render);document.getElementById("crmFilter")?.addEventListener("change",render);if(!selectedArtistId&&all().length)selectedArtistId=all()[0].id;render();save();}
+  async function init(){await repo()?.init?.();all();bindAddForm();document.getElementById("crmSearch")?.addEventListener("input",render);document.getElementById("crmFilter")?.addEventListener("change",render);if(!selectedArtistId&&all().length)selectedArtistId=all()[0].id;render();}
   window.addEventListener("DOMContentLoaded",init);
   window.addEventListener("statusos:view-change",e=>{if(e.detail?.view==="crm"||document.getElementById("crm")?.classList.contains("active"))render();});
-  window.StatusOS=window.StatusOS||{};window.StatusOS.ArtistOS={render,list:all};
+  window.StatusOS=window.StatusOS||{};window.StatusOS.ArtistOS={render,list:all}; window.addEventListener("statusos:artists-updated",()=>{state.artists=repo()?.list?.()||[];render();});
 })();
