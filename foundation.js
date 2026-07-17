@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "2.6.2";
-  const CODENAME = "Smart Scheduling";
+  const VERSION = "2.7.0";
+  const CODENAME = "Artist CRM";
   const BUILD_DATE = "2026-07-17";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

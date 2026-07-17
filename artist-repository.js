@@ -1,4 +1,4 @@
-/* StatusOS v2.0.1 Artist Repository */
+/* StatusOS v2.7.0 Artist CRM Repository */
 (function(){
   "use strict";
   const LOCAL_KEY="statusos_artists_v2";
@@ -11,7 +11,7 @@
   const emit=(name,detail={})=>window.dispatchEvent(new CustomEvent(name,{detail}));
   const client=()=>window.statusOSSupabase||null;
   async function user(){const c=client();if(!c)return null;const {data}=await c.auth.getUser();return data?.user||null;}
-  function normalize(a={}){const created=a.createdAt||a.created_at||now();return {id:a.id||id(),name:a.name||"Untitled Artist",contact:a.contact||a.instagram||"",email:a.email||"",genre:a.genre||"",status:a.status||"New Lead",followUp:a.followUp||a.follow_up||"",lastContact:a.lastContact||a.last_contact||"",notes:a.notes||"",songs:Array.isArray(a.songs)?a.songs:[],beats:Array.isArray(a.beats)?a.beats:[],activities:Array.isArray(a.activities)?a.activities:[],createdAt:created,updatedAt:a.updatedAt||a.updated_at||created,deletedAt:a.deletedAt||a.deleted_at||null,version:Number(a.version||1)};}
+  function normalize(a={}){const created=a.createdAt||a.created_at||now();return {id:a.id||id(),name:a.name||"Untitled Artist",contact:a.contact||a.instagram||"",email:a.email||"",phone:a.phone||"",website:a.website||"",location:a.location||"",genre:a.genre||"",relationship:a.relationship||"Warm",status:a.status||"New Lead",followUp:a.followUp||a.follow_up||"",lastContact:a.lastContact||a.last_contact||"",notes:a.notes||"",tags:Array.isArray(a.tags)?a.tags:[],revenue:Number(a.revenue||0),songs:Array.isArray(a.songs)?a.songs:[],beats:Array.isArray(a.beats)?a.beats:[],activities:Array.isArray(a.activities)?a.activities:[],createdAt:created,updatedAt:a.updatedAt||a.updated_at||created,deletedAt:a.deletedAt||a.deleted_at||null,version:Number(a.version||1)};}
   function local(){try{const rows=JSON.parse(localStorage.getItem(LOCAL_KEY)||"[]");return Array.isArray(rows)?rows.map(normalize):[];}catch{return [];}}
   function writeLocal(rows){localStorage.setItem(LOCAL_KEY,JSON.stringify(rows.map(normalize)));if(window.state)window.state.artists=rows.filter(a=>!a.deletedAt);emit("statusos:artists-updated");}
   function queue(){try{return JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]");}catch{return [];}}

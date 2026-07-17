@@ -1,2 +1,4 @@
-StatusOS v2.6.2
-Codename: Smart Scheduling
+# StatusOS Version
+
+**v2.7.0**  
+Codename: **Artist CRM**

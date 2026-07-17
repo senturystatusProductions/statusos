@@ -511,14 +511,14 @@
   </div>
   <section class="artist-stats-grid">
     <article class="card artist-stat"><span>Total Artists</span><strong id="artistTotalCount">0</strong><small>Your relationship network</small></article>
-    <article class="card artist-stat"><span>Contacted</span><strong id="artistContactedCount">0</strong><small>Outreach completed</small></article>
-    <article class="card artist-stat"><span>Interested</span><strong id="artistInterestedCount">0</strong><small>Positive responses</small></article>
-    <article class="card artist-stat"><span>Follow-ups Due</span><strong id="artistFollowupCount">0</strong><small>Needs attention</small></article>
+    <article class="card artist-stat"><span id="artistContactedLabel">Hot Leads</span><strong id="artistContactedCount">0</strong><small>Ready for attention</small></article>
+    <article class="card artist-stat"><span id="artistInterestedLabel">Clients</span><strong id="artistInterestedCount">0</strong><small>Active relationships</small></article>
+    <article class="card artist-stat"><span>Follow-ups Due</span><strong id="artistFollowupCount">0</strong><small>Needs attention</small></article><article class="card artist-stat artist-revenue-stat"><span>Artist Revenue</span><strong id="artistRevenueTotal">$0</strong><small>Tracked relationship value</small></article>
   </section>
   <div class="card toolbar artist-toolbar">
     <input id="crmSearch" placeholder="Search artists, handles, genres, songs or notes..." />
     <select id="crmFilter">
-      <option value="">All statuses</option><option>New Lead</option><option>Contacted</option><option>Replied</option><option>Interested</option><option>Free Beat Sent</option><option>Negotiating</option><option>Client</option><option>Inactive</option>
+      <option value="">All statuses</option><option>New Lead</option><option>Contacted</option><option>Replied</option><option>Interested</option><option>Free Beat Sent</option><option>Negotiating</option><option>Client</option><option>Returning Client</option><option>Inactive</option>
     </select>
   </div>
   <div class="artist-os-layout">
@@ -851,8 +851,8 @@
       <label>Name<input name="name" required placeholder="Artist name"></label>
       <label>Instagram Handle<input name="contact" placeholder="@artist"></label>
       <label>Email<input name="email" type="email" placeholder="artist@email.com"></label>
-      <label>Genre / Style<input name="genre" placeholder="Boom bap, R&B..."></label>
-      <label>Status<select name="status"><option>New Lead</option><option>Contacted</option><option>Replied</option><option>Interested</option><option>Free Beat Sent</option><option>Negotiating</option><option>Client</option><option>Inactive</option></select></label>
+      <label>Genre / Style<input name="genre" placeholder="Boom bap, R&B..."></label><label>Relationship<select name="relationship"><option>Cold</option><option selected>Warm</option><option>Hot Lead</option><option>Client</option><option>VIP</option></select></label><label>Phone<input name="phone" placeholder="Phone number"></label><label>Location<input name="location" placeholder="City / region"></label><label>Website<input name="website" placeholder="https://"></label><label>Tags<input name="tags" placeholder="West Coast, VIP"></label><label>Revenue (CAD)<input name="revenue" type="number" min="0" step="1" value="0"></label>
+      <label>Status<select name="status"><option>New Lead</option><option>Contacted</option><option>Replied</option><option>Interested</option><option>Free Beat Sent</option><option>Negotiating</option><option>Client</option><option>Returning Client</option><option>Inactive</option></select></label>
       <label>Follow-up Date<input name="followUp" type="date"></label>
     </div>
     <label>Initial Notes<textarea name="notes" placeholder="What stood out about their music?"></textarea></label>

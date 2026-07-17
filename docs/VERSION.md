@@ -1,2 +1,4 @@
-StatusOS v2.6.1
-Codename: AI Inbox & Guided Day
+# StatusOS Version
+
+**v2.7.0**  
+Codename: **Artist CRM**
