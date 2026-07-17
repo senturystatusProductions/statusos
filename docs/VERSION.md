@@ -1,2 +1,1 @@
-StatusOS v2.3.0
-Calendar + Daily Planner
+StatusOS v2.4.0 - Daily Command Center
