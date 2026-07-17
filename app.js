@@ -433,6 +433,7 @@ function bindNavigation() {
       if (target) target.classList.add("active");
 
       setText("pageTitle", matchingNav ? matchingNav.textContent.trim() : button.textContent.trim());
+      window.dispatchEvent(new CustomEvent("statusos:view-change", { detail: { view: button.dataset.view } }));
     });
   });
 }

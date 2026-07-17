@@ -1,6 +1,6 @@
 /* StatusOS v1.7.0 Artist OS */
 (function () {
-  let selectedArtistId = null;
+  let selectedArtistId = window.StatusOS?.Workspace?.getSelectedArtist?.() || null;
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const cleanDate = value => value ? new Date(`${value}T12:00:00`).toLocaleDateString("en-CA", {month:"short",day:"numeric",year:"numeric"}) : "Not set";
   const isoToday = () => new Date().toISOString().slice(0,10);
@@ -65,7 +65,7 @@
         <span class="artist-directory-main"><strong>${esc(a.name)}</strong><small>${esc(a.contact||a.email||a.genre||"No contact added")}</small><span class="artist-status-chip">${esc(a.status)}</span></span>
         <span class="artist-directory-meta">${due?'<b class="followup-due">Follow up</b>':`<small>${esc(a.followUp?cleanDate(a.followUp):"No follow-up")}</small>`}</span>
       </button>`}).join("");
-    box.querySelectorAll("[data-artist-id]").forEach(btn=>btn.addEventListener("click",()=>{selectedArtistId=btn.dataset.artistId;render();}));
+    box.querySelectorAll("[data-artist-id]").forEach(btn=>btn.addEventListener("click",()=>{selectedArtistId=btn.dataset.artistId;window.StatusOS?.Workspace?.saveSelectedArtist?.(selectedArtistId);render();}));
   }
 
   function activityIcon(type){return ({"Song Researched":"♫","DM Sent":"↗","Email Sent":"✉","Reply Received":"💬","Beat Sent":"◆","Follow-up":"↻","Note":"•","Call":"☎"})[type]||"•";}
@@ -106,17 +106,18 @@
     activityForm?.addEventListener("change",()=>setDraft(a.id,Object.fromEntries(new FormData(activityForm))));
     activityForm?.addEventListener("submit",e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget));addActivity(a,d.type,d.title,d.details,d.date); clearDraft(a.id); if(d.type==="Reply Received"&&["New Lead","Contacted"].includes(a.status))a.status="Replied"; if(d.type==="Beat Sent")a.status="Free Beat Sent"; persistArtist(a);});
     document.querySelectorAll("[data-delete-activity]").forEach(btn=>btn.addEventListener("click",()=>{a.activities=a.activities.filter(x=>x.id!==btn.dataset.deleteActivity);persistArtist(a);}));
-    document.getElementById("deleteArtistBtn")?.addEventListener("click",()=>{if(confirm(`Move ${a.name} to the Recycle Bin?`)){repo()?.softDelete?.(a.id);selectedArtistId=null;state.artists=repo()?.list?.()||[];render();}});
+    document.getElementById("deleteArtistBtn")?.addEventListener("click",()=>{if(confirm(`Move ${a.name} to the Recycle Bin?`)){repo()?.softDelete?.(a.id);selectedArtistId=null;window.StatusOS?.Workspace?.saveSelectedArtist?.(null);state.artists=repo()?.list?.()||[];render();}});
   }
 
   function bindAddForm(){
     const form=document.getElementById("artistForm"); if(!form||form.dataset.artistOsBound)return; form.dataset.artistOsBound="1";
-    form.addEventListener("submit",e=>{if(e.submitter?.value==="cancel")return;e.preventDefault();e.stopImmediatePropagation();const d=Object.fromEntries(new FormData(form));const a=normalizeArtist({id:uid(),...d,lastContact:d.status==="New Lead"?"":isoToday()});if(d.notes)addActivity(a,"Note","Artist added",d.notes,isoToday()); repo()?.save?.(a); state.artists=repo()?.list?.()||[]; selectedArtistId=a.id;form.reset();form.closest("dialog")?.close();render();},true);
+    form.addEventListener("submit",e=>{if(e.submitter?.value==="cancel")return;e.preventDefault();e.stopImmediatePropagation();const d=Object.fromEntries(new FormData(form));const a=normalizeArtist({id:uid(),...d,lastContact:d.status==="New Lead"?"":isoToday()});if(d.notes)addActivity(a,"Note","Artist added",d.notes,isoToday()); repo()?.save?.(a); state.artists=repo()?.list?.()||[]; selectedArtistId=a.id;window.StatusOS?.Workspace?.saveSelectedArtist?.(selectedArtistId);form.reset();form.closest("dialog")?.close();render();},true);
   }
 
   function render(){renderStats();renderDirectory();renderWorkspace();}
-  async function init(){await repo()?.init?.();all();bindAddForm();document.getElementById("crmSearch")?.addEventListener("input",render);document.getElementById("crmFilter")?.addEventListener("change",render);if(!selectedArtistId&&all().length)selectedArtistId=all()[0].id;render();}
+  async function init(){await repo()?.init?.();all();bindAddForm();document.getElementById("crmSearch")?.addEventListener("input",render);document.getElementById("crmFilter")?.addEventListener("change",render);const savedId=window.StatusOS?.Workspace?.getSelectedArtist?.();if(savedId&&all().some(a=>a.id===savedId))selectedArtistId=savedId;if(!selectedArtistId&&all().length)selectedArtistId=all()[0].id;window.StatusOS?.Workspace?.saveSelectedArtist?.(selectedArtistId);render();}
   window.addEventListener("DOMContentLoaded",init);
   window.addEventListener("statusos:view-change",e=>{if(e.detail?.view==="crm"||document.getElementById("crm")?.classList.contains("active"))render();});
+  window.addEventListener("statusos:workspace-restore",e=>{const id=e.detail?.selectedArtistId;if(id&&all().some(a=>a.id===id)){selectedArtistId=id;render();}});
   window.StatusOS=window.StatusOS||{};window.StatusOS.ArtistOS={render,list:all}; window.addEventListener("statusos:artists-updated",()=>{state.artists=repo()?.list?.()||[];render();});
 })();

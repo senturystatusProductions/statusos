@@ -47,6 +47,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (window.StatusOS?.ArtistRepository?.init) {
       await window.StatusOS.ArtistRepository.init();
     }
+
+    window.dispatchEvent(new CustomEvent("statusos:app-ready"));
   }
 
   try {
