@@ -128,7 +128,6 @@
           <button id="exportBtn" class="button secondary utility-action">Export Backup</button>
           <label class="button secondary file-label utility-action">Import Backup<input id="importInput" type="file" accept=".json" hidden></label>
           <input id="artistImportInput" type="file" accept=".json" hidden>
-          <input id="fullBackupImportInput" type="file" accept=".json" hidden>
         </div>
       </header>
 
@@ -744,6 +743,25 @@
           </div>
         </article>
 
+        <article class="card ai-inbox-card">
+          <div class="section-head">
+            <div><p class="eyebrow">AI INBOX</p><h3>Your daily operating brief</h3></div>
+            <span id="aiInboxStatus" class="status-pill">Ready</span>
+          </div>
+          <div id="aiInboxBrief" class="ai-inbox-brief">
+            <p class="muted">StatusOS is reviewing your day.</p>
+          </div>
+          <div class="ai-inbox-recommendation">
+            <span>Recommended first move</span>
+            <strong id="aiInboxRecommendation">Build today's plan</strong>
+            <small id="aiInboxReason">Use your priorities, schedule, and artist follow-ups.</small>
+          </div>
+          <div class="ai-inbox-actions">
+            <button id="aiInboxStartBtn" class="button" type="button">▶ Start My Day</button>
+            <button id="refreshAiInboxBtn" class="button secondary" type="button">Refresh Brief</button>
+          </div>
+        </article>
+
         <section class="command-summary-grid" aria-label="Today's summary">
           <article class="card command-stat"><span>Open today</span><strong id="commandOpenCount">0</strong><small>planner items</small></article>
           <article class="card command-stat"><span>Priorities</span><strong id="commandPriorityCount">0</strong><small>remaining</small></article>
@@ -784,6 +802,8 @@
         </article>
       </section>
     </main>
+
+    <button id="iosQuickAddBtn" class="ios-quick-add" type="button" aria-label="Quick add">+</button>
 
     <nav id="iosTabBar" class="ios-tab-bar" aria-label="Primary mobile navigation">
       <button type="button" data-ios-view="dashboard" class="active"><span>⌂</span><small>Home</small></button>
@@ -946,6 +966,24 @@
     </form>
   </dialog>
 
+<dialog id="guidedDayModal" class="modal guided-day-modal">
+  <div class="modal-card guided-day-shell">
+    <div class="section-head"><div><p class="eyebrow">GUIDED DAY</p><h2 id="guidedDayHeading">Your next action</h2></div><button id="guidedDayClose" class="mini-btn" type="button">Close</button></div>
+    <div class="guided-day-progress"><span id="guidedDayProgressBar"></span></div>
+    <p id="guidedDayCounter" class="muted">Step 1</p>
+    <article class="guided-day-action">
+      <span id="guidedDayTime" class="status-pill">Now</span>
+      <h3 id="guidedDayTitle">Build today's plan</h3>
+      <p id="guidedDayDetail" class="muted"></p>
+    </article>
+    <div class="guided-day-actions">
+      <button id="guidedDayOpenBtn" class="button secondary" type="button">Open Item</button>
+      <button id="guidedDayCompleteBtn" class="button" type="button">Complete & Continue</button>
+      <button id="guidedDaySkipBtn" class="text-button" type="button">Skip for now</button>
+    </div>
+  </div>
+</dialog>
+
 <dialog id="recoveryCenterModal" class="modal recovery-modal"><div class="modal-card"><div class="section-head"><div><p class="eyebrow">DATA PROTECTION</p><h2>Recovery Center</h2></div><button class="mini-btn" type="button" onclick="document.getElementById('recoveryCenterModal').close()">Close</button></div><p class="muted">Restore Artist OS or the rest of your StatusOS workspace from a protected snapshot.</p><div id="recoveryCenterBody"></div></div></dialog>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
@@ -970,6 +1008,7 @@
   <script src="artist-os.js"></script>
   <script src="data-protection.js"></script>
   <script src="ios-app.js"></script>
+  <script src="ai-inbox.js"></script>
   <script src="auth.js"></script>
   <script>
     if ("serviceWorker" in navigator) {

@@ -1,5 +1,5 @@
 (function () {
-  const VERSION = "2.5.2";
+  const VERSION = "2.6.0";
   const CODENAME = "Data Protection & iPhone Experience";
   const BUILD_DATE = "2026-07-17";
   const LOG_KEY = "statusos_diagnostic_log_v1";

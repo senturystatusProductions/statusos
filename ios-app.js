@@ -10,6 +10,7 @@
   function bind(){
     document.documentElement.classList.toggle('standalone-app',isStandalone());
     document.querySelectorAll('[data-ios-view]').forEach(btn=>btn.addEventListener('click',()=>activate(btn.dataset.iosView)));
+    document.getElementById('iosQuickAddBtn')?.addEventListener('click',()=>{ window.StatusOS?.Planner?.selectDate?.(new Date().toISOString().slice(0,10)); window.StatusOS?.Planner?.openAdd?.(); try{navigator.vibrate?.(10)}catch{} });
     document.getElementById('iosMoreBtn')?.addEventListener('click',()=>{
       document.getElementById('nav')?.classList.toggle('mobile-open');
       document.body.classList.toggle('nav-open');

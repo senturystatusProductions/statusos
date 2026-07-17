@@ -1,3 +1,2 @@
-# StatusOS Version
-
-**v2.5.1 Time & Display Polish**
+StatusOS v2.6.0
+Codename: AI Inbox & Guided Day

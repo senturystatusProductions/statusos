@@ -1,3 +1,2 @@
-# StatusOS v2.4.2
-
-Daily Command Center navigation and version fix.
+StatusOS v2.6.0
+Codename: AI Inbox & Guided Day
