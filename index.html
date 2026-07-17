@@ -86,7 +86,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v1.7.2 Artist OS Stability</small>
+        <small id="appVersionLabel" class="version-label">v1.7.3 Data Integrity</small>
       </div>
     </aside>
 
@@ -105,11 +105,16 @@
               <button type="button" data-view="settings" role="menuitem">Settings</button>
               <button id="profileExportBtn" type="button" role="menuitem">Export Backup</button>
               <button id="profileImportBtn" type="button" role="menuitem">Import Backup</button>
+              <button id="profileRestoreBtn" type="button" role="menuitem">Restore Recent Backup</button>
+              <button id="profileArtistExportBtn" type="button" role="menuitem">Export Artist OS</button>
+              <button id="profileArtistImportBtn" type="button" role="menuitem">Import Artist OS</button>
+              <button id="profileSyncNowBtn" type="button" role="menuitem">Sync Now</button>
               <button id="profileAboutBtn" type="button" role="menuitem">About StatusOS</button>
             </div>
           </div>
           <button id="exportBtn" class="button secondary utility-action">Export Backup</button>
           <label class="button secondary file-label utility-action">Import Backup<input id="importInput" type="file" accept=".json" hidden></label>
+          <input id="artistImportInput" type="file" accept=".json" hidden>
         </div>
       </header>
 
@@ -853,6 +858,7 @@
   <script src="ux-polish.js"></script>
   <script src="app.js"></script>
   <script src="artist-os.js"></script>
+  <script src="data-protection.js"></script>
   <script src="auth.js"></script>
   <script>
     if ("serviceWorker" in navigator) {

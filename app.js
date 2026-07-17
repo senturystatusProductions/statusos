@@ -168,6 +168,56 @@ function loadLocal() {
   }
 }
 
+const WORKSPACE_BACKUPS_KEY = "statusos_workspace_backups_v1";
+const MAX_WORKSPACE_BACKUPS = 10;
+let lastAutomaticBackupAt = 0;
+
+function readWorkspaceBackups() {
+  try {
+    const value = JSON.parse(localStorage.getItem(WORKSPACE_BACKUPS_KEY) || "[]");
+    return Array.isArray(value) ? value : [];
+  } catch {
+    return [];
+  }
+}
+
+function createWorkspaceBackup(reason = "Automatic backup", force = false) {
+  const now = Date.now();
+  if (!force && now - lastAutomaticBackupAt < 120000) return readWorkspaceBackups();
+  const backups = readWorkspaceBackups();
+  const snapshot = JSON.stringify(state);
+  if (backups[0]?.snapshot === snapshot) return backups;
+  backups.unshift({ id: uid(), createdAt: new Date().toISOString(), reason, snapshot });
+  localStorage.setItem(WORKSPACE_BACKUPS_KEY, JSON.stringify(backups.slice(0, MAX_WORKSPACE_BACKUPS)));
+  lastAutomaticBackupAt = now;
+  window.dispatchEvent(new CustomEvent("statusos:backups-updated"));
+  return backups;
+}
+
+function restoreWorkspaceBackup(backupId) {
+  const backup = readWorkspaceBackups().find(item => item.id === backupId);
+  if (!backup) throw new Error("Backup not found.");
+  createWorkspaceBackup("Before restore", true);
+  state = normalizeState(JSON.parse(backup.snapshot));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  renderAll();
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = setTimeout(saveCloud, 100);
+  return state;
+}
+
+function mergeImportedArtists(importedArtists) {
+  if (!Array.isArray(importedArtists)) throw new Error("Artist backup is invalid.");
+  createWorkspaceBackup("Before artist import", true);
+  state.artists = mergeArtistRecords(state.artists, importedArtists);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  renderAll();
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = setTimeout(saveCloud, 100);
+  window.dispatchEvent(new CustomEvent("statusos:artists-updated"));
+  return state.artists;
+}
+
 let state = loadLocal();
 let cloudSaveTimer = null;
 let appInitialized = false;
@@ -193,6 +243,7 @@ async function getSignedInUser() {
 }
 
 async function saveCloud() {
+  createWorkspaceBackup("Before cloud sync");
   const client = getSupabaseClient();
   const user = await getSignedInUser();
 
@@ -215,6 +266,7 @@ async function saveCloud() {
 }
 
 function save() {
+  createWorkspaceBackup("Automatic save");
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   renderAll();
 
@@ -242,6 +294,7 @@ async function loadCloud() {
   }
 
   if (data?.app_state && Object.keys(data.app_state).length) {
+    createWorkspaceBackup("Before cloud merge", true);
     state = mergeCloudState(state, data.app_state);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     await saveCloud();
@@ -287,6 +340,7 @@ async function startRealtimeSync() {
         if (!incoming || !Object.keys(incoming).length) return;
 
         suppressCloudSave = true;
+        createWorkspaceBackup("Before realtime merge", true);
         state = mergeCloudState(state, incoming);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         renderAll();
@@ -302,6 +356,23 @@ async function startRealtimeSync() {
       }
     });
 }
+
+window.StatusOS = window.StatusOS || {};
+window.StatusOS.DataProtection = {
+  listBackups: readWorkspaceBackups,
+  createBackup: (reason = "Manual backup") => createWorkspaceBackup(reason, true),
+  restoreBackup: restoreWorkspaceBackup,
+  exportArtists: () => clone(state.artists || []),
+  importArtists: mergeImportedArtists,
+  syncNow: async () => {
+    createWorkspaceBackup("Before manual sync", true);
+    await saveCloud();
+    await loadCloud();
+    renderAll();
+    return true;
+  },
+  getLastCloudState: () => clone(state)
+};
 
 const dayThemes = {
   Sunday: ["Reset Day", ["Rest", "Family time", "Light planning"]],
