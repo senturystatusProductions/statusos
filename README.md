@@ -1,3 +1,3 @@
-# StatusOS v2.4.2
+# StatusOS v2.4.3
 
-Daily Command Center navigation and version fix.
+Version display hotfix for the v2.4.2 Actionable Day Plan release. No SQL required.

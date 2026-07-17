@@ -1,7 +1,7 @@
 (function () {
-  const VERSION = "2.4.1";
-  const CODENAME = "Data Integrity";
-  const BUILD_DATE = "2026-07-16";
+  const VERSION = "2.4.3";
+  const CODENAME = "Version Integrity";
+  const BUILD_DATE = "2026-07-17";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;
 
@@ -148,7 +148,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    setText("appVersionLabel", `v${VERSION}`);
+    setText("appVersionLabel", `v${VERSION} ${CODENAME}`);
     document.getElementById("refreshDiagnosticsBtn")?.addEventListener("click", renderDeveloper);
     document.getElementById("clearDiagnosticLogsBtn")?.addEventListener("click", () => { Logger.clear(); renderLogs(); });
     document.getElementById("exportDiagnosticsBtn")?.addEventListener("click", exportDiagnostics);
