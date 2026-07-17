@@ -1,4 +1,4 @@
-/* StatusOS v2.0.0 Artist Repository */
+/* StatusOS v2.0.1 Artist Repository */
 (function(){
   "use strict";
   const LOCAL_KEY="statusos_artists_v2";
@@ -30,9 +30,14 @@
   function softDelete(artistId){const a=local().find(x=>x.id===artistId);if(!a)return;a.deletedAt=now();return saveArtist(a)}
   function restore(artistId){const a=local().find(x=>x.id===artistId);if(!a)return;a.deletedAt=null;return saveArtist(a)}
   function migrateLegacy(){const legacy=Array.isArray(window.state?.artists)?window.state.artists:[];if(!local().length&&legacy.length){writeLocal(legacy.map(normalize));backup("Imported v1.7.3 artists");legacy.forEach(a=>enqueue("upsert_artist",normalize(a)));}else if(window.state){window.state.artists=local().filter(a=>!a.deletedAt)}}
-  async function init(){migrateLegacy();await flush();try{await pull()}catch(e){console.warn("Artist cloud pull unavailable",e)};emit("statusos:artists-ready");}
-  window.StatusOS=window.StatusOS||{};window.StatusOS.ArtistRepository={init,list:()=>local().filter(a=>!a.deletedAt),listDeleted:()=>local().filter(a=>a.deletedAt),get:x=>local().find(a=>a.id===x),save:saveArtist,saveActivity,softDelete,restore,backup,backups,restoreBackup,flush,sync:async()=>{await flush();return pull()},export:()=>clone(local()),import:rows=>{backup("Before artist import");const merged=merge(local(),rows||[]);writeLocal(merged);merged.forEach(a=>enqueue("upsert_artist",a));return merged}};
-  window.addEventListener("online",flush);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")flush()});
+  let initPromise=null;
+  let realtimeChannel=null;
+  let pullTimer=null;
+  function schedulePull(){clearTimeout(pullTimer);pullTimer=setTimeout(async()=>{try{emit("statusos:artist-sync-status",{status:"syncing",pending:queue().length});await pull();emit("statusos:artist-sync-status",{status:queue().length?"pending":"synced",pending:queue().length});}catch(e){console.warn("Artist realtime pull unavailable",e)}},250);}
+  async function startRealtime(){const c=client(),u=await user();if(!c||!u)return;if(realtimeChannel){await c.removeChannel(realtimeChannel);realtimeChannel=null;}realtimeChannel=c.channel(`statusos-artists-${u.id}`).on("postgres_changes",{event:"*",schema:"public",table:"artists",filter:`user_id=eq.${u.id}`},schedulePull).on("postgres_changes",{event:"*",schema:"public",table:"artist_activities",filter:`user_id=eq.${u.id}`},schedulePull).subscribe();}
+  async function init(){if(initPromise)return initPromise;initPromise=(async()=>{migrateLegacy();await flush();try{await pull()}catch(e){console.warn("Artist cloud pull unavailable",e)}try{await startRealtime()}catch(e){console.warn("Artist realtime unavailable",e)}emit("statusos:artist-sync-status",{status:queue().length?"pending":"synced",pending:queue().length});emit("statusos:artists-ready");return local();})();try{return await initPromise}catch(e){initPromise=null;throw e}}
+  window.StatusOS=window.StatusOS||{};window.StatusOS.ArtistRepository={init,list:()=>local().filter(a=>!a.deletedAt),listDeleted:()=>local().filter(a=>a.deletedAt),get:x=>local().find(a=>a.id===x),save:saveArtist,saveActivity,softDelete,restore,backup,backups,restoreBackup,flush,sync:async()=>{await flush();const rows=await pull();emit("statusos:artist-sync-status",{status:queue().length?"pending":"synced",pending:queue().length});return rows},export:()=>clone(local()),import:rows=>{backup("Before artist import");const merged=merge(local(),rows||[]);writeLocal(merged);merged.forEach(a=>enqueue("upsert_artist",a));return merged}};
+  window.addEventListener("online",async()=>{await flush();schedulePull()});document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){flush();schedulePull();}});
 })();
 
 (function(){function update(e){const b=document.getElementById("artistSyncBadge");if(!b)return;const s=e.detail?.status||"saved",p=e.detail?.pending||0;b.dataset.status=s;b.textContent=s==="syncing"?"Artist OS syncing…":s==="pending"?`${p} artist change${p===1?"":"s"} pending`:s==="synced"?"Artist OS synced":"Artist OS saved"}window.addEventListener("statusos:artist-sync-status",update);})();

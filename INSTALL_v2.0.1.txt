@@ -1,0 +1,11 @@
+StatusOS v2.0.1 Installation
+
+1. Copy all files into the StatusOS project folder and replace existing files.
+2. Commit and push the changes to GitHub.
+3. Wait for GitHub Pages to deploy.
+4. On desktop, hard refresh with Ctrl + Shift + R.
+5. On iPhone, close StatusOS completely and reopen it. If installed to the Home Screen, reopen twice so the new service worker takes control.
+6. Sign into the same account on both devices.
+7. Create one test artist on desktop and confirm it appears on iPhone.
+
+No new SQL migration is required for v2.0.1.

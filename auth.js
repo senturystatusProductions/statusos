@@ -43,6 +43,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (window.StatusOS?.Sync?.initialize) {
       await window.StatusOS.Sync.initialize();
     }
+
+    if (window.StatusOS?.ArtistRepository?.init) {
+      await window.StatusOS.ArtistRepository.init();
+    }
   }
 
   try {
