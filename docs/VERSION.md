@@ -1,3 +1,3 @@
-# StatusOS v2.4.1
+# StatusOS v2.4.2
 
 Daily Command Center navigation and version fix.

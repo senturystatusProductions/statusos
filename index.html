@@ -96,7 +96,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v2.4.1 Daily Command Center Fix</small>
+        <small id="appVersionLabel" class="version-label">v2.4.2 Actionable Day Plan</small>
       </div>
     </aside>
 
@@ -743,7 +743,7 @@
           <article class="card command-stat"><span>Open today</span><strong id="commandOpenCount">0</strong><small>planner items</small></article>
           <article class="card command-stat"><span>Priorities</span><strong id="commandPriorityCount">0</strong><small>remaining</small></article>
           <article class="card command-stat"><span>Follow-ups</span><strong id="commandFollowupCount">0</strong><small>due</small></article>
-          <article class="card command-stat"><span>Progress</span><strong id="commandProgress">0%</strong><small>day complete</small></article>
+          <article class="card command-stat"><span>Progress</span><strong id="commandProgress">0%</strong><small>day complete</small><div class="command-progress-track" aria-hidden="true"><span id="commandProgressBar"></span></div></article>
         </section>
 
         <section class="command-main-grid">
@@ -910,11 +910,11 @@
 
   <dialog id="plannerModal" class="modal">
     <form method="dialog" id="plannerForm">
-      <div class="section-head"><h3>Add to Day</h3><button class="icon-btn" value="cancel" type="button" onclick="document.getElementById('plannerModal').close()">×</button></div>
+      <div class="section-head"><h3 id="plannerModalTitle">Add to Day</h3><button class="icon-btn" value="cancel" type="button" onclick="document.getElementById('plannerModal').close()">×</button></div>
       <label>What are you doing?<input name="title" required placeholder="Send beats to Artist A"></label>
       <div class="form-grid"><label>Date<input id="plannerDate" name="date" type="date" required></label><label>Time<input name="time" type="time"></label></div>
       <label>Category<select name="category"><option>Priority</option><option>Studio</option><option>Artist Follow-up</option><option>Business</option><option>Workout</option><option>Family</option><option>Plan</option></select></label>
-      <button class="button" value="default">Save to Planner</button>
+      <button id="plannerSubmitBtn" class="button" value="default">Save to Planner</button>
     </form>
   </dialog>
 
