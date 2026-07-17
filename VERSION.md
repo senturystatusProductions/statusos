@@ -1,2 +1,2 @@
-StatusOS v2.6.1
-Codename: AI Inbox & Guided Day
+StatusOS v2.6.2
+Codename: Smart Scheduling

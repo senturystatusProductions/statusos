@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "2.6.1";
-  const CODENAME = "Data Protection & iPhone Experience";
+  const VERSION = "2.6.2";
+  const CODENAME = "Smart Scheduling";
   const BUILD_DATE = "2026-07-17";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

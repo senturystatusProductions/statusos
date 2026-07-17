@@ -984,6 +984,20 @@
   </div>
 </dialog>
 
+<dialog id="plannerSnoozeModal" class="modal snooze-modal">
+  <div class="modal-card">
+    <div class="section-head"><div><p class="eyebrow">SMART SCHEDULING</p><h2>Snooze task</h2></div><button id="snoozeCancelBtn" class="mini-btn" type="button">Close</button></div>
+    <p id="snoozeTaskTitle" class="snooze-task-title"></p>
+    <div class="snooze-options">
+      <button id="snoozeTomorrowBtn" class="snooze-option" type="button"><strong>Tomorrow</strong><span>Keep the same time</span></button>
+      <button id="snoozeLaterWeekBtn" class="snooze-option" type="button"><strong>Later This Week</strong><span>Move it to Friday</span></button>
+      <button id="snoozeNextWeekBtn" class="snooze-option" type="button"><strong>Next Week</strong><span>Move it ahead seven days</span></button>
+    </div>
+    <label class="snooze-custom-label">Choose a date<div class="snooze-date-wrap"><input id="snoozeCustomDate" type="date"></div></label>
+    <button id="snoozeCustomBtn" class="button" type="button">Snooze to Selected Date</button>
+  </div>
+</dialog>
+
 <dialog id="recoveryCenterModal" class="modal recovery-modal"><div class="modal-card"><div class="section-head"><div><p class="eyebrow">DATA PROTECTION</p><h2>Recovery Center</h2></div><button class="mini-btn" type="button" onclick="document.getElementById('recoveryCenterModal').close()">Close</button></div><p class="muted">Restore Artist OS or the rest of your StatusOS workspace from a protected snapshot.</p><div id="recoveryCenterBody"></div></div></dialog>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>

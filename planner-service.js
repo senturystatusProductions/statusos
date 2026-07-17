@@ -5,6 +5,7 @@
   let items=[];
   let selectedDate=new Date().toISOString().slice(0,10);
   let editingId=null;
+  let snoozingId=null;
   const $=id=>document.getElementById(id);
   const uid=()=>crypto.randomUUID?crypto.randomUUID():`plan_${Date.now()}_${Math.random().toString(16).slice(2)}`;
   const now=()=>new Date().toISOString();
@@ -32,7 +33,7 @@
       const actions=document.createElement("div");actions.className="planner-item-actions";
       actions.append(
         actionButton("Edit","planner-action",()=>openEdit(item.id),`Edit ${item.title}`),
-        actionButton("Tomorrow","planner-action",()=>postpone(item.id),`Move ${item.title} to tomorrow`),
+        actionButton("Snooze","planner-action",()=>openSnooze(item.id),`Snooze ${item.title}`),
         actionButton("Delete","planner-action danger",()=>remove(item.id),`Delete ${item.title}`)
       );
       row.append(check,time,copy,actions);list.appendChild(row);
@@ -44,7 +45,13 @@
   function openAdd(){editingId=null;const f=$("plannerForm");f.reset();f.elements.date.value=selectedDate;$("plannerModalTitle").textContent="Add to Day";$("plannerSubmitBtn").textContent="Save to Planner";$("plannerModal").showModal();}
   function openEdit(id){const item=items.find(x=>x.id===id);if(!item)return;editingId=id;const f=$("plannerForm");f.elements.title.value=item.title;f.elements.date.value=item.date;f.elements.time.value=item.time||"";f.elements.category.value=item.category||"Plan";$("plannerModalTitle").textContent="Edit Planner Item";$("plannerSubmitBtn").textContent="Save Changes";$("plannerModal").showModal();}
   function toggle(id){const item=items.find(x=>x.id===id);if(!item)return;item.completed=!item.completed;item.completed_at=item.completed?now():null;item.updated_at=now();save();notify(item.completed?"Task completed":"Task reopened","success");}
-  function postpone(id){const item=items.find(x=>x.id===id);if(!item)return;item.date=tomorrow(item.date);item.completed=false;item.completed_at=null;item.updated_at=now();save();notify(`Moved to ${dateLabel(item.date)}`,"success");}
+  function addDays(date,days){const d=new Date(`${date}T12:00:00`);d.setDate(d.getDate()+days);return d.toISOString().slice(0,10);}
+  function nextWeekday(date,weekday){const d=new Date(`${date}T12:00:00`);let delta=(weekday-d.getDay()+7)%7;if(delta===0)delta=7;d.setDate(d.getDate()+delta);return d.toISOString().slice(0,10);}
+  function moveToDate(id,date){const item=items.find(x=>x.id===id);if(!item||!date)return;item.date=date;item.completed=false;item.completed_at=null;item.updated_at=now();save();notify(`Snoozed until ${dateLabel(item.date)}`,"success");}
+  function postpone(id){const item=items.find(x=>x.id===id);if(!item)return;moveToDate(id,tomorrow(item.date));}
+  function openSnooze(id){const item=items.find(x=>x.id===id);if(!item)return;snoozingId=id;const title=$("snoozeTaskTitle");if(title)title.textContent=item.title;const custom=$("snoozeCustomDate");if(custom)custom.value=tomorrow(item.date);$("plannerSnoozeModal")?.showModal();}
+  function closeSnooze(){snoozingId=null;$("plannerSnoozeModal")?.close();}
+  function applySnooze(mode){const item=items.find(x=>x.id===snoozingId);if(!item)return;let date;if(mode==="tomorrow")date=tomorrow(item.date);else if(mode==="later-week")date=nextWeekday(item.date,5);else if(mode==="next-week")date=addDays(item.date,7);else if(mode==="custom")date=$("snoozeCustomDate")?.value;if(!date)return;moveToDate(item.id,date);closeSnooze();}
   async function remove(id){const item=items.find(x=>x.id===id);if(!item)return;items=items.filter(x=>x.id!==id);save();const sb=window.statusOSSupabase;if(sb&&navigator.onLine){try{const {data:{user}}=await sb.auth.getUser();if(user)await sb.from("planner_items").delete().eq("id",id).eq("user_id",user.id);}catch(e){console.warn("Planner cloud delete failed",e);}}notify("Planner item deleted","success");}
   async function cloudPull(){const sb=window.statusOSSupabase;if(!sb)return;try{const {data:{user}}=await sb.auth.getUser();if(!user)return;const {data,error}=await sb.from("planner_items").select("*").eq("user_id",user.id);if(error)throw error;if(Array.isArray(data)){const cloud=data.map(x=>({id:x.id,title:x.title,date:x.plan_date,time:x.plan_time?.slice(0,5)||"",category:x.category,completed:x.completed,updated_at:x.updated_at}));const map=new Map(items.map(x=>[x.id,x]));cloud.forEach(x=>{const local=map.get(x.id);if(!local||new Date(x.updated_at)>=new Date(local.updated_at||0))map.set(x.id,x);});items=[...map.values()];localStorage.setItem(KEY,JSON.stringify(items));emit();}}
     catch(e){console.warn("Planner pull failed",e);}
@@ -60,10 +67,15 @@
     $("plannerNextWeek")?.addEventListener("click",()=>{const d=new Date(`${selectedDate}T12:00:00`);d.setDate(d.getDate()+7);selectedDate=d.toISOString().slice(0,10);render();});
     $("plannerTodayBtn")?.addEventListener("click",()=>{selectedDate=new Date().toISOString().slice(0,10);render();});
     $("addPlannerItemBtn")?.addEventListener("click",openAdd);
+    $("snoozeTomorrowBtn")?.addEventListener("click",()=>applySnooze("tomorrow"));
+    $("snoozeLaterWeekBtn")?.addEventListener("click",()=>applySnooze("later-week"));
+    $("snoozeNextWeekBtn")?.addEventListener("click",()=>applySnooze("next-week"));
+    $("snoozeCustomBtn")?.addEventListener("click",()=>applySnooze("custom"));
+    $("snoozeCancelBtn")?.addEventListener("click",closeSnooze);
     $("plannerForm")?.addEventListener("submit",e=>{e.preventDefault();const f=e.currentTarget,fd=new FormData(f),data={title:String(fd.get("title")||"").trim(),date:String(fd.get("date")),time:String(fd.get("time")||""),category:String(fd.get("category")||"Plan")};if(editingId){const item=items.find(x=>x.id===editingId);if(item)Object.assign(item,data,{updated_at:now()});notify("Planner item updated","success");}else{items.push({id:uid(),...data,completed:false,updated_at:now()});notify("Added to your day","success");}editingId=null;save();$("plannerModal").close();});
     window.addEventListener("statusos:app-ready",()=>setTimeout(cloudPull,250));window.addEventListener("online",cloudPush);document.addEventListener("visibilitychange",()=>{if(!document.hidden){cloudPull();cloudPush();}});render();
   }
   window.StatusOS=window.StatusOS||{};
-  window.StatusOS.Planner={formatTime,render,pull:cloudPull,push:cloudPush,list:()=>items.map(x=>({...x})),selectedDate:()=>selectedDate,selectDate:(date)=>{selectedDate=date||new Date().toISOString().slice(0,10);render();},openAdd,openEdit,toggle,postpone,remove,update:(id,patch)=>{const item=items.find(x=>x.id===id);if(!item)return null;Object.assign(item,patch,{updated_at:now()});save();return {...item};},add:(input)=>{const item={id:input.id||uid(),title:String(input.title||"Untitled").trim(),date:String(input.date||selectedDate),time:String(input.time||""),category:String(input.category||"Plan"),completed:!!input.completed,updated_at:now()};items.push(item);save();return item;},addMany:(rows)=>{const created=[];(rows||[]).forEach(input=>{const duplicate=items.some(x=>x.date===(input.date||selectedDate)&&x.title.trim().toLowerCase()===String(input.title||"").trim().toLowerCase());if(!duplicate){const item={id:input.id||uid(),title:String(input.title||"Untitled").trim(),date:String(input.date||selectedDate),time:String(input.time||""),category:String(input.category||"Plan"),completed:false,updated_at:now()};items.push(item);created.push(item);}});if(created.length)save();return created;}};
+  window.StatusOS.Planner={formatTime,render,pull:cloudPull,push:cloudPush,list:()=>items.map(x=>({...x})),selectedDate:()=>selectedDate,selectDate:(date)=>{selectedDate=date||new Date().toISOString().slice(0,10);render();},openAdd,openEdit,toggle,postpone,openSnooze,remove,update:(id,patch)=>{const item=items.find(x=>x.id===id);if(!item)return null;Object.assign(item,patch,{updated_at:now()});save();return {...item};},add:(input)=>{const item={id:input.id||uid(),title:String(input.title||"Untitled").trim(),date:String(input.date||selectedDate),time:String(input.time||""),category:String(input.category||"Plan"),completed:!!input.completed,updated_at:now()};items.push(item);save();return item;},addMany:(rows)=>{const created=[];(rows||[]).forEach(input=>{const duplicate=items.some(x=>x.date===(input.date||selectedDate)&&x.title.trim().toLowerCase()===String(input.title||"").trim().toLowerCase());if(!duplicate){const item={id:input.id||uid(),title:String(input.title||"Untitled").trim(),date:String(input.date||selectedDate),time:String(input.time||""),category:String(input.category||"Plan"),completed:false,updated_at:now()};items.push(item);created.push(item);}});if(created.length)save();return created;}};
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bind,{once:true});else bind();
 })();

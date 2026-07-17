@@ -18,7 +18,7 @@
     const check=action(item.completed?"✓":"","command-task-check",()=>window.StatusOS?.Planner?.toggle?.(item.id));check.setAttribute("aria-label",item.completed?"Mark incomplete":"Mark complete");
     const body=document.createElement("button");body.type="button";body.className="command-task-body";body.innerHTML=`<span class="command-time">${escapeHtml(formatTime(item.time))}</span><span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.category||"Plan")}${item.completed?" · Completed":""}</small></span>`;body.addEventListener("click",()=>window.StatusOS?.Planner?.openEdit?.(item.id));
     const controls=document.createElement("div");controls.className="command-task-actions";
-    controls.append(action("Edit","command-task-action",()=>window.StatusOS?.Planner?.openEdit?.(item.id)),action("Tomorrow","command-task-action",()=>window.StatusOS?.Planner?.postpone?.(item.id)),action("Delete","command-task-action danger",()=>window.StatusOS?.Planner?.remove?.(item.id)));
+    controls.append(action("Edit","command-task-action",()=>window.StatusOS?.Planner?.openEdit?.(item.id)),action("Snooze","command-task-action",()=>window.StatusOS?.Planner?.openSnooze?.(item.id)),action("Delete","command-task-action danger",()=>window.StatusOS?.Planner?.remove?.(item.id)));
     row.append(check,body,controls);host.appendChild(row);
   }
   function render(){
