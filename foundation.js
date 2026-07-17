@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "2.4.3";
-  const CODENAME = "Version Integrity";
+  const VERSION = "2.5.0";
+  const CODENAME = "Smart Task Engine";
   const BUILD_DATE = "2026-07-17";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

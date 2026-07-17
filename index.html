@@ -96,7 +96,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v2.4.3 Version Integrity</small>
+        <small id="appVersionLabel" class="version-label">v2.5.0 Smart Task Engine</small>
       </div>
     </aside>
 
@@ -381,25 +381,26 @@
       
 <section id="tasks" class="view">
   <div class="section-head">
-    <div><p class="eyebrow">EXECUTION</p><h2>Task Engine</h2></div>
+    <div><p class="eyebrow">EXECUTION</p><h2>Smart Task Engine</h2><p class="muted">Plan work with priority, duration, progress, due dates, projects, artists, and recurrence.</p></div>
+    <button id="smartTaskAddBtn" class="button" type="button">New Smart Task</button>
   </div>
+  <section class="smart-task-metrics" aria-label="Task summary">
+    <article class="card smart-task-metric"><span>Open</span><strong id="smartTaskOpen">0</strong><small>Active tasks</small></article>
+    <article class="card smart-task-metric"><span>Due Today</span><strong id="smartTaskDue">0</strong><small>Needs attention</small></article>
+    <article class="card smart-task-metric"><span>Focused Time</span><strong id="smartTaskMinutes">0m</strong><small>Open workload</small></article>
+    <article class="card smart-task-metric"><span>Completed</span><strong id="smartTaskCompleted">0</strong><small>All time</small></article>
+  </section>
   <article class="card task-engine-card">
-    <div class="task-compose">
-      <input id="taskInput" placeholder="Add a task to today’s mission" autocomplete="off">
-      <button id="addTaskBtn" class="button" type="button">Add Task</button>
+    <div class="smart-task-toolbar">
+      <input id="smartTaskSearch" placeholder="Search tasks, projects, artists, or notes" autocomplete="off">
+      <select id="smartTaskStatusFilter" aria-label="Filter by status"><option value="open">Open tasks</option><option value="all">All tasks</option><option value="done">Completed</option></select>
+      <select id="smartTaskPriorityFilter" aria-label="Filter by priority"><option value="all">All priorities</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Normal</option><option value="low">Low</option></select>
     </div>
-    <div class="task-engine-summary">
-      <span id="taskEngineSummary">0 tasks</span>
-      <button id="clearCompletedTasksBtn" class="text-button" type="button">Clear completed</button>
-    </div>
-    <ul id="taskList" class="task-engine-list"></ul>
-    <div id="taskEmptyState" class="task-empty-state">
-      <strong>Your mission is clear.</strong>
-      <span>Add your first task above.</span>
-    </div>
+    <div class="task-engine-summary"><span id="smartTaskSummary">0 tasks</span><button id="smartTaskClearDone" class="text-button" type="button">Clear completed</button></div>
+    <div id="smartTaskList" class="smart-task-list"></div>
+    <div id="smartTaskEmpty" class="task-empty-state"><strong>Your task system is clear.</strong><span>Create a smart task to begin.</span></div>
   </article>
 </section>
-
 
 <section id="habits" class="view">
   <div class="section-head">
@@ -908,6 +909,21 @@
   </dialog>
 
 
+  <dialog id="smartTaskModal" class="modal smart-task-modal">
+    <form method="dialog" id="smartTaskForm">
+      <div class="section-head"><div><p class="eyebrow">SMART TASK</p><h3 id="smartTaskModalTitle">New Task</h3></div><button id="smartTaskClose" class="icon-btn" value="cancel" type="button">×</button></div>
+      <label>Task title<input name="text" required placeholder="Finish Double Barrel beat"></label>
+      <div class="form-grid"><label>Priority<select name="priority"><option value="critical">Critical</option><option value="high">High</option><option value="medium" selected>Normal</option><option value="low">Low</option></select></label><label>Status<select name="status"><option value="not_started">Not started</option><option value="in_progress">In progress</option><option value="waiting">Waiting</option></select></label></div>
+      <div class="form-grid"><label>Estimated duration<select name="estimatedMinutes"><option value="15">15 minutes</option><option value="30" selected>30 minutes</option><option value="45">45 minutes</option><option value="60">1 hour</option><option value="90">1.5 hours</option><option value="120">2 hours</option><option value="180">3 hours</option></select></label><label>Progress<input name="progress" type="number" min="0" max="100" step="5" value="0"></label></div>
+      <div class="form-grid"><label>Due date<input name="dueDate" type="date"></label><label>Recurring<select name="recurrence"><option value="none">Does not repeat</option><option value="daily">Daily</option><option value="weekdays">Weekdays</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></label></div>
+      <div class="form-grid"><label>Project<input name="project" placeholder="Double Barrel Album"></label><label>Artist<input name="artist" placeholder="Rob Whiskey"></label></div>
+      <label>Category<select name="category"><option>Productivity</option><option>Music</option><option>Artist Outreach</option><option>Mixing</option><option>Sound Design</option><option>Business</option><option>Personal</option></select></label>
+      <label>Depends on<input name="dependsOn" placeholder="Task that must be completed first"></label>
+      <label>Notes<textarea name="notes" rows="3" placeholder="Important details, links, or next steps"></textarea></label>
+      <div class="modal-actions"><button id="smartTaskCancel" class="button secondary" value="cancel" type="button">Cancel</button><button class="button" value="default" type="submit">Save Task</button></div>
+    </form>
+  </dialog>
+
   <dialog id="plannerModal" class="modal">
     <form method="dialog" id="plannerForm">
       <div class="section-head"><h3 id="plannerModalTitle">Add to Day</h3><button class="icon-btn" value="cancel" type="button" onclick="document.getElementById('plannerModal').close()">×</button></div>
@@ -938,6 +954,7 @@
   <script src="command-center.js"></script>
   <script src="app.js"></script>
   <script src="artist-repository.js"></script>
+  <script src="smart-task-engine.js"></script>
   <script src="artist-os.js"></script>
   <script src="data-protection.js"></script>
   <script src="auth.js"></script>

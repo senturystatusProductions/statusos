@@ -23,6 +23,16 @@
       done: Boolean(task.done ?? task.completed),
       priority: task.priority || "medium",
       category: task.category || "Productivity",
+      status: task.status || (Boolean(task.done ?? task.completed) ? "completed" : "not_started"),
+      estimatedMinutes: Number(task.estimatedMinutes ?? task.estimated_minutes ?? 30),
+      progress: Number(task.progress ?? (Boolean(task.done ?? task.completed) ? 100 : 0)),
+      dueDate: task.dueDate || task.due_date || "",
+      recurrence: task.recurrence || "none",
+      project: task.project || "",
+      artist: task.artist || "",
+      dependsOn: task.dependsOn || task.depends_on || "",
+      notes: task.notes || "",
+      completedAt: task.completedAt || task.completed_at || null,
       createdAt: task.createdAt || task.created_at || now,
       updatedAt: task.updatedAt || task.updated_at || now
     };
