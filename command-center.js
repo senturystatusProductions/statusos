@@ -4,6 +4,7 @@
   const $=id=>document.getElementById(id);
   const isoToday=()=>new Date().toISOString().slice(0,10);
   const escapeHtml=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const formatTime=value=>window.StatusOS?.Planner?.formatTime?.(value)||(value||"Anytime");
   function workspace(){try{return JSON.parse(localStorage.getItem("senturyStatusOS_v2")||"{}");}catch{return {};}}
   function artists(){try{return JSON.parse(localStorage.getItem("statusos_artists_v2")||"[]").filter(a=>!a.deletedAt);}catch{return [];}}
   function planner(){return window.StatusOS?.Planner?.list?.()||[];}
@@ -15,7 +16,7 @@
   function renderScheduleItem(item,host){
     const row=document.createElement("article");row.className=`command-task${item.completed?" completed":""}`;
     const check=action(item.completed?"✓":"","command-task-check",()=>window.StatusOS?.Planner?.toggle?.(item.id));check.setAttribute("aria-label",item.completed?"Mark incomplete":"Mark complete");
-    const body=document.createElement("button");body.type="button";body.className="command-task-body";body.innerHTML=`<span class="command-time">${escapeHtml(item.time||"Anytime")}</span><span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.category||"Plan")}${item.completed?" · Completed":""}</small></span>`;body.addEventListener("click",()=>window.StatusOS?.Planner?.openEdit?.(item.id));
+    const body=document.createElement("button");body.type="button";body.className="command-task-body";body.innerHTML=`<span class="command-time">${escapeHtml(formatTime(item.time))}</span><span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.category||"Plan")}${item.completed?" · Completed":""}</small></span>`;body.addEventListener("click",()=>window.StatusOS?.Planner?.openEdit?.(item.id));
     const controls=document.createElement("div");controls.className="command-task-actions";
     controls.append(action("Edit","command-task-action",()=>window.StatusOS?.Planner?.openEdit?.(item.id)),action("Tomorrow","command-task-action",()=>window.StatusOS?.Planner?.postpone?.(item.id)),action("Delete","command-task-action danger",()=>window.StatusOS?.Planner?.remove?.(item.id)));
     row.append(check,body,controls);host.appendChild(row);
@@ -30,7 +31,7 @@
     const schedule=$("commandSchedule");schedule.innerHTML="";
     if(!dayItems.length)schedule.innerHTML='<div class="command-empty"><strong>Your day is open.</strong><span>Press Plan My Day to build a practical schedule.</span></div>';
     dayItems.forEach(item=>renderScheduleItem(item,schedule));
-    const next=open[0]||null;$("commandNextTitle").textContent=next?.title||remaining[0]?.title||follows[0]?.name||"Your day is clear";$("commandNextDetail").textContent=next?`${next.time||"Anytime"} · ${next.category||"Plan"}`:remaining[0]?"This is your first unfinished priority.":follows[0]?`Follow-up due ${follows[0].followUp}.`:"Add an item or let StatusOS build a practical plan.";
+    const next=open[0]||null;$("commandNextTitle").textContent=next?.title||remaining[0]?.title||follows[0]?.name||"Your day is clear";$("commandNextDetail").textContent=next?`${formatTime(next.time)} · ${next.category||"Plan"}`:remaining[0]?"This is your first unfinished priority.":follows[0]?`Follow-up due ${follows[0].followUp}.`:"Add an item or let StatusOS build a practical plan.";
     const priorityHost=$("commandPriorities");priorityHost.innerHTML="";if(!remaining.length)priorityHost.innerHTML='<div class="command-empty small"><span>All priorities complete.</span></div>';remaining.slice(0,5).forEach(x=>{const r=document.createElement("button");r.type="button";r.className="command-row compact";r.innerHTML=`<span class="command-dot"></span><span><strong>${escapeHtml(x.title)}</strong><small>Daily priority</small></span><b>›</b>`;r.onclick=()=>document.querySelector('[data-view="dashboard"]')?.click();priorityHost.appendChild(r);});
     const followHost=$("commandFollowups");followHost.innerHTML="";if(!follows.length)followHost.innerHTML='<div class="command-empty small"><span>No artist follow-ups are due.</span></div>';follows.slice(0,5).forEach(a=>{const r=document.createElement("button");r.type="button";r.className="command-row compact";r.innerHTML=`<span class="command-avatar">${escapeHtml((a.name||"?").slice(0,1).toUpperCase())}</span><span><strong>${escapeHtml(a.name)}</strong><small>${escapeHtml(a.status||"Artist")} · ${escapeHtml(a.followUp)}</small></span><b>›</b>`;r.onclick=()=>document.querySelector('[data-view="artists"]')?.click();followHost.appendChild(r);});
   }

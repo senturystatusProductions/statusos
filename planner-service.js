@@ -9,6 +9,7 @@
   const uid=()=>crypto.randomUUID?crypto.randomUUID():`plan_${Date.now()}_${Math.random().toString(16).slice(2)}`;
   const now=()=>new Date().toISOString();
   const notify=(m,t="success")=>window.StatusOS?.Notify?.[t]?.(m)||window.dispatchEvent(new CustomEvent("statusos:notify",{detail:{message:m,type:t}}));
+  const formatTime=(value)=>{if(!value)return "Anytime";const match=String(value).match(/^(\d{1,2}):(\d{2})/);if(!match)return String(value);const hour=Number(match[1]),minutes=match[2],period=hour>=12?"PM":"AM",displayHour=hour%12||12;return `${displayHour}:${minutes} ${period}`;};
   const tomorrow=date=>{const d=new Date(`${date}T12:00:00`);d.setDate(d.getDate()+1);return d.toISOString().slice(0,10);};
   function load(){try{items=JSON.parse(localStorage.getItem(KEY)||"[]");if(!Array.isArray(items))items=[];}catch{items=[];}}
   function emit(){render();window.dispatchEvent(new CustomEvent("statusos:planner-updated",{detail:{items:[...items]}}));}
@@ -26,7 +27,7 @@
     dayItems.forEach(item=>{
       const row=document.createElement("article");row.className=`planner-item${item.completed?" completed":""}`;
       const check=actionButton(item.completed?"✓":"","planner-check",()=>toggle(item.id),item.completed?"Mark incomplete":"Mark complete");
-      const time=document.createElement("div");time.className="planner-time";time.textContent=item.time||"Anytime";
+      const time=document.createElement("div");time.className="planner-time";time.textContent=formatTime(item.time);
       const copy=document.createElement("div");copy.className="planner-copy";copy.innerHTML="<strong></strong><span></span>";copy.querySelector("strong").textContent=item.title;copy.querySelector("span").textContent=item.completed?`${item.category||"Plan"} · Completed`:item.category||"Plan";
       const actions=document.createElement("div");actions.className="planner-item-actions";
       actions.append(
@@ -63,6 +64,6 @@
     window.addEventListener("statusos:app-ready",()=>setTimeout(cloudPull,250));window.addEventListener("online",cloudPush);document.addEventListener("visibilitychange",()=>{if(!document.hidden){cloudPull();cloudPush();}});render();
   }
   window.StatusOS=window.StatusOS||{};
-  window.StatusOS.Planner={render,pull:cloudPull,push:cloudPush,list:()=>items.map(x=>({...x})),selectedDate:()=>selectedDate,selectDate:(date)=>{selectedDate=date||new Date().toISOString().slice(0,10);render();},openAdd,openEdit,toggle,postpone,remove,update:(id,patch)=>{const item=items.find(x=>x.id===id);if(!item)return null;Object.assign(item,patch,{updated_at:now()});save();return {...item};},add:(input)=>{const item={id:input.id||uid(),title:String(input.title||"Untitled").trim(),date:String(input.date||selectedDate),time:String(input.time||""),category:String(input.category||"Plan"),completed:!!input.completed,updated_at:now()};items.push(item);save();return item;},addMany:(rows)=>{const created=[];(rows||[]).forEach(input=>{const duplicate=items.some(x=>x.date===(input.date||selectedDate)&&x.title.trim().toLowerCase()===String(input.title||"").trim().toLowerCase());if(!duplicate){const item={id:input.id||uid(),title:String(input.title||"Untitled").trim(),date:String(input.date||selectedDate),time:String(input.time||""),category:String(input.category||"Plan"),completed:false,updated_at:now()};items.push(item);created.push(item);}});if(created.length)save();return created;}};
+  window.StatusOS.Planner={formatTime,render,pull:cloudPull,push:cloudPush,list:()=>items.map(x=>({...x})),selectedDate:()=>selectedDate,selectDate:(date)=>{selectedDate=date||new Date().toISOString().slice(0,10);render();},openAdd,openEdit,toggle,postpone,remove,update:(id,patch)=>{const item=items.find(x=>x.id===id);if(!item)return null;Object.assign(item,patch,{updated_at:now()});save();return {...item};},add:(input)=>{const item={id:input.id||uid(),title:String(input.title||"Untitled").trim(),date:String(input.date||selectedDate),time:String(input.time||""),category:String(input.category||"Plan"),completed:!!input.completed,updated_at:now()};items.push(item);save();return item;},addMany:(rows)=>{const created=[];(rows||[]).forEach(input=>{const duplicate=items.some(x=>x.date===(input.date||selectedDate)&&x.title.trim().toLowerCase()===String(input.title||"").trim().toLowerCase());if(!duplicate){const item={id:input.id||uid(),title:String(input.title||"Untitled").trim(),date:String(input.date||selectedDate),time:String(input.time||""),category:String(input.category||"Plan"),completed:false,updated_at:now()};items.push(item);created.push(item);}});if(created.length)save();return created;}};
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bind,{once:true});else bind();
 })();

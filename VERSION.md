@@ -1,3 +1,3 @@
-# StatusOS v2.5.0
+# StatusOS Version
 
-Smart Task Engine
+**v2.5.1 Time & Display Polish**
