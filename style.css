@@ -524,3 +524,16 @@ input:focus,select:focus,textarea:focus{border-color:rgba(215,182,91,.65);box-sh
 
 /* StatusOS v2 Artist reliability UI */
 .artist-head-actions{display:flex;align-items:center;gap:10px}.artist-sync-badge{border:1px solid var(--line);border-radius:999px;padding:7px 10px;font-size:.78rem;font-weight:800;color:var(--muted);background:var(--panel)}.artist-sync-badge[data-status="synced"],.artist-sync-badge[data-status="saved"]{color:#9ce6b3}.artist-sync-badge[data-status="pending"]{color:#ffd27a}.artist-sync-badge[data-status="syncing"]{color:var(--gold)}.recovery-modal .modal-card{width:min(720px,calc(100vw - 24px));max-height:82vh;overflow:auto}.recovery-section{margin-top:18px}.recovery-section h3{margin-bottom:9px}.recovery-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:13px 14px;border-radius:12px;margin:8px 0;text-align:left;cursor:pointer}.recovery-row:hover{border-color:rgba(213,180,108,.6)}.recovery-row span{display:flex;flex-direction:column;gap:4px}.recovery-row small{color:var(--muted)}.recovery-row b{color:var(--gold)}
+
+/* StatusOS v2.1.1 seamless workspace restoration */
+html.statusos-booting .app{visibility:hidden;opacity:0}
+.app{transition:opacity .16s ease}
+.workspace-boot-screen{position:fixed;inset:0;z-index:998;display:none;place-items:center;padding:20px;background:radial-gradient(circle at top,rgba(213,180,108,.14),transparent 34%),#0c0c0d}
+html.statusos-booting .workspace-boot-screen{display:grid}
+.workspace-boot-card{text-align:center;width:min(100%,360px)}
+.workspace-boot-logo{margin:0 auto 18px}
+.workspace-boot-card h2{margin-bottom:18px}
+.workspace-boot-line{height:3px;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.08)}
+.workspace-boot-line span{display:block;width:42%;height:100%;border-radius:inherit;background:var(--gold);animation:statusos-restore 1s ease-in-out infinite}
+@keyframes statusos-restore{0%{transform:translateX(-120%)}100%{transform:translateX(340%)}}
+@media(prefers-reduced-motion:reduce){.app{transition:none}.workspace-boot-line span{animation:none;width:100%}}

@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const authMessage = document.getElementById("authMessage");
   const emailInput = document.getElementById("authEmail");
   const passwordInput = document.getElementById("authPassword");
+  let appStarting = false;
+  let appStarted = false;
 
   function setMessage(message, isError = false) {
     let text = "";
@@ -25,6 +27,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     authMessage.style.color = isError ? "var(--red)" : "";
   }
 
+  function finishWorkspaceBoot() {
+    document.documentElement.classList.remove("statusos-booting");
+  }
+
   function showAuth() {
     authScreen.classList.remove("hidden");
   }
@@ -33,7 +39,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     authScreen.classList.add("hidden");
   }
 
+  function waitForWorkspaceRestore() {
+    return new Promise(resolve => {
+      let finished = false;
+      const done = () => {
+        if (finished) return;
+        finished = true;
+        window.removeEventListener("statusos:workspace-restored", done);
+        resolve();
+      };
+      window.addEventListener("statusos:workspace-restored", done, { once: true });
+      setTimeout(done, 1200);
+    });
+  }
+
   async function startApp() {
+    if (appStarted || appStarting) return;
+    appStarting = true;
     hideAuth();
 
     if (typeof window.initStatusOSApp === "function") {
@@ -48,7 +70,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       await window.StatusOS.ArtistRepository.init();
     }
 
+    const restored = waitForWorkspaceRestore();
     window.dispatchEvent(new CustomEvent("statusos:app-ready"));
+    await restored;
+    finishWorkspaceBoot();
+    appStarted = true;
+    appStarting = false;
   }
 
   try {
@@ -92,6 +119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       await startApp();
     } else {
       showAuth();
+      finishWorkspaceBoot();
     }
 
     authForm.addEventListener("submit", async event => {
@@ -162,12 +190,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (session) {
         await startApp();
       } else {
+        appStarted = false;
+        appStarting = false;
         showAuth();
+        finishWorkspaceBoot();
       }
     });
   } catch (error) {
     console.error("StatusOS authentication error:", error);
     showAuth();
+    finishWorkspaceBoot();
     setMessage(error, true);
   }
 });

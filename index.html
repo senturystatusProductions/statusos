@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="statusos-booting">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -13,6 +13,14 @@
   <title>StatusOS — Your Personal Operating System</title>
 </head>
 <body>
+  <div id="workspaceBootScreen" class="workspace-boot-screen" role="status" aria-live="polite">
+    <div class="workspace-boot-card">
+      <div class="brand-mark workspace-boot-logo">SS</div>
+      <p class="eyebrow">STATUSOS</p>
+      <h2>Restoring workspace...</h2>
+      <div class="workspace-boot-line"><span></span></div>
+    </div>
+  </div>
   <div id="authScreen" class="auth-screen">
     <div class="auth-card">
       <div class="brand-mark auth-logo">SS</div>
@@ -86,7 +94,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v2.1.0 Workspace Engine</small>
+        <small id="appVersionLabel" class="version-label">v2.1.1 Seamless Restore</small>
       </div>
     </aside>
 

@@ -1,4 +1,4 @@
-/* StatusOS v2.1.0 Workspace State Engine */
+/* StatusOS v2.1.1 Workspace State Engine */
 (function () {
   const KEY = "statusos_workspace_state_v2";
   const DEFAULT_STATE = {
@@ -111,7 +111,10 @@
     restoreControls();
     window.dispatchEvent(new CustomEvent("statusos:workspace-restore", { detail: { ...state } }));
     restoreScroll();
-    setTimeout(() => { restoring = false; }, 100);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      window.dispatchEvent(new CustomEvent("statusos:workspace-restored", { detail: { ...state } }));
+      restoring = false;
+    }));
   }
 
   function bind() {

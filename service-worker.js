@@ -1,4 +1,4 @@
-const CACHE="statusos-v2.1.0";
+const CACHE="statusos-v2.1.1";
 const ASSETS=["./","./index.html","./style.css","./storage-service.js","./sync-service.js","./foundation.js","./habits-service.js","./music-service.js","./public-beta.js","./daily-briefing.js","./smart-alerts.js","./weekly-review.js","./habit-calendar.js","./ux-polish.js","./settings-service.js","./artist-repository.js","./artist-os.js","./data-protection.js","./workspace-manager.js","./app.js","./auth.js","./config.js","./manifest.json","./icon-192.png","./icon-512.png"];
 self.addEventListener("install",event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));});
 self.addEventListener("activate",event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
