@@ -139,6 +139,25 @@ function normalizeState(saved) {
   return merged;
 }
 
+
+function mergeArtistRecords(localArtists = [], cloudArtists = []) {
+  const merged = new Map();
+  [...cloudArtists, ...localArtists].forEach(item => {
+    if (!item?.id) return;
+    const current = merged.get(item.id);
+    const itemTime = new Date(item.updatedAt || item.createdAt || 0).getTime();
+    const currentTime = new Date(current?.updatedAt || current?.createdAt || 0).getTime();
+    if (!current || itemTime >= currentTime) merged.set(item.id, item);
+  });
+  return Array.from(merged.values());
+}
+
+function mergeCloudState(localState, cloudState) {
+  const merged = normalizeState({ ...localState, ...cloudState });
+  merged.artists = mergeArtistRecords(localState?.artists, cloudState?.artists);
+  return merged;
+}
+
 function loadLocal() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -223,8 +242,9 @@ async function loadCloud() {
   }
 
   if (data?.app_state && Object.keys(data.app_state).length) {
-    state = normalizeState(data.app_state);
+    state = mergeCloudState(state, data.app_state);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    await saveCloud();
     return;
   }
 
@@ -267,7 +287,7 @@ async function startRealtimeSync() {
         if (!incoming || !Object.keys(incoming).length) return;
 
         suppressCloudSave = true;
-        state = normalizeState(incoming);
+        state = mergeCloudState(state, incoming);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         renderAll();
 
@@ -1196,8 +1216,17 @@ window.copyTemplate = async id => {
   }
 };
 
+function bindMobileNavigation(){
+  const toggle=byId("mobileNavToggle"), nav=byId("nav");
+  if(!toggle||!nav||toggle.dataset.bound)return;
+  toggle.dataset.bound="1";
+  toggle.addEventListener("click",()=>{const open=!nav.classList.contains("mobile-open");nav.classList.toggle("mobile-open",open);toggle.setAttribute("aria-expanded",String(open));});
+  nav.addEventListener("click",e=>{if(e.target.closest(".nav-item")&&window.innerWidth<=980){nav.classList.remove("mobile-open");toggle.setAttribute("aria-expanded","false");}});
+}
+
 function initializeInterface() {
   bindNavigation();
+  bindMobileNavigation();
   bindModals();
   bindForms();
   bindControls();
