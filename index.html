@@ -6,7 +6,9 @@
   <meta name="theme-color" content="#0c0c0d" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Sentury OS" />
+  <meta name="apple-mobile-web-app-title" content="StatusOS" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="stylesheet" href="style.css" />
@@ -96,7 +98,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v2.5.0 Smart Task Engine</small>
+        <small id="appVersionLabel" class="version-label">v2.5.2 Data Protection & iPhone Experience</small>
       </div>
     </aside>
 
@@ -113,8 +115,9 @@
             <button id="profileMenuBtn" class="profile-menu-btn" type="button" aria-expanded="false" aria-controls="profileMenu">Profile <span aria-hidden="true">▾</span></button>
             <div id="profileMenu" class="profile-menu hidden" role="menu">
               <button type="button" data-view="settings" role="menuitem">Settings</button>
-              <button id="profileExportBtn" type="button" role="menuitem">Export Backup</button>
-              <button id="profileImportBtn" type="button" role="menuitem">Import Backup</button>
+              <button id="profileBackupNowBtn" type="button" role="menuitem">Backup Now</button>
+              <button id="profileExportBtn" type="button" role="menuitem">Export Full Backup</button>
+              <button id="profileImportBtn" type="button" role="menuitem">Import Full Backup</button>
               <button id="profileRestoreBtn" type="button" role="menuitem">Restore Recent Backup</button>
               <button id="profileArtistExportBtn" type="button" role="menuitem">Export Artist OS</button>
               <button id="profileArtistImportBtn" type="button" role="menuitem">Import Artist OS</button>
@@ -125,6 +128,7 @@
           <button id="exportBtn" class="button secondary utility-action">Export Backup</button>
           <label class="button secondary file-label utility-action">Import Backup<input id="importInput" type="file" accept=".json" hidden></label>
           <input id="artistImportInput" type="file" accept=".json" hidden>
+          <input id="fullBackupImportInput" type="file" accept=".json" hidden>
         </div>
       </header>
 
@@ -780,6 +784,14 @@
         </article>
       </section>
     </main>
+
+    <nav id="iosTabBar" class="ios-tab-bar" aria-label="Primary mobile navigation">
+      <button type="button" data-ios-view="dashboard" class="active"><span>⌂</span><small>Home</small></button>
+      <button type="button" data-ios-view="today"><span>✓</span><small>Today</small></button>
+      <button type="button" data-ios-view="planner"><span>▦</span><small>Planner</small></button>
+      <button type="button" data-ios-view="tasks"><span>☑</span><small>Tasks</small></button>
+      <button id="iosMoreBtn" type="button"><span>•••</span><small>More</small></button>
+    </nav>
   </div>
 
   <div id="modalBackdrop" class="modal-backdrop hidden"></div>
@@ -957,6 +969,7 @@
   <script src="smart-task-engine.js"></script>
   <script src="artist-os.js"></script>
   <script src="data-protection.js"></script>
+  <script src="ios-app.js"></script>
   <script src="auth.js"></script>
   <script>
     if ("serviceWorker" in navigator) {

@@ -1869,17 +1869,17 @@ function bindAssistant() {
 
     profileExport?.addEventListener('click', () => {
       closeProfile();
-      exportButton?.click();
+      window.StatusOS?.FullDataProtection?.exportAll?.();
     });
 
     profileImport?.addEventListener('click', () => {
       closeProfile();
-      importInput?.click();
+      document.getElementById('fullBackupImportInput')?.click();
     });
 
     aboutButton?.addEventListener('click', () => {
       closeProfile();
-      alert('StatusOS v1.4.1\nYour Personal Operating System\n\nSimple. Fast. Intentional.');
+      alert('StatusOS v2.5.2\nData Protection & iPhone Experience\n\nLocal-first. Protected. Built for daily use.');
     });
 
     document.querySelectorAll('.nav-group .nav-item').forEach((button) => {
