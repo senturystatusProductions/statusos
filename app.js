@@ -493,10 +493,10 @@ function bindControls() {
   }
 
   const crmSearch = byId("crmSearch");
-  if (crmSearch) crmSearch.addEventListener("input", renderCRM);
+  if (crmSearch) crmSearch.addEventListener("input", () => window.StatusOS?.ArtistOS?.render?.());
 
   const crmFilter = byId("crmFilter");
-  if (crmFilter) crmFilter.addEventListener("change", renderCRM);
+  if (crmFilter) crmFilter.addEventListener("change", () => window.StatusOS?.ArtistOS?.render?.());
 }
 
 function renderDashboardHeader() {
