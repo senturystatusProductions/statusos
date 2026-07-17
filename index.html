@@ -67,6 +67,7 @@
         <details class="nav-group">
           <summary>Productivity</summary>
           <div class="nav-group-items">
+            <button class="nav-item" data-view="planner">Calendar + Planner</button>
             <button class="nav-item" data-view="tasks">Task Engine</button>
             <button class="nav-item" data-view="habits">Habit Engine</button>
             <button class="nav-item" data-view="review">Weekly Review</button>
@@ -94,7 +95,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v2.2.1 Command Palette Fix</small>
+        <small id="appVersionLabel" class="version-label">v2.3.0 Calendar + Planner</small>
       </div>
     </aside>
 
@@ -853,6 +854,16 @@
   </dialog>
 
 
+  <dialog id="plannerModal" class="modal">
+    <form method="dialog" id="plannerForm">
+      <div class="section-head"><h3>Add to Day</h3><button class="icon-btn" value="cancel" type="button" onclick="document.getElementById('plannerModal').close()">×</button></div>
+      <label>What are you doing?<input name="title" required placeholder="Send beats to Artist A"></label>
+      <div class="form-grid"><label>Date<input id="plannerDate" name="date" type="date" required></label><label>Time<input name="time" type="time"></label></div>
+      <label>Category<select name="category"><option>Priority</option><option>Studio</option><option>Artist Follow-up</option><option>Business</option><option>Workout</option><option>Family</option><option>Plan</option></select></label>
+      <button class="button" value="default">Save to Planner</button>
+    </form>
+  </dialog>
+
 <dialog id="recoveryCenterModal" class="modal recovery-modal"><div class="modal-card"><div class="section-head"><div><p class="eyebrow">DATA PROTECTION</p><h2>Recovery Center</h2></div><button class="mini-btn" type="button" onclick="document.getElementById('recoveryCenterModal').close()">Close</button></div><p class="muted">Restore Artist OS or the rest of your StatusOS workspace from a protected snapshot.</p><div id="recoveryCenterBody"></div></div></dialog>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
@@ -869,6 +880,7 @@
   <script src="notification-manager.js"></script>
   <script src="app-services.js"></script>
   <script src="workspace-manager.js"></script>
+  <script src="planner-service.js"></script>
   <script src="app.js"></script>
   <script src="artist-repository.js"></script>
   <script src="artist-os.js"></script>
@@ -881,4 +893,19 @@
   </script>
 </body>
 </html>
+
+      <section id="planner" class="view">
+        <div class="section-head planner-head">
+          <div><p class="eyebrow">CALENDAR + DAILY PLANNER</p><h2 id="plannerSelectedDate">Today</h2></div>
+          <div class="planner-actions"><button id="plannerTodayBtn" class="button secondary" type="button">Today</button><button id="addPlannerItemBtn" class="button" type="button">Add to Day</button></div>
+        </div>
+        <article class="card planner-week-card">
+          <div class="planner-week-nav"><button id="plannerPrevWeek" class="mini-btn" type="button">← Previous</button><strong>This Week</strong><button id="plannerNextWeek" class="mini-btn" type="button">Next →</button></div>
+          <div id="plannerWeekStrip" class="planner-week-strip"></div>
+        </article>
+        <article class="card planner-day-card">
+          <div class="section-head"><div><p class="eyebrow">DAY PLAN</p><h3>Your schedule</h3></div><span id="plannerDayCount" class="status-pill">0 open</span></div>
+          <div id="plannerTimeline" class="planner-timeline"></div>
+        </article>
+      </section>
 
