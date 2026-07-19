@@ -75,7 +75,7 @@
             <button class="nav-item" data-view="habits">Habit Engine</button>
             <button class="nav-item" data-view="review">Weekly Review</button>
             <button class="nav-item" data-view="goals">Goals</button>
-            <button class="nav-item" data-view="reset">Daily Reset</button>
+            <button class="nav-item" data-view="reset">Success OS</button>
           </div>
         </details>
 
@@ -98,7 +98,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v2.8.1 iPhone & Artist OS Fix</small>
+        <small id="appVersionLabel" class="version-label">v2.9.0 Success OS</small>
       </div>
     </aside>
 
@@ -143,6 +143,15 @@
             <strong id="dashboardDay"></strong>
             <span id="dashboardFullDate"></span>
           </div>
+        </article>
+
+        <article class="card success-launch-card">
+          <div>
+            <p class="eyebrow">SUCCESS OS</p>
+            <h3 id="successLaunchTitle">Start with purpose</h3>
+            <p id="successLaunchText" class="muted">Complete your morning ritual before the day gets noisy.</p>
+          </div>
+          <button class="button" type="button" data-view="reset" id="dashboardSuccessBtn">Start My Day</button>
         </article>
 
         <article class="card daily-briefing-card" aria-labelledby="dailyBriefingTitle">
@@ -619,39 +628,57 @@
         </div>
       </section>
 
-      <section id="reset" class="view">
-        <div class="section-head mindset-head">
-          <div><p class="eyebrow">THINK AND GROW RICH</p><h2>Daily Mindset</h2><p class="muted">Train your thoughts, purpose, faith, and action every morning and night.</p></div>
+      <section id="reset" class="view success-os-view">
+        <div class="section-head success-os-head">
+          <div><p class="eyebrow">PURPOSE • FAITH • ACTION</p><h2>Success OS</h2><p class="muted">A practical daily system inspired by the success principles you have been studying.</p></div>
           <span id="mindsetStreak" class="status-pill">0 day streak</span>
         </div>
 
-        <div class="mindset-switch" role="tablist">
-          <button id="morningMindsetTab" class="active" type="button">Morning</button>
-          <button id="nightMindsetTab" type="button">Night</button>
+        <div class="success-tabs" role="tablist" aria-label="Success OS sections">
+          <button data-success-tab="morning" class="active" type="button">Morning</button>
+          <button data-success-tab="purpose" type="button">Purpose</button>
+          <button data-success-tab="identity" type="button">Identity</button>
+          <button data-success-tab="night" type="button">Night</button>
+          <button data-success-tab="progress" type="button">Progress</button>
         </div>
 
-        <article id="morningMindsetPanel" class="card mindset-card">
-          <div class="mindset-progress"><span id="morningMindsetProgress">0 of 5 complete</span><div><i id="morningMindsetBar"></i></div></div>
-          <p class="eyebrow">MORNING ROUTINE · 5 MINUTES</p><h3>Choose your thoughts before the day chooses them for you.</h3>
-          <div class="mindset-checklist">
-            <label><input data-mindset-check="purpose" type="checkbox"><span><strong>Read your definite purpose</strong><small id="mindsetPurposeText">I am building Sentury Status into a successful, respected music business that creates freedom for my family and real value for artists.</small></span></label>
-            <label><input data-mindset-check="faith" type="checkbox"><span><strong>Speak with faith</strong><small>I believe I can achieve this purpose. I will act today as the person capable of achieving it.</small></span></label>
-            <label><input data-mindset-check="visualize" type="checkbox"><span><strong>See the result</strong><small>Close your eyes for 60 seconds. See the work completed, the clients responding, and the business growing.</small></span></label>
-            <label><input data-mindset-check="gratitude" type="checkbox"><span><strong>Name three things you appreciate</strong><input id="morningGratitude" placeholder="Family, health, opportunities..."></span></label>
-            <label><input data-mindset-check="action" type="checkbox"><span><strong>Choose one action that proves your desire</strong><input id="mindsetAction" placeholder="The most important action I will take today..."></span></label>
-          </div>
-          <button id="completeMorningMindset" class="button" type="button">Complete Morning Routine</button><p id="morningMindsetStatus" class="small muted"></p>
-        </article>
+        <section data-success-panel="morning" class="success-panel">
+          <article class="card success-hero-card">
+            <div><p class="eyebrow">MORNING SUCCESS RITUAL</p><h3>Choose your thoughts before the day chooses them for you.</h3><p class="muted">Five focused minutes. Read, believe, visualize, appreciate, then act.</p></div>
+            <div class="success-score-ring"><strong id="morningScore">0%</strong><span>complete</span></div>
+          </article>
+          <article class="card mindset-card">
+            <div class="mindset-progress"><span id="morningMindsetProgress">0 of 6 complete</span><div><i id="morningMindsetBar"></i></div></div>
+            <div class="mindset-checklist">
+              <label><input data-mindset-check="purpose" type="checkbox"><span><strong>1. Read your definite chief aim aloud</strong><small id="mindsetPurposeText"></small></span></label>
+              <label><input data-mindset-check="identity" type="checkbox"><span><strong>2. Read who you are becoming</strong><small id="mindsetIdentityPreview"></small></span></label>
+              <label><input data-mindset-check="faith" type="checkbox"><span><strong>3. Speak with faith</strong><small>I believe this goal is possible, and I will prove that belief through disciplined action today.</small></span></label>
+              <label><input data-mindset-check="visualize" type="checkbox"><span><strong>4. Visualize the completed result</strong><small>Picture the work finished, the right clients responding, your family benefiting, and yourself acting with confidence.</small><button id="startVisualizationBtn" class="mini-btn" type="button">Start 60-second timer</button><strong id="visualizationTimer" class="visualization-timer">1:00</strong></span></label>
+              <label><input data-mindset-check="gratitude" type="checkbox"><span><strong>5. Name three things you appreciate</strong><textarea id="morningGratitude" placeholder="1. Family
+2. Health
+3. Opportunity"></textarea></span></label>
+              <label><input data-mindset-check="action" type="checkbox"><span><strong>6. Choose today's major win</strong><input id="mindsetAction" placeholder="The one action that moves me closest to my purpose..."></span></label>
+            </div>
+            <article class="daily-principle-card"><span class="eyebrow">TODAY'S PRINCIPLE</span><h3 id="dailyPrincipleTitle"></h3><p id="dailyPrincipleLesson"></p><strong id="dailyPrincipleAction"></strong></article>
+            <div class="success-actions"><button id="completeMorningMindset" class="button" type="button">Complete Morning Ritual</button><button id="openPlannerAfterRitual" class="button secondary" type="button">Open Today's Planner</button></div><p id="morningMindsetStatus" class="small muted"></p>
+          </article>
+        </section>
 
-        <article id="nightMindsetPanel" class="card mindset-card hidden">
-          <p class="eyebrow">NIGHT ROUTINE · 5 MINUTES</p><h3>Teach your mind what to carry into tomorrow.</h3>
-          <label>Three wins<textarea id="eveningWins" placeholder="What went well today?"></textarea></label>
-          <label>One lesson<textarea id="eveningLesson" placeholder="What did today teach you?"></textarea></label>
-          <label>Evidence that you are moving forward<textarea id="eveningEvidence" placeholder="A reply, completed task, new idea, discipline shown..."></textarea></label>
-          <label>Tomorrow's first priority<input id="tomorrowPriority" placeholder="What comes first tomorrow?"></label>
-          <div class="night-suggestion"><strong>Before sleep</strong><span>Read your purpose once. Picture tomorrow's first priority completed. Let your final thought be expectation, not worry.</span></div>
-          <button id="saveEveningResetBtn" class="button" type="button">Complete Night Routine</button><p id="eveningResetStatus" class="small muted"></p>
-        </article>
+        <section data-success-panel="purpose" class="success-panel hidden">
+          <article class="card purpose-editor-card"><p class="eyebrow">DEFINITE CHIEF AIM</p><h3>Give your mind one clear destination.</h3><p class="muted">Write this in your own words. Include what you intend to achieve, why it matters, and the consistent value you will give in return.</p><label>My purpose<textarea id="successPurposeInput" rows="7"></textarea></label><label>Why this matters<textarea id="successWhyInput" rows="4" placeholder="The deeper reason this goal matters to me and my family..."></textarea></label><button id="saveSuccessPurpose" class="button" type="button">Save Purpose</button><p id="successPurposeStatus" class="small muted"></p></article>
+        </section>
+
+        <section data-success-panel="identity" class="success-panel hidden">
+          <article class="card"><p class="eyebrow">IDENTITY</p><h3>Act like the person capable of the result.</h3><p class="muted">These statements appear in your morning ritual. Keep them believable, personal, and action-based.</p><div id="identityList" class="identity-list"></div><div class="identity-add-row"><input id="newIdentityInput" placeholder="I am becoming..."><button id="addIdentityBtn" class="button" type="button">Add</button></div></article>
+        </section>
+
+        <section data-success-panel="night" class="success-panel hidden">
+          <article class="card mindset-card"><p class="eyebrow">EVENING SUCCESS REVIEW</p><h3>End with evidence, learning, and expectation.</h3><label>Biggest win<textarea id="eveningWins" placeholder="What did I accomplish today?"></textarea></label><label>Biggest lesson<textarea id="eveningLesson" placeholder="What did today teach me?"></textarea></label><label>Evidence I am moving forward<textarea id="eveningEvidence" placeholder="A completed task, reply, sale, idea, or disciplined choice..."></textarea></label><label>Tomorrow's first action<input id="tomorrowPriority" placeholder="What will I do first tomorrow?"></label><div class="night-suggestion"><strong>Before sleep</strong><span>Read your purpose once. Picture tomorrow's first action completed. Let your final thought be expectation, not worry.</span></div><button id="saveEveningResetBtn" class="button" type="button">Complete Night Review</button><p id="eveningResetStatus" class="small muted"></p></article>
+        </section>
+
+        <section data-success-panel="progress" class="success-panel hidden">
+          <div class="success-progress-grid"><article class="card success-metric"><span>Current streak</span><strong id="successCurrentStreak">0</strong><small>complete days</small></article><article class="card success-metric"><span>Morning rituals</span><strong id="successMorningCount">0</strong><small>last 30 days</small></article><article class="card success-metric"><span>Night reviews</span><strong id="successNightCount">0</strong><small>last 30 days</small></article><article class="card success-metric"><span>Consistency</span><strong id="successConsistency">0%</strong><small>last 30 days</small></article></div><article class="card"><p class="eyebrow">RECENT PROGRESS</p><h3>Your last seven days</h3><div id="successHistory" class="success-history"></div></article>
+        </section>
       </section>
 
       <section id="settings" class="view">
