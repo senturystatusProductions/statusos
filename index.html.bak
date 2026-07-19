@@ -620,38 +620,41 @@
       </section>
 
       <section id="reset" class="view">
-        <div class="section-head mindset-head">
-          <div><p class="eyebrow">THINK AND GROW RICH</p><h2>Daily Mindset</h2><p class="muted">Train your thoughts, purpose, faith, and action every morning and night.</p></div>
-          <span id="mindsetStreak" class="status-pill">0 day streak</span>
-        </div>
-
-        <div class="mindset-switch" role="tablist">
-          <button id="morningMindsetTab" class="active" type="button">Morning</button>
-          <button id="nightMindsetTab" type="button">Night</button>
-        </div>
-
-        <article id="morningMindsetPanel" class="card mindset-card">
-          <div class="mindset-progress"><span id="morningMindsetProgress">0 of 5 complete</span><div><i id="morningMindsetBar"></i></div></div>
-          <p class="eyebrow">MORNING ROUTINE · 5 MINUTES</p><h3>Choose your thoughts before the day chooses them for you.</h3>
-          <div class="mindset-checklist">
-            <label><input data-mindset-check="purpose" type="checkbox"><span><strong>Read your definite purpose</strong><small id="mindsetPurposeText">I am building Sentury Status into a successful, respected music business that creates freedom for my family and real value for artists.</small></span></label>
-            <label><input data-mindset-check="faith" type="checkbox"><span><strong>Speak with faith</strong><small>I believe I can achieve this purpose. I will act today as the person capable of achieving it.</small></span></label>
-            <label><input data-mindset-check="visualize" type="checkbox"><span><strong>See the result</strong><small>Close your eyes for 60 seconds. See the work completed, the clients responding, and the business growing.</small></span></label>
-            <label><input data-mindset-check="gratitude" type="checkbox"><span><strong>Name three things you appreciate</strong><input id="morningGratitude" placeholder="Family, health, opportunities..."></span></label>
-            <label><input data-mindset-check="action" type="checkbox"><span><strong>Choose one action that proves your desire</strong><input id="mindsetAction" placeholder="The most important action I will take today..."></span></label>
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Mind + Direction</p>
+            <h2>Daily Reset</h2>
           </div>
-          <button id="completeMorningMindset" class="button" type="button">Complete Morning Routine</button><p id="morningMindsetStatus" class="small muted"></p>
-        </article>
+        </div>
 
-        <article id="nightMindsetPanel" class="card mindset-card hidden">
-          <p class="eyebrow">NIGHT ROUTINE · 5 MINUTES</p><h3>Teach your mind what to carry into tomorrow.</h3>
-          <label>Three wins<textarea id="eveningWins" placeholder="What went well today?"></textarea></label>
-          <label>One lesson<textarea id="eveningLesson" placeholder="What did today teach you?"></textarea></label>
-          <label>Evidence that you are moving forward<textarea id="eveningEvidence" placeholder="A reply, completed task, new idea, discipline shown..."></textarea></label>
-          <label>Tomorrow's first priority<input id="tomorrowPriority" placeholder="What comes first tomorrow?"></label>
-          <div class="night-suggestion"><strong>Before sleep</strong><span>Read your purpose once. Picture tomorrow's first priority completed. Let your final thought be expectation, not worry.</span></div>
-          <button id="saveEveningResetBtn" class="button" type="button">Complete Night Routine</button><p id="eveningResetStatus" class="small muted"></p>
-        </article>
+        <div class="reset-grid">
+          <article class="card reset-card">
+            <p class="eyebrow">Morning Reset</p>
+            <h3>Set your mind before you work</h3>
+            <ol class="reset-steps">
+              <li><strong>Be still.</strong><span>Sit quietly and take five slow breaths.</span></li>
+              <li><strong>Visualize.</strong><span>See yourself finishing today's Top 3.</span></li>
+              <li><strong>Feel grateful.</strong><span>Name three things you appreciate.</span></li>
+              <li><strong>Read your purpose.</strong><span>Build Sentury Status. Create freedom. Help artists.</span></li>
+            </ol>
+            <label class="reset-check">
+              <input id="morningResetDone" type="checkbox">
+              <span>Morning reset complete</span>
+            </label>
+            <button id="startMyDayBtn" class="button">Start My Day</button>
+          </article>
+
+          <article class="card reset-card">
+            <p class="eyebrow">Evening Reset</p>
+            <h3>Close the day with intention</h3>
+            <label>Three wins<textarea id="eveningWins" placeholder="What went well today?"></textarea></label>
+            <label>One lesson<textarea id="eveningLesson" placeholder="What did today teach you?"></textarea></label>
+            <label>Tomorrow's first priority<input id="tomorrowPriority" placeholder="What comes first tomorrow?"></label>
+            <p class="muted small">Take 30 seconds to picture tomorrow going smoothly.</p>
+            <button id="saveEveningResetBtn" class="button">Save Evening Reset</button>
+            <p id="eveningResetStatus" class="small muted"></p>
+          </article>
+        </div>
       </section>
 
       <section id="settings" class="view">
@@ -1021,7 +1024,6 @@
   <script src="ios-app.js"></script>
   <script src="ai-inbox.js"></script>
   <script src="auth.js"></script>
-  <script src="mindset-routine.js"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
