@@ -1,5 +1,5 @@
 (function () {
-  const VERSION = "2.9.1";
+  const VERSION = "3.0.0";
   const CODENAME = "Daily Use Polish";
   const BUILD_DATE = "2026-07-20";
   const LOG_KEY = "statusos_diagnostic_log_v1";

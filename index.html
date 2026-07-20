@@ -98,7 +98,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v2.9.1 Daily Use Polish</small>
+        <small id="appVersionLabel" class="version-label">v3.0.0 Project Command Center</small>
       </div>
     </aside>
 
@@ -559,12 +559,14 @@
         <div class="kanban" id="salesBoard"></div>
       </section>
 
-      <section id="projects" class="view">
+      <section id="projects" class="view project-command-view">
         <div class="section-head">
-          <div><p class="eyebrow">Operations</p><h2>Projects</h2></div>
+          <div><p class="eyebrow">PROJECT COMMAND CENTER</p><h2>Projects</h2><p class="muted">One workspace for deadlines, money, tasks, deliverables, notes, and next actions.</p></div>
           <button class="button" data-open="projectModal">Add Project</button>
         </div>
+        <div id="projectCommandSummary" class="project-command-summary"></div>
         <div id="projectList" class="project-grid"></div>
+        <div id="projectWorkspace" class="project-workspace hidden"></div>
       </section>
 
       <section id="revenue" class="view">
@@ -916,15 +918,16 @@
     </form>
   </dialog>
 
-  <dialog id="projectModal" class="modal">
+  <dialog id="projectModal" class="modal project-modal">
     <form method="dialog" id="projectForm">
-      <div class="section-head"><h3>Add Project</h3><button class="icon-btn" value="cancel">×</button></div>
-      <label>Project Name<input name="name" required></label>
-      <label>Type<select name="type"><option>Beat Release</option><option>Mixing</option><option>Custom Beat</option><option>Sound Kit</option><option>Instrumental CD</option><option>Website</option><option>Other</option></select></label>
-      <label>Deadline<input name="deadline" type="date"></label>
-      <label>Progress<input name="progress" type="number" min="0" max="100" value="0"></label>
-      <label>Next Step<input name="nextStep"></label>
-      <button class="button" value="default">Save Project</button>
+      <div class="section-head"><div><p class="eyebrow">PROJECT COMMAND CENTER</p><h3>Add Project</h3></div><button class="icon-btn" value="cancel">×</button></div>
+      <label>Project Name<input name="name" required placeholder="Double Barrel"></label>
+      <div class="form-grid"><label>Type<select name="type"><option>Album Production</option><option>Beat Release</option><option>Mixing</option><option>Custom Beat</option><option>Sound Kit</option><option>Instrumental CD</option><option>Website</option><option>Other</option></select></label><label>Status<select name="status"><option>Planning</option><option selected>In Progress</option><option>Waiting</option><option>Review</option><option>Complete</option><option>On Hold</option></select></label></div>
+      <div class="form-grid"><label>Artist / Client<input name="artist" placeholder="Lu"></label><label>Deadline<input name="deadline" type="date"></label></div>
+      <div class="form-grid"><label>Project Price<input name="budget" type="number" min="0" step="0.01" value="0"></label><label>Amount Paid<input name="paid" type="number" min="0" step="0.01" value="0"></label></div>
+      <label>Next Action<input name="nextStep" placeholder="Finish Beat 5"></label>
+      <label>Notes<textarea name="notes" rows="3" placeholder="Important project details..."></textarea></label>
+      <button class="button" value="default">Create Project</button>
     </form>
   </dialog>
 
@@ -1058,6 +1061,7 @@
   <script src="auth.js"></script>
   <script src="mindset-routine.js"></script>
   <script src="daily-use-polish.js"></script>
+  <script src="project-command-center.js"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
