@@ -1,5 +1,7 @@
-# StatusOS
+# StatusOS Version
 
-v3.1.1
+v3.1.5
 
-Unified Timeline Version Fix
+Design System & UX Polish
+
+Build date: 2026-07-20
