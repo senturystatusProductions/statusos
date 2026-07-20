@@ -98,7 +98,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v2.9.0 Success OS</small>
+        <small id="appVersionLabel" class="version-label">v2.9.1 Daily Use Polish</small>
       </div>
     </aside>
 
@@ -696,6 +696,14 @@
           </div>
           <p id="profileSettingsStatus" class="small muted"></p>
         </div>
+        <div class="card report-problem-card">
+          <p class="eyebrow">SUPPORT</p>
+          <h3>Report a Problem</h3>
+          <p class="muted">Create a private diagnostic report you can attach when telling me what went wrong. It does not include passwords or API keys.</p>
+          <label>What happened?<textarea id="problemDescription" rows="4" placeholder="Example: I tapped Save, refreshed the app, and the entry disappeared."></textarea></label>
+          <button id="exportProblemReportBtn" class="button secondary" type="button">Download Problem Report</button>
+          <p id="problemReportStatus" class="small muted"></p>
+        </div>
         <div class="card danger-zone">
           <h3>Reset All App Data</h3>
           <p class="muted">This clears all artists, projects, content, revenue, and settings on this device.</p>
@@ -1049,6 +1057,7 @@
   <script src="ai-inbox.js"></script>
   <script src="auth.js"></script>
   <script src="mindset-routine.js"></script>
+  <script src="daily-use-polish.js"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));

@@ -1,7 +1,7 @@
 (function () {
-  const VERSION = "2.8.1";
-  const CODENAME = "iPhone & Artist OS Fix";
-  const BUILD_DATE = "2026-07-17";
+  const VERSION = "2.9.1";
+  const CODENAME = "Daily Use Polish";
+  const BUILD_DATE = "2026-07-20";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;
 
