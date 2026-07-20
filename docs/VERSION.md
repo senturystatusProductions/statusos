@@ -1,4 +1,3 @@
-# StatusOS Version
+StatusOS v3.1.0
 
-**v2.7.0**  
-Codename: **Artist CRM**
+Unified Timeline

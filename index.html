@@ -87,6 +87,7 @@
             <button class="nav-item" data-view="content">Content Planner</button>
             <button class="nav-item" data-view="sales">Sales Pipeline</button>
             <button class="nav-item" data-view="projects">Projects</button>
+            <button class="nav-item" data-view="timeline">Timeline</button>
             <button class="nav-item" data-view="revenue">Revenue</button>
             <button class="nav-item" data-view="templates">DM Templates</button>
           </div>
@@ -98,7 +99,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v3.0.0 Project Command Center</small>
+        <small id="appVersionLabel" class="version-label">v3.1.0 Unified Timeline</small>
       </div>
     </aside>
 
@@ -567,6 +568,28 @@
         <div id="projectCommandSummary" class="project-command-summary"></div>
         <div id="projectList" class="project-grid"></div>
         <div id="projectWorkspace" class="project-workspace hidden"></div>
+      </section>
+
+
+      <section id="timeline" class="view timeline-view">
+        <div class="section-head">
+          <div><p class="eyebrow">UNIFIED TIMELINE</p><h2>Your Business Memory</h2><p class="muted">Artists, projects, tasks, payments, planner activity, and Success OS in one chronological history.</p></div>
+          <button id="addTimelineNoteBtn" class="button" type="button">Add Note</button>
+        </div>
+        <div class="timeline-summary">
+          <article class="card"><span>Today</span><strong id="timelineTodayCount">0</strong></article>
+          <article class="card"><span>Last 7 Days</span><strong id="timelineWeekCount">0</strong></article>
+          <article class="card"><span>Revenue This Week</span><strong id="timelineRevenueCount">$0</strong></article>
+        </div>
+        <div class="card timeline-toolbar">
+          <input id="timelineSearch" type="search" placeholder="Search artists, projects, payments or notes...">
+          <select id="timelineRange"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="all">All time</option></select>
+        </div>
+        <div class="timeline-filters" role="tablist" aria-label="Timeline filters">
+          <button class="active" data-timeline-filter="all">Everything</button><button data-timeline-filter="artists">Artists</button><button data-timeline-filter="projects">Projects</button><button data-timeline-filter="tasks">Tasks</button><button data-timeline-filter="finance">Payments</button><button data-timeline-filter="planner">Planner</button><button data-timeline-filter="success">Success OS</button><button data-timeline-filter="notes">Notes</button>
+        </div>
+        <div class="timeline-result-head"><span id="timelineResultCount" class="muted small">0 events</span></div>
+        <div id="unifiedTimelineFeed" class="unified-timeline-feed"></div>
       </section>
 
       <section id="revenue" class="view">
@@ -1062,6 +1085,7 @@
   <script src="mindset-routine.js"></script>
   <script src="daily-use-polish.js"></script>
   <script src="project-command-center.js"></script>
+  <script src="unified-timeline.js"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
