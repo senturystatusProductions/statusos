@@ -1,5 +1,7 @@
 # StatusOS Version
 
-**v3.3.0 — Executive Dashboard**
+**Version:** 3.3.1  
+**Codename:** Artist Quick Log & Contact Tracker  
+**Release type:** Daily-use stability update
 
-Build date: 2026-07-20
+Adds natural-language artist logging, editable timeline entries, contact/reply tracking, and follow-up routing.

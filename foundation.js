@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "3.3.0";
-  const CODENAME = "Executive Dashboard";
+  const VERSION = "3.3.1";
+  const CODENAME = "Artist Quick Log & Contact Tracker";
   const BUILD_DATE = "2026-07-20";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

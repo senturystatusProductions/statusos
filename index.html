@@ -99,7 +99,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v3.3.0 Executive Dashboard</small>
+        <small id="appVersionLabel" class="version-label">v3.3.1 Artist Quick Log & Contact Tracker</small>
       </div>
     </aside>
 
@@ -553,6 +553,26 @@
   <div class="section-head">
     <div><p class="eyebrow">RELATIONSHIP ENGINE</p><h2>Artist OS</h2></div>
     <div class="artist-head-actions"><span id="artistSyncBadge" class="artist-sync-badge">Saved locally</span><button class="button" data-open="artistModal">Add Artist</button></div>
+  </div>
+  <article class="card artist-quick-log-card">
+    <div class="section-head"><div><p class="eyebrow">QUICK LOG</p><h3>Tell Artist OS what happened</h3></div><span class="muted small">Your original note is preserved</span></div>
+    <form id="artistQuickLogForm" class="artist-quick-log-form">
+      <textarea id="artistQuickLogText" rows="3" required placeholder="Example: Contacted This Is Grabbz via Instagram. They were extremely happy, asked if I mix and master, and said we will do lots of business soon."></textarea>
+      <div class="artist-quick-log-controls">
+        <label>Artist (optional)<select id="artistQuickLogArtist"><option value="">Auto-detect artist</option></select></label>
+        <label>Follow up<select id="artistQuickLogFollowup"><option value="3">In 3 days</option><option value="1">Tomorrow</option><option value="7">In 1 week</option><option value="0">No follow-up</option></select></label>
+        <button class="button" type="submit">Add to Artist OS</button>
+      </div>
+      <p id="artistQuickLogResult" class="muted small" aria-live="polite"></p>
+    </form>
+  </article>
+  <div class="artist-contact-tracker" id="artistContactTracker">
+    <button type="button" data-contact-filter="today">Contacted Today <strong id="artistContactedToday">0</strong></button>
+    <button type="button" data-contact-filter="waiting">Waiting for Reply <strong id="artistWaitingCount">0</strong></button>
+    <button type="button" data-contact-filter="replied">Replied <strong id="artistRepliedCount">0</strong></button>
+    <button type="button" data-contact-filter="interested">Interested <strong id="artistOpportunityCount">0</strong></button>
+    <button type="button" data-contact-filter="followup">Follow Up <strong id="artistTrackerFollowupCount">0</strong></button>
+    <button type="button" data-contact-filter="all" class="active">All Artists</button>
   </div>
   <section class="artist-stats-grid">
     <article class="card artist-stat"><span>Total Artists</span><strong id="artistTotalCount">0</strong><small>Your relationship network</small></article>
