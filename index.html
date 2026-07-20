@@ -99,7 +99,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v3.1.5 Design System & UX Polish</small>
+        <small id="appVersionLabel" class="version-label">v3.3.0 Executive Dashboard</small>
       </div>
     </aside>
 
@@ -145,6 +145,41 @@
             <span id="dashboardFullDate"></span>
           </div>
         </article>
+
+        <section id="executiveDashboard" class="executive-dashboard" aria-label="Executive Dashboard">
+          <article class="card executive-hero">
+            <div class="executive-hero-copy">
+              <p class="eyebrow">EXECUTIVE DASHBOARD</p>
+              <h2 id="executiveGreeting">Good morning, Sam.</h2>
+              <span>Today’s focus</span>
+              <h3 id="executiveFocusTitle">Preparing your highest-impact action...</h3>
+              <p id="executiveFocusReason" class="muted">StatusOS is ranking today’s work.</p>
+              <div class="executive-hero-actions">
+                <button id="executiveLaunchBtn" class="button" type="button">Launch Work</button>
+                <button id="executivePlanBtn" class="button secondary" type="button">Open Today</button>
+              </div>
+            </div>
+            <div class="executive-day-score">
+              <span>Today’s progress</span><strong id="executiveProgress">0%</strong>
+              <div class="mission-progress-track"><i id="executiveProgressBar"></i></div>
+              <button id="executiveSuccessBtn" type="button"><span>Morning Success OS</span><b id="executiveRitualStatus">Start</b></button>
+            </div>
+          </article>
+          <div class="executive-metrics">
+            <article class="card"><span>Revenue this month</span><strong id="executiveRevenue">$0</strong></article>
+            <article class="card"><span>Outstanding</span><strong id="executiveOutstanding">$0</strong></article>
+            <article class="card"><span>Projects due soon</span><strong id="executiveProjectsDue">0</strong></article>
+            <article class="card"><span>Artists waiting</span><strong id="executiveArtistsWaiting">0</strong></article>
+          </div>
+          <div class="executive-main-grid">
+            <article class="card executive-priority-card"><div class="section-head"><div><p class="eyebrow">RANKED PRIORITIES</p><h3>Highest-impact actions</h3></div></div><div id="executivePriorityList"></div></article>
+            <article class="card"><div class="section-head"><div><p class="eyebrow">TODAY</p><h3>Your schedule</h3></div><button class="text-button" data-view="planner">Open Planner</button></div><div id="executiveSchedule"></div></article>
+          </div>
+          <div class="executive-support-grid">
+            <article class="card"><div class="section-head"><div><p class="eyebrow">PROJECTS</p><h3>Needs attention</h3></div><button class="text-button" data-view="projects">All Projects</button></div><div id="executiveProjects"></div></article>
+            <article class="card"><div class="section-head"><div><p class="eyebrow">ARTISTS</p><h3>Waiting on you</h3></div><button class="text-button" data-view="artists">Artist OS</button></div><div id="executiveArtists"></div></article>
+          </div>
+        </section>
 
         <article class="card success-launch-card">
           <div>
@@ -1096,6 +1131,7 @@
   <script src="project-command-center.js"></script>
   <script src="unified-timeline.js"></script>
   <script src="finance-os.js"></script>
+  <script src="executive-dashboard.js"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));

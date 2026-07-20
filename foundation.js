@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "3.2.0";
-  const CODENAME = "Finance OS";
+  const VERSION = "3.3.0";
+  const CODENAME = "Executive Dashboard";
   const BUILD_DATE = "2026-07-20";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;
