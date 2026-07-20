@@ -592,23 +592,28 @@
         <div id="unifiedTimelineFeed" class="unified-timeline-feed"></div>
       </section>
 
-      <section id="revenue" class="view">
-        <div class="section-head">
-          <div><p class="eyebrow">Money</p><h2>Revenue Tracker</h2></div>
-          <button class="button" data-open="revenueModal">Add Revenue</button>
+      <section id="revenue" class="view finance-os-view">
+        <div class="section-head finance-head">
+          <div><p class="eyebrow">MONEY COMMAND CENTER</p><h2>Finance OS</h2><p class="muted">Revenue, expenses, balances and invoices in one place.</p></div>
+          <div class="finance-actions"><button class="button secondary" data-open="expenseModal">Add Expense</button><button class="button secondary" data-open="invoiceModal">New Invoice</button><button class="button" data-open="revenueModal">Add Income</button></div>
         </div>
-        <div class="stats-grid">
-          <article class="stat card"><span>Today</span><strong id="revToday">$0</strong></article>
-          <article class="stat card"><span>This Week</span><strong id="revWeek">$0</strong></article>
-          <article class="stat card"><span>This Month</span><strong id="revMonth">$0</strong></article>
-          <article class="stat card"><span>All Time</span><strong id="revAll">$0</strong></article>
+        <div class="finance-summary-grid">
+          <article class="card finance-kpi"><span>Revenue This Month</span><strong id="financeMonthRevenue">$0</strong><small id="financeRevenueChange">Current month</small></article>
+          <article class="card finance-kpi"><span>Expenses This Month</span><strong id="financeMonthExpenses">$0</strong><small>Business spending</small></article>
+          <article class="card finance-kpi"><span>Monthly Profit</span><strong id="financeMonthProfit">$0</strong><small>Revenue minus expenses</small></article>
+          <article class="card finance-kpi"><span>Outstanding</span><strong id="financeOutstanding">$0</strong><small>Projects and invoices</small></article>
         </div>
-        <div class="card table-wrap">
-          <table>
-            <thead><tr><th>Date</th><th>Source</th><th>Client/Product</th><th>Amount</th><th></th></tr></thead>
-            <tbody id="revenueTable"></tbody>
-          </table>
-        </div>
+        <div class="finance-tabs" role="tablist"><button class="active" data-finance-tab="overview">Overview</button><button data-finance-tab="income">Income</button><button data-finance-tab="expenses">Expenses</button><button data-finance-tab="invoices">Invoices</button><button data-finance-tab="clients">Clients</button><button data-finance-tab="reports">Reports</button></div>
+        <section class="finance-panel" data-finance-panel="overview">
+          <div class="finance-overview-grid"><article class="card"><div class="section-head"><h3>Cash Flow</h3><span class="status-pill">Last 6 months</span></div><div id="financeCashFlow" class="finance-bars"></div></article><article class="card"><div class="section-head"><h3>Revenue by Service</h3></div><div id="financeServiceMix" class="finance-list"></div></article></div>
+          <article class="card"><div class="section-head"><h3>Needs Attention</h3></div><div id="financeAttention" class="finance-list"></div></article>
+        </section>
+        <section class="finance-panel hidden" data-finance-panel="income"><div class="card table-wrap"><table><thead><tr><th>Date</th><th>Source</th><th>Client / Product</th><th>Amount</th><th></th></tr></thead><tbody id="revenueTable"></tbody></table></div></section>
+        <section class="finance-panel hidden" data-finance-panel="expenses"><div class="card table-wrap"><table><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th></th></tr></thead><tbody id="expenseTable"></tbody></table></div></section>
+        <section class="finance-panel hidden" data-finance-panel="invoices"><div id="invoiceList" class="finance-card-list"></div></section>
+        <section class="finance-panel hidden" data-finance-panel="clients"><div id="clientBalanceList" class="finance-card-list"></div></section>
+        <section class="finance-panel hidden" data-finance-panel="reports"><article class="card"><div class="section-head"><div><h3>Finance Report</h3><p class="muted">A clean summary for bookkeeping and planning.</p></div><button id="exportFinanceCsv" class="button secondary" type="button">Export CSV</button></div><div id="financeReportSummary" class="finance-report-grid"></div></article></section>
+        <div class="legacy-finance-metrics" aria-hidden="true"><span id="revToday"></span><span id="revWeek"></span><span id="revMonth"></span><span id="revAll"></span></div>
       </section>
 
       <section id="goals" class="view">
@@ -965,6 +970,10 @@
     </form>
   </dialog>
 
+  <dialog id="expenseModal" class="modal"><form method="dialog" id="expenseForm"><div class="section-head"><div><p class="eyebrow">FINANCE OS</p><h3>Add Expense</h3></div><button class="icon-btn" value="cancel">×</button></div><label>Date<input name="date" type="date" required></label><label>Category<select name="category"><option>Software & Plugins</option><option>Subscriptions</option><option>Studio Equipment</option><option>Marketing</option><option>Artwork & Contractors</option><option>Travel</option><option>Education</option><option>Office</option><option>Other</option></select></label><label>Description<input name="description" required placeholder="Monthly subscription, plugin, artwork..."></label><label>Amount<input name="amount" type="number" min="0" step="0.01" required></label><button class="button" value="default">Save Expense</button></form></dialog>
+
+  <dialog id="invoiceModal" class="modal"><form method="dialog" id="invoiceForm"><div class="section-head"><div><p class="eyebrow">FINANCE OS</p><h3>Create Invoice</h3></div><button class="icon-btn" value="cancel">×</button></div><div class="form-grid"><label>Client<input name="client" required></label><label>Project<input name="project"></label></div><label>Description<input name="description" required placeholder="Album production deposit"></label><div class="form-grid"><label>Amount<input name="amount" type="number" min="0" step="0.01" required></label><label>Due Date<input name="dueDate" type="date" required></label></div><label>Status<select name="status"><option>Draft</option><option selected>Sent</option><option>Partially Paid</option><option>Paid</option><option>Overdue</option></select></label><button class="button" value="default">Create Invoice</button></form></dialog>
+
   <dialog id="habitLogModal" class="modal">
     <form method="dialog" id="habitLogForm">
       <div class="section-head"><h3>Log Habit Date</h3><button class="icon-btn" value="cancel" aria-label="Close">×</button></div>
@@ -1086,6 +1095,7 @@
   <script src="daily-use-polish.js"></script>
   <script src="project-command-center.js"></script>
   <script src="unified-timeline.js"></script>
+  <script src="finance-os.js"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));

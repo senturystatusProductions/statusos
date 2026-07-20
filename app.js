@@ -85,6 +85,8 @@ const defaultState = {
     }
   ],
   revenue: [],
+  expenses: [],
+  invoices: [],
   goals: [
     {
       id: uid(),
@@ -126,7 +128,7 @@ function normalizeState(saved) {
     daily: saved?.daily || base.daily
   };
 
-  ["artists", "content", "sales", "projects", "revenue", "goals", "templates"].forEach(
+  ["artists", "content", "sales", "projects", "revenue", "expenses", "invoices", "goals", "templates"].forEach(
     key => {
       if (!Array.isArray(merged[key])) merged[key] = [];
     }
@@ -983,6 +985,8 @@ function renderRevenue() {
       )
       .join("") ||
     `<tr><td colspan="5" class="muted">No revenue entered yet.</td></tr>`;
+
+  window.StatusOS?.Finance?.render?.();
 }
 
 function renderGoals() {
