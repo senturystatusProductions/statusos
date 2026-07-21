@@ -1,7 +1,7 @@
 (function () {
-  const VERSION = "3.3.3";
-  const CODENAME = "Visualization Timer Bell";
-  const BUILD_DATE = "2026-07-20";
+  const VERSION = "3.4.0";
+  const CODENAME = "Daily Reliability";
+  const BUILD_DATE = "2026-07-21";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;
 

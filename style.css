@@ -711,3 +711,7 @@ textarea{min-height:112px}
 /* StatusOS v3.3.3 Visualization Timer Bell */
 .visualization-controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.visualization-controls .mini-btn{min-height:38px}.visualization-status{display:block;margin-top:4px;color:var(--muted);line-height:1.4}.visualization-timer{font-variant-numeric:tabular-nums;min-width:56px}
 @media(max-width:760px){.visualization-controls{display:grid;grid-template-columns:1fr 1fr}.visualization-controls #startVisualizationBtn{grid-column:1/-1}.visualization-controls .mini-btn{width:100%}}
+
+
+/* StatusOS v3.4.0 Daily Reliability */
+.reliability-center{margin-bottom:18px}.reliability-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}.reliability-metrics>div{border:1px solid var(--border);border-radius:14px;padding:12px;display:grid;gap:5px}.reliability-metrics span{font-size:.78rem;color:var(--muted)}.reliability-metrics strong{font-size:.92rem;overflow-wrap:anywhere}.reliability-actions{display:flex;gap:10px;flex-wrap:wrap}@media(max-width:680px){.reliability-metrics{grid-template-columns:1fr}.reliability-actions .button{width:100%}}
