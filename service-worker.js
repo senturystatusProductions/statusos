@@ -1,4 +1,4 @@
-const CACHE = "statusos-v3.4.8";
+const CACHE = "statusos-v3.4.9";
 const CORE = [
   "./index.html", "./style.css", "./manifest.json", "./favicon.png",
   "./icon-192.png", "./icon-512.png", "./statusos-logo.svg", "./statusos-wordmark.svg"

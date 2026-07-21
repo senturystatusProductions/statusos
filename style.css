@@ -733,3 +733,34 @@ textarea{min-height:112px}
 /* StatusOS v3.4.8 Morning Command Center */
 .morning-command-center{display:grid;gap:16px;margin:16px 0 22px}.morning-command-hero{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px;background:linear-gradient(135deg,rgba(195,151,68,.16),rgba(255,255,255,.025) 55%,rgba(255,255,255,.01));border-color:rgba(206,168,91,.28)}.morning-command-hero h2{margin:4px 0 7px}.morning-command-actions{display:flex;gap:10px;flex-wrap:wrap}.morning-command-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.morning-command-metrics article{display:grid;gap:6px;min-height:112px}.morning-command-metrics span,.morning-command-metrics small{color:var(--muted)}.morning-command-metrics strong{font-size:2rem;line-height:1}.morning-command-grid{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:14px}.morning-command-panel{min-width:0}.morning-command-list{display:grid;gap:9px}.morning-command-item{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:12px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,.025);text-align:left;color:inherit}.morning-command-item:hover{border-color:rgba(206,168,91,.38);background:rgba(255,255,255,.045)}.morning-command-index{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(206,168,91,.16);color:var(--accent);font-weight:800}.morning-command-copy{min-width:0;display:grid;gap:3px}.morning-command-copy strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.morning-command-copy small{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.morning-command-tag{font-size:.72rem;font-weight:800;padding:5px 8px;border-radius:999px;background:rgba(255,255,255,.06);color:var(--muted);white-space:nowrap}.morning-command-tag.urgent{background:rgba(222,87,87,.13);color:#ffabab}.morning-command-empty{padding:18px;border:1px dashed var(--border);border-radius:14px;color:var(--muted)}
 @media(max-width:980px){.morning-command-grid{grid-template-columns:1fr 1fr}.morning-command-priorities{grid-column:1/-1}.morning-command-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:640px){.morning-command-hero{align-items:flex-start;flex-direction:column;padding:19px}.morning-command-actions{width:100%}.morning-command-actions .button{flex:1}.morning-command-grid,.morning-command-metrics{grid-template-columns:1fr}.morning-command-priorities{grid-column:auto}.morning-command-metrics article{min-height:92px}.morning-command-item{padding:11px}.morning-command-tag{display:none}}
+
+
+/* StatusOS v3.4.9 UI Polish - high visibility daily planner completion controls */
+.planner-check{
+  width:38px;
+  height:38px;
+  min-width:38px;
+  border-radius:12px;
+  border:2px solid var(--accent);
+  background:rgba(212,175,55,.08);
+  color:transparent;
+  display:grid;
+  place-items:center;
+  font-size:1.15rem;
+  font-weight:950;
+  line-height:1;
+  box-shadow:0 0 0 3px rgba(212,175,55,.08), inset 0 0 0 1px rgba(255,255,255,.05);
+  transition:transform .15s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.planner-check::before{content:"";width:9px;height:15px;border:solid transparent;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.planner-check:hover,.planner-check:focus-visible{transform:scale(1.06);background:rgba(212,175,55,.16);box-shadow:0 0 0 4px rgba(212,175,55,.15)}
+.planner-item.completed{opacity:.78;border-color:rgba(212,175,55,.32);background:rgba(212,175,55,.055)}
+.planner-item.completed .planner-check{background:var(--accent);border-color:var(--accent);color:#17130c;box-shadow:0 0 0 4px rgba(212,175,55,.16)}
+.planner-item.completed .planner-check::before{border-color:#17130c}
+.planner-item{grid-template-columns:42px 76px minmax(0,1fr) auto;cursor:default}
+.planner-copy strong{font-size:.98rem;line-height:1.35}
+@media(max-width:760px){
+  .planner-check{width:42px;height:42px;min-width:42px;border-width:2.5px}
+  .planner-item{grid-template-columns:46px 58px minmax(0,1fr);gap:.65rem;padding:.85rem .75rem;min-height:66px}
+}
