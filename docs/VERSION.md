@@ -1,5 +1,2 @@
-# StatusOS Version
-
-- Version: 3.4.1
-- Codename: Daily Use Polish
-- Build date: 2026-07-21
+StatusOS v3.4.2
+Yearly Habit Goals

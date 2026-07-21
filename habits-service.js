@@ -25,7 +25,7 @@
     const now = new Date().toISOString();
     const legacyDate = habit.completedDate || habit.completed_date || null;
     const dates = habit.completionDates || habit.completion_dates || (legacyDate ? [legacyDate] : []);
-    const period = ["daily", "weekly", "monthly"].includes(habit.period) ? habit.period : "daily";
+    const period = ["daily", "weekly", "monthly", "yearly"].includes(habit.period) ? habit.period : "daily";
     return {
       id: habit.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
       name: String(habit.name || "Untitled habit"),
@@ -37,7 +37,7 @@
     };
   }
 
-  const parseDate = key => new Date(`${key}T12:00:00`);
+  const parseDate = key => new Date(`${String(key).split("#")[0]}T12:00:00`);
   const startOfWeek = (date = new Date()) => {
     const copy = new Date(date); const day = copy.getDay();
     copy.setHours(12,0,0,0); copy.setDate(copy.getDate() - ((day + 6) % 7)); return copy;
@@ -45,6 +45,7 @@
   const periodKey = (date, period) => {
     if (period === "daily") return localDateKey(date);
     if (period === "monthly") return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}`;
+    if (period === "yearly") return String(date.getFullYear());
     return localDateKey(startOfWeek(date));
   };
   function countInPeriod(habit, date = new Date()) {
@@ -60,7 +61,8 @@
     const d = new Date(date);
     if (period === "daily") d.setDate(d.getDate()+amount);
     else if (period === "weekly") d.setDate(d.getDate()+amount*7);
-    else d.setMonth(d.getMonth()+amount);
+    else if (period === "monthly") d.setMonth(d.getMonth()+amount);
+    else d.setFullYear(d.getFullYear()+amount);
     return d;
   }
   function streak(habit) {
@@ -121,7 +123,30 @@
     return habit;
   }
   function toggleToday(habit, force) { return toggleDate(habit, localDateKey(), force); }
+  function addProgress(habit, amount = 1) {
+    habit = normalizeHabit(habit);
+    const steps = Math.max(1, Math.floor(Number(amount) || 1));
+    const stamp = localDateKey();
+    for (let i = 0; i < steps; i++) {
+      const token = `${stamp}#${Date.now()}-${i}-${Math.random().toString(36).slice(2,8)}`;
+      habit.completionDates.push(token);
+    }
+    habit.completionDates = [...new Set(habit.completionDates)].sort();
+    return habit;
+  }
+  function removeProgress(habit, amount = 1) {
+    habit = normalizeHabit(habit);
+    let remaining = Math.max(1, Math.floor(Number(amount) || 1));
+    const currentKey = periodKey(new Date(), habit.period);
+    const kept = [...habit.completionDates];
+    for (let i = kept.length - 1; i >= 0 && remaining > 0; i--) {
+      if (periodKey(parseDate(kept[i]), habit.period) === currentKey) { kept.splice(i, 1); remaining--; }
+    }
+    habit.completionDates = kept;
+    return habit;
+  }
+
   window.StatusOS = window.StatusOS || {};
   window.StatusOS.Habits = { list: readLocal, save: saveHabit, delete: deleteHabit, pull: pullHabits, normalize: normalizeHabit,
-    isDoneToday, todayKey: localDateKey, toggleToday, toggleDate, progress, streak, countInPeriod };
+    isDoneToday, todayKey: localDateKey, toggleToday, toggleDate, addProgress, removeProgress, progress, streak, countInPeriod };
 })();

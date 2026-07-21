@@ -99,7 +99,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v3.4.1 Daily Use Polish</small>
+        <small id="appVersionLabel" class="version-label">v3.4.2 Yearly Habit Goals</small>
       </div>
     </aside>
 
@@ -462,8 +462,8 @@
   <article class="card habit-engine-card">
     <div class="habit-compose">
       <input id="habitInput" placeholder="Habit name, such as Workout" autocomplete="off">
-      <label><span>Schedule</span><select id="habitPeriod"><option value="weekly" selected>Weekly</option><option value="daily">Daily</option><option value="monthly">Monthly</option></select></label>
-      <label><span>Target</span><input id="habitTarget" type="number" min="1" max="31" value="3"></label>
+      <label><span>Schedule</span><select id="habitPeriod"><option value="weekly" selected>Weekly</option><option value="daily">Daily</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select></label>
+      <label><span>Target</span><input id="habitTarget" type="number" min="1" max="999" value="3"></label>
       <button id="addHabitBtn" class="button" type="button">Add Habit</button>
     </div>
     <div class="habit-engine-summary">
@@ -473,7 +473,7 @@
     <ul id="habitList" class="habit-list"></ul>
     <div id="habitEmptyState" class="task-empty-state">
       <strong>Build consistency.</strong>
-      <span>Add a realistic daily, weekly, or monthly commitment above.</span>
+      <span>Add a realistic daily, weekly, monthly, or yearly commitment above.</span>
     </div>
   </article>
 </section>
@@ -1069,7 +1069,7 @@
       <label>Task title<input name="text" required placeholder="Finish Double Barrel beat"></label>
       <div class="form-grid"><label>Priority<select name="priority"><option value="critical">Critical</option><option value="high">High</option><option value="medium" selected>Normal</option><option value="low">Low</option></select></label><label>Status<select name="status"><option value="not_started">Not started</option><option value="in_progress">In progress</option><option value="waiting">Waiting</option></select></label></div>
       <div class="form-grid"><label>Estimated duration<select name="estimatedMinutes"><option value="15">15 minutes</option><option value="30" selected>30 minutes</option><option value="45">45 minutes</option><option value="60">1 hour</option><option value="90">1.5 hours</option><option value="120">2 hours</option><option value="180">3 hours</option></select></label><label>Progress<input name="progress" type="number" min="0" max="100" step="5" value="0"></label></div>
-      <div class="form-grid"><label>Due date<input name="dueDate" type="date"></label><label>Recurring<select name="recurrence"><option value="none">Does not repeat</option><option value="daily">Daily</option><option value="weekdays">Weekdays</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></label></div>
+      <div class="form-grid"><label>Due date<input name="dueDate" type="date"></label><label>Recurring<select name="recurrence"><option value="none">Does not repeat</option><option value="daily">Daily</option><option value="weekdays">Weekdays</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select></label></div>
       <div class="form-grid"><label>Project<input name="project" placeholder="Double Barrel Album"></label><label>Artist<input name="artist" placeholder="Rob Whiskey"></label></div>
       <label>Category<select name="category"><option>Productivity</option><option>Music</option><option>Artist Outreach</option><option>Mixing</option><option>Sound Design</option><option>Business</option><option>Personal</option></select></label>
       <label>Depends on<input name="dependsOn" placeholder="Task that must be completed first"></label>

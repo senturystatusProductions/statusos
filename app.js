@@ -1652,7 +1652,7 @@ function bindAssistant() {
 (function () {
   const api = () => window.StatusOS?.Habits;
   const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
-  const periodWord = (habit, count = 1) => habit.period === "daily" ? (count === 1 ? "day" : "days") : habit.period === "monthly" ? (count === 1 ? "month" : "months") : (count === 1 ? "week" : "weeks");
+  const periodWord = (habit, count = 1) => habit.period === "daily" ? (count === 1 ? "day" : "days") : habit.period === "monthly" ? (count === 1 ? "month" : "months") : habit.period === "yearly" ? (count === 1 ? "year" : "years") : (count === 1 ? "week" : "weeks");
   function renderHabits() {
     const habits = api()?.list?.() || [];
     const states = habits.map(h => ({ habit: h, progress: api().progress(h), streak: api().streak(h) }));
@@ -1670,16 +1670,24 @@ function bindAssistant() {
     const list = document.getElementById('habitList'); if (!list) return; list.innerHTML = '';
     states.forEach(({habit, progress, streak}) => {
       const doneToday = api().isDoneToday(habit); const li = document.createElement('li'); li.className = `habit-item${progress.complete ? ' completed' : ''}`;
-      const check = document.createElement('input'); check.type='checkbox'; check.className='habit-check'; check.checked=doneToday;
-      check.setAttribute('aria-label', `Log ${habit.name} today`);
-      check.addEventListener('change', async()=>{ await api().save(api().toggleToday(habit, check.checked)); renderHabits(); });
+      let check;
+      if (habit.period === 'yearly') {
+        check = document.createElement('button'); check.type='button'; check.className='habit-yearly-add'; check.textContent='+1';
+        check.setAttribute('aria-label', `Add one to ${habit.name}`);
+        check.addEventListener('click', async()=>{ await api().save(api().addProgress(habit,1)); renderHabits(); });
+      } else {
+        check = document.createElement('input'); check.type='checkbox'; check.className='habit-check'; check.checked=doneToday;
+        check.setAttribute('aria-label', `Log ${habit.name} today`);
+        check.addEventListener('change', async()=>{ await api().save(api().toggleToday(habit, check.checked)); renderHabits(); });
+      }
       const main=document.createElement('div'); main.className='habit-main';
       const name=document.createElement('strong'); name.textContent=habit.name;
-      const detail=document.createElement('small'); detail.textContent=`${progress.count} / ${progress.target} this ${periodWord(habit)} · ${progress.percent}%`;
+      const detail=document.createElement('small'); detail.textContent=habit.period==='yearly' ? `${progress.count} / ${progress.target} this year · ${progress.percent}%` : `${progress.count} / ${progress.target} this ${periodWord(habit)} · ${progress.percent}%`;
       const track=document.createElement('div'); track.className='habit-progress-track'; const fill=document.createElement('span'); fill.style.width=`${progress.percent}%`; track.append(fill);
       main.append(name,detail,track);
       const streakEl=document.createElement('span'); streakEl.className='habit-streak'; streakEl.textContent=`🔥 ${streak} ${periodWord(habit, streak)}`;
       const actions=document.createElement('div'); actions.className='habit-actions';
+      if (habit.period === 'yearly' && progress.count > 0) { const minus=document.createElement('button'); minus.className='button secondary habit-yearly-minus'; minus.type='button'; minus.textContent='−1'; minus.addEventListener('click',async()=>{await api().save(api().removeProgress(habit,1));renderHabits();}); actions.append(minus); }
       const logDate=document.createElement('button'); logDate.className='button secondary habit-log-date'; logDate.type='button'; logDate.textContent='Log Date';
       logDate.addEventListener('click',()=>openHabitLog(habit));
       const remove=document.createElement('button'); remove.className='task-delete-button'; remove.type='button'; remove.textContent='Delete';
@@ -1714,7 +1722,7 @@ function bindAssistant() {
   window.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('addHabitBtn')?.addEventListener('click',addHabit);
     document.getElementById('habitInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')addHabit();});
-    document.getElementById('habitPeriod')?.addEventListener('change',e=>{const t=document.getElementById('habitTarget'); if(t) t.value=e.target.value==='daily'?'1':e.target.value==='monthly'?'4':'3';});
+    document.getElementById('habitPeriod')?.addEventListener('change',e=>{const t=document.getElementById('habitTarget'); if(t) t.value=e.target.value==='daily'?'1':e.target.value==='monthly'?'4':e.target.value==='yearly'?'12':'3';});
     document.getElementById('resetHabitsTodayBtn')?.addEventListener('click',async()=>{for(const h of api()?.list?.()||[]) if(api().isDoneToday(h)) await api().save(api().toggleToday(h,false)); renderHabits();});
     document.getElementById('habitLogForm')?.addEventListener('submit',e=>{e.preventDefault(); saveHabitDate(false);});
     document.getElementById('habitLogRemove')?.addEventListener('click',()=>saveHabitDate(true));
