@@ -580,7 +580,7 @@
     <article class="card artist-stat"><span id="artistInterestedLabel">Clients</span><strong id="artistInterestedCount">0</strong><small>Active relationships</small></article>
     <article class="card artist-stat"><span>Follow-ups Due</span><strong id="artistFollowupCount">0</strong><small>Needs attention</small></article><article class="card artist-stat artist-revenue-stat"><span>Artist Revenue</span><strong id="artistRevenueTotal">$0</strong><small>Tracked relationship value</small></article>
   </section>
-  <div class="card toolbar artist-toolbar">
+  <div class="card toolbar artist-toolbar"><label class="artist-mobile-jump">Jump to artist<select id="artistMobileJump"><option value="">Choose an artist</option></select></label>
     <input id="crmSearch" placeholder="Search artists, handles, genres, songs or notes..." />
     <select id="crmFilter">
       <option value="">All statuses</option><option>New Lead</option><option>Contacted</option><option>Replied</option><option>Interested</option><option>Free Beat Sent</option><option>Negotiating</option><option>Client</option><option>Returning Client</option><option>Inactive</option>
@@ -720,10 +720,10 @@
         </div>
 
         <div class="success-tabs" role="tablist" aria-label="Success OS sections">
-          <button data-success-tab="morning" class="active" type="button">Morning</button>
+          <button data-success-tab="morning" class="active" type="button">Morning <span id="morningTabDone" class="success-tab-done hidden">Completed</span></button>
           <button data-success-tab="purpose" type="button">Purpose</button>
           <button data-success-tab="identity" type="button">Identity</button>
-          <button data-success-tab="night" type="button">Night</button>
+          <button data-success-tab="night" type="button">Night <span id="nightTabDone" class="success-tab-done hidden">Completed</span></button>
           <button data-success-tab="progress" type="button">Progress</button>
         </div>
 
@@ -738,7 +738,7 @@
               <label><input data-mindset-check="purpose" type="checkbox"><span><strong>1. Read your definite chief aim aloud</strong><small id="mindsetPurposeText"></small></span></label>
               <label><input data-mindset-check="identity" type="checkbox"><span><strong>2. Read who you are becoming</strong><small id="mindsetIdentityPreview"></small></span></label>
               <label><input data-mindset-check="faith" type="checkbox"><span><strong>3. Speak with faith</strong><small>I believe this goal is possible, and I will prove that belief through disciplined action today.</small></span></label>
-              <label><input data-mindset-check="visualize" type="checkbox"><span><strong>4. Visualize the completed result</strong><small>Picture the work finished, the right clients responding, your family benefiting, and yourself acting with confidence.</small><button id="startVisualizationBtn" class="mini-btn" type="button">Start 60-second timer</button><strong id="visualizationTimer" class="visualization-timer">1:00</strong></span></label>
+              <label><input data-mindset-check="visualize" type="checkbox"><span><strong>4. Visualize the completed result</strong><small>Picture the work finished, the right clients responding, your family benefiting, and yourself acting with confidence.</small><div class="visualization-controls"><button id="startVisualizationBtn" class="mini-btn" type="button">Start 60-second timer</button><button id="pauseVisualizationBtn" class="mini-btn secondary" type="button" disabled>Pause</button><button id="resetVisualizationBtn" class="mini-btn secondary" type="button">Reset</button></div><strong id="visualizationTimer" class="visualization-timer" aria-live="polite">1:00</strong><small id="visualizationTimerStatus" class="visualization-status">A gentle zen bell will sound when the minute is complete.</small></span></label>
               <label><input data-mindset-check="gratitude" type="checkbox"><span><strong>5. Name three things you appreciate</strong><textarea id="morningGratitude" placeholder="1. Family
 2. Health
 3. Opportunity"></textarea></span></label>
@@ -1123,6 +1123,7 @@
 <dialog id="recoveryCenterModal" class="modal recovery-modal"><div class="modal-card"><div class="section-head"><div><p class="eyebrow">DATA PROTECTION</p><h2>Recovery Center</h2></div><button class="mini-btn" type="button" onclick="document.getElementById('recoveryCenterModal').close()">Close</button></div><p class="muted">Restore Artist OS or the rest of your StatusOS workspace from a protected snapshot.</p><div id="recoveryCenterBody"></div></div></dialog>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
+  <script src="upgrade-safety.js"></script>
   <script src="storage-service.js"></script>
   <script src="sync-service.js"></script>
   <script src="foundation.js"></script>

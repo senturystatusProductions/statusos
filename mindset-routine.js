@@ -40,6 +40,7 @@
     set('morningGratitude',x.morning.gratitude||'');set('mindsetAction',x.morning.action||'');set('eveningWins',x.night.wins||'');set('eveningLesson',x.night.lesson||'');set('eveningEvidence',x.night.evidence||'');set('tomorrowPriority',x.night.priority||'');set('successPurposeInput',data.purpose);set('successWhyInput',data.why);
     const done=Object.values(checks).filter(Boolean).length,total=6,pct=Math.round(done/total*100);
     set('morningMindsetProgress',`${done} of ${total} complete`,'textContent');const bar=document.getElementById('morningMindsetBar');if(bar)bar.style.width=`${pct}%`;set('morningScore',`${pct}%`,'textContent');
+    const morningDone=document.getElementById('morningTabDone'),nightDone=document.getElementById('nightTabDone');morningDone?.classList.toggle('hidden',!x.morning.complete);nightDone?.classList.toggle('hidden',!x.night.complete);const morningBtn=document.getElementById('completeMorningMindset');if(morningBtn)morningBtn.textContent=x.morning.complete?'Morning Completed':'Complete Morning Ritual';const nightBtn=document.getElementById('saveEveningResetBtn');if(nightBtn)nightBtn.textContent=x.night.complete?'Night Completed':'Complete Night Review';
     const st=streak();set('mindsetStreak',`${st} day streak`,'textContent');set('successCurrentStreak',String(st),'textContent');
     const [pt,pl,pa]=principle();set('dailyPrincipleTitle',pt,'textContent');set('dailyPrincipleLesson',pl,'textContent');set('dailyPrincipleAction',`Today's action: ${pa}`,'textContent');
     const list=document.getElementById('identityList');if(list)list.innerHTML=data.identities.map((v,i)=>`<div class="identity-row"><span>${escapeHtml(v)}</span><button type="button" data-remove-identity="${i}" aria-label="Remove identity">×</button></div>`).join('');
@@ -51,13 +52,79 @@
   function escapeHtml(v){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
   function saveMorning(){const x=current();x.morning.checks={};document.querySelectorAll('[data-mindset-check]').forEach(el=>x.morning.checks[el.dataset.mindsetCheck]=el.checked);x.morning.gratitude=document.getElementById('morningGratitude')?.value.trim()||'';x.morning.action=document.getElementById('mindsetAction')?.value.trim()||'';x.morning.complete=Object.keys(x.morning.checks).length===6&&Object.values(x.morning.checks).every(Boolean)&&!!x.morning.gratitude&&!!x.morning.action;x.morning.completedAt=x.morning.complete?(x.morning.completedAt||new Date().toISOString()):null;write()}
   function saveNightDraft(markComplete=false){const x=current(),previousComplete=!!x.night.complete;const next={wins:document.getElementById('eveningWins')?.value.trim()||'',lesson:document.getElementById('eveningLesson')?.value.trim()||'',evidence:document.getElementById('eveningEvidence')?.value.trim()||'',priority:document.getElementById('tomorrowPriority')?.value.trim()||'',complete:previousComplete,completedAt:x.night.completedAt||null};if(markComplete){next.complete=!!(next.wins&&next.lesson&&next.evidence&&next.priority);next.completedAt=next.complete?(next.completedAt||new Date().toISOString()):null}else if(previousComplete&&!(next.wins&&next.lesson&&next.evidence&&next.priority)){next.complete=false;next.completedAt=null}x.night=next;write();return next.complete}
-  let timer=null,remaining=60;
-  function startTimer(){clearInterval(timer);remaining=60;const out=document.getElementById('visualizationTimer'),btn=document.getElementById('startVisualizationBtn');if(btn)btn.disabled=true;timer=setInterval(()=>{remaining--;if(out)out.textContent=`0:${String(remaining).padStart(2,'0')}`;if(remaining<=0){clearInterval(timer);if(btn){btn.disabled=false;btn.textContent='Visualize again'}const check=document.querySelector('[data-mindset-check="visualize"]');if(check){check.checked=true;saveMorning()}try{navigator.vibrate?.([20,40,20])}catch{}}},1000)}
+  let timer=null,remaining=60,isPaused=false,audioContext=null;
+  function formatTimer(seconds){return `${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`}
+  function prepareAudio(){
+    try{
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      if(!AudioCtx)return null;
+      audioContext ||= new AudioCtx();
+      if(audioContext.state==='suspended')audioContext.resume();
+      return audioContext;
+    }catch{return null}
+  }
+  function playZenBell(){
+    const ctx=prepareAudio();
+    if(!ctx)return;
+    const now=ctx.currentTime;
+    const master=ctx.createGain();
+    master.gain.setValueAtTime(0.0001,now);
+    master.gain.exponentialRampToValueAtTime(0.22,now+0.02);
+    master.gain.exponentialRampToValueAtTime(0.0001,now+4.2);
+    master.connect(ctx.destination);
+    [528,790,1056].forEach((frequency,index)=>{
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+      osc.type=index===0?'sine':'triangle';
+      osc.frequency.setValueAtTime(frequency,now);
+      osc.frequency.exponentialRampToValueAtTime(frequency*0.985,now+4);
+      gain.gain.setValueAtTime(index===0?0.7:0.22/(index+1),now);
+      gain.gain.exponentialRampToValueAtTime(0.0001,now+3.7-(index*.35));
+      osc.connect(gain);gain.connect(master);osc.start(now);osc.stop(now+4.3);
+    });
+  }
+  function updateTimerUI(status=''){
+    const out=document.getElementById('visualizationTimer');
+    const startBtn=document.getElementById('startVisualizationBtn');
+    const pauseBtn=document.getElementById('pauseVisualizationBtn');
+    const statusEl=document.getElementById('visualizationTimerStatus');
+    if(out)out.textContent=formatTimer(remaining);
+    if(startBtn)startBtn.textContent=remaining===60?'Start 60-second timer':timer?'Running':'Continue';
+    if(startBtn)startBtn.disabled=!!timer;
+    if(pauseBtn){pauseBtn.disabled=!timer;pauseBtn.textContent='Pause'}
+    if(statusEl&&status)statusEl.textContent=status;
+  }
+  function finishTimer(){
+    clearInterval(timer);timer=null;remaining=0;isPaused=false;updateTimerUI('Visualization complete. Carry that picture into your next action.');
+    const startBtn=document.getElementById('startVisualizationBtn');if(startBtn){startBtn.disabled=false;startBtn.textContent='Visualize again'}
+    const pauseBtn=document.getElementById('pauseVisualizationBtn');if(pauseBtn)pauseBtn.disabled=true;
+    const check=document.querySelector('[data-mindset-check="visualize"]');if(check){check.checked=true;saveMorning()}
+    playZenBell();
+    try{navigator.vibrate?.([60,80,60])}catch{}
+  }
+  function startTimer(){
+    if(timer)return;
+    prepareAudio();
+    if(remaining<=0)remaining=60;
+    isPaused=false;updateTimerUI('Stay still and picture the completed result.');
+    timer=setInterval(()=>{remaining=Math.max(0,remaining-1);updateTimerUI();if(remaining<=0)finishTimer()},1000);
+  }
+  function pauseTimer(){
+    if(!timer)return;
+    clearInterval(timer);timer=null;isPaused=true;updateTimerUI('Paused. Continue when you are ready.');
+    const startBtn=document.getElementById('startVisualizationBtn');if(startBtn){startBtn.disabled=false;startBtn.textContent='Continue'}
+  }
+  function resetTimer(){
+    clearInterval(timer);timer=null;remaining=60;isPaused=false;updateTimerUI('A gentle zen bell will sound when the minute is complete.');
+    const startBtn=document.getElementById('startVisualizationBtn');if(startBtn){startBtn.disabled=false;startBtn.textContent='Start 60-second timer'}
+  }
   function navigate(view){document.querySelector(`[data-view="${view}"]`)?.click()}
   function bind(){
     document.querySelectorAll('[data-success-tab]').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.successTab)));
     document.querySelectorAll('[data-mindset-check]').forEach(el=>el.addEventListener('change',saveMorning));['morningGratitude','mindsetAction'].forEach(id=>document.getElementById(id)?.addEventListener('input',saveMorning));['eveningWins','eveningLesson','eveningEvidence','tomorrowPriority'].forEach(id=>document.getElementById(id)?.addEventListener('input',()=>saveNightDraft(false)));
     document.getElementById('startVisualizationBtn')?.addEventListener('click',startTimer);
+    document.getElementById('pauseVisualizationBtn')?.addEventListener('click',pauseTimer);
+    document.getElementById('resetVisualizationBtn')?.addEventListener('click',resetTimer);
     document.getElementById('completeMorningMindset')?.addEventListener('click',()=>{saveMorning();const ok=current().morning.complete;const el=document.getElementById('morningMindsetStatus');if(el)el.textContent=ok?'Morning ritual complete. Now prove it with focused action.':'Complete all six steps and fill in gratitude and today’s major win.';if(ok)try{navigator.vibrate?.(20)}catch{}});
     document.getElementById('openPlannerAfterRitual')?.addEventListener('click',()=>navigate('planner'));
     document.getElementById('saveSuccessPurpose')?.addEventListener('click',()=>{data.purpose=document.getElementById('successPurposeInput')?.value.trim()||defaults.purpose;data.why=document.getElementById('successWhyInput')?.value.trim()||'';write();const el=document.getElementById('successPurposeStatus');if(el)el.textContent='Purpose saved and added to your daily ritual.'});

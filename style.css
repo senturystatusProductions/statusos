@@ -692,3 +692,22 @@ textarea{min-height:112px}
 /* StatusOS v3.3.1 Artist Quick Log & Contact Tracker */
 .artist-quick-log-card{margin-bottom:14px}.artist-quick-log-form textarea{width:100%;min-height:92px;resize:vertical}.artist-quick-log-controls{display:grid;grid-template-columns:minmax(180px,1fr) minmax(150px,.6fr) auto;gap:10px;align-items:end;margin-top:10px}.artist-quick-log-controls label{display:grid;gap:6px}.artist-contact-tracker{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none}.artist-contact-tracker::-webkit-scrollbar{display:none}.artist-contact-tracker button{white-space:nowrap;border:1px solid var(--border,rgba(255,255,255,.12));background:var(--card,rgba(255,255,255,.04));color:inherit;border-radius:999px;padding:9px 12px;min-height:42px;cursor:pointer}.artist-contact-tracker button.active{outline:2px solid currentColor;outline-offset:-2px}.artist-contact-tracker strong{margin-left:6px}.timeline-actions{display:flex;align-items:center;gap:5px;margin-left:auto}.timeline-edit{border:0;background:transparent;color:var(--muted,#a7a7a7);font:inherit;font-size:12px;cursor:pointer;padding:7px}.artist-timeline-item>div:nth-child(2){min-width:0;flex:1}
 @media(max-width:760px){.artist-quick-log-controls{grid-template-columns:1fr 1fr}.artist-quick-log-controls .button{grid-column:1/-1;width:100%}.artist-quick-log-card .section-head{align-items:flex-start}.artist-quick-log-card .section-head>span{display:none}.artist-contact-tracker{margin-right:-14px;padding-right:14px}}
+
+/* v3.3.2 daily stability */
+.success-tab-done{display:inline-flex;margin-left:6px;padding:2px 6px;border-radius:999px;font-size:10px;font-weight:800;background:rgba(34,197,94,.16);color:#86efac;vertical-align:middle}
+.success-tabs button:has(.success-tab-done:not(.hidden)){border-color:rgba(34,197,94,.45)}
+.artist-mobile-jump{display:none}
+@media (max-width:760px){
+  .artist-toolbar{position:sticky;top:64px;z-index:12;display:grid!important;grid-template-columns:1fr;gap:10px;padding:12px}
+  .artist-mobile-jump{display:grid;gap:5px;font-size:12px;font-weight:700}
+  .artist-mobile-jump select,#crmSearch,#crmFilter{width:100%;min-height:46px}
+  .artist-directory-card{max-height:none}
+  .artist-directory{max-height:55vh;overflow:auto;-webkit-overflow-scrolling:touch}
+  .artist-directory-item{min-height:76px}
+  .artist-contact-tracker{overflow-x:auto;display:flex;scroll-snap-type:x proximity;padding-bottom:4px}
+  .artist-contact-tracker button{flex:0 0 auto;scroll-snap-align:start}
+}
+
+/* StatusOS v3.3.3 Visualization Timer Bell */
+.visualization-controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.visualization-controls .mini-btn{min-height:38px}.visualization-status{display:block;margin-top:4px;color:var(--muted);line-height:1.4}.visualization-timer{font-variant-numeric:tabular-nums;min-width:56px}
+@media(max-width:760px){.visualization-controls{display:grid;grid-template-columns:1fr 1fr}.visualization-controls #startVisualizationBtn{grid-column:1/-1}.visualization-controls .mini-btn{width:100%}}

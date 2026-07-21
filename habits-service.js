@@ -1,6 +1,7 @@
 (function () {
   const HABIT_KEY = "statusos_habits_v1";
   const TABLE = "habits";
+  const DELETED_KEY = "statusos_habits_deleted_v1";
   const localDateKey = (date = new Date()) => {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -16,6 +17,9 @@
   }
 
   function writeLocal(habits) { localStorage.setItem(HABIT_KEY, JSON.stringify(habits.map(normalizeHabit))); }
+  function readDeleted(){try{const x=JSON.parse(localStorage.getItem(DELETED_KEY)||"{}");return x&&typeof x==="object"?x:{};}catch{return {};}}
+  function markDeleted(id){const x=readDeleted();x[id]=new Date().toISOString();localStorage.setItem(DELETED_KEY,JSON.stringify(x));}
+  function clearDeleted(id){const x=readDeleted();delete x[id];localStorage.setItem(DELETED_KEY,JSON.stringify(x));}
 
   function normalizeHabit(habit) {
     const now = new Date().toISOString();
@@ -86,20 +90,20 @@
     habit = normalizeHabit(habit); habit.updatedAt = new Date().toISOString();
     const habits = readLocal(); const index = habits.findIndex(item => item.id === habit.id);
     if (index >= 0) habits[index] = habit; else habits.push(habit);
-    writeLocal(habits); window.dispatchEvent(new CustomEvent("statusos:habits-updated"));
+    clearDeleted(habit.id); writeLocal(habits); window.dispatchEvent(new CustomEvent("statusos:habits-updated"));
     const ctx = await context();
     if (ctx) { const { error } = await ctx.client.from(TABLE).upsert(toRow(habit, ctx.user.id), { onConflict: "id" }); if (error) console.warn("Habit cloud save failed", error); }
     return habit;
   }
   async function deleteHabit(id) {
-    writeLocal(readLocal().filter(h => h.id !== id)); window.dispatchEvent(new CustomEvent("statusos:habits-updated"));
+    markDeleted(id); writeLocal(readLocal().filter(h => h.id !== id)); window.dispatchEvent(new CustomEvent("statusos:habits-updated"));
     const ctx = await context(); if (ctx) await ctx.client.from(TABLE).delete().eq("id", id).eq("user_id", ctx.user.id);
   }
   async function pullHabits() {
     const ctx = await context(); if (!ctx) return readLocal();
     const { data, error } = await ctx.client.from(TABLE).select("*").eq("user_id", ctx.user.id).order("created_at");
     if (error) return readLocal();
-    const merged = new Map(); [...(data || []).map(normalizeHabit), ...readLocal()].forEach(h => {
+    const deleted=readDeleted(); const merged = new Map(); [...(data || []).map(normalizeHabit), ...readLocal()].filter(h=>!deleted[h.id]).forEach(h => {
       const old = merged.get(h.id); if (!old || new Date(h.updatedAt) >= new Date(old.updatedAt)) merged.set(h.id, h);
     });
     const habits = [...merged.values()]; writeLocal(habits);
