@@ -100,7 +100,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v3.4.7 PWA Cache Recovery</small>
+        <small id="appVersionLabel" class="version-label">v3.4.8 Morning Command Center</small>
       </div>
     </aside>
 
@@ -146,6 +146,42 @@
             <span id="dashboardFullDate"></span>
           </div>
         </article>
+
+        <section class="morning-command-center" aria-label="Morning Command Center">
+          <article class="card morning-command-hero">
+            <div>
+              <p class="eyebrow">MORNING COMMAND CENTER</p>
+              <h2 id="morningCommandTitle">Here is what matters today.</h2>
+              <p id="morningCommandSummary" class="muted">StatusOS is preparing your day.</p>
+            </div>
+            <div class="morning-command-actions">
+              <button id="morningPlanDayBtn" class="button" type="button">Plan My Day</button>
+              <button id="morningReviewBtn" class="button secondary" type="button">Daily Review</button>
+            </div>
+          </article>
+
+          <div class="morning-command-metrics">
+            <article class="card"><span>Top priorities</span><strong id="morningPriorityCount">0</strong><small>Highest-impact actions</small></article>
+            <article class="card"><span>Overdue</span><strong id="morningOverdueCount">0</strong><small>Needs attention now</small></article>
+            <article class="card"><span>Habits due</span><strong id="morningHabitCount">0</strong><small>Current commitments</small></article>
+            <article class="card"><span>Upcoming</span><strong id="morningUpcomingCount">0</strong><small>Next seven days</small></article>
+          </div>
+
+          <div class="morning-command-grid">
+            <article class="card morning-command-panel morning-command-priorities">
+              <div class="section-head"><div><p class="eyebrow">TODAY'S PRIORITIES</p><h3>Do these first</h3></div><button class="text-button" data-view="tasks">Open Tasks</button></div>
+              <div id="morningCommandPriorities" class="morning-command-list"></div>
+            </article>
+            <article class="card morning-command-panel">
+              <div class="section-head"><div><p class="eyebrow">HABITS DUE</p><h3>Keep your commitments</h3></div><button class="text-button" data-view-jump="habits">Open Habits</button></div>
+              <div id="morningCommandHabits" class="morning-command-list"></div>
+            </article>
+            <article class="card morning-command-panel">
+              <div class="section-head"><div><p class="eyebrow">UPCOMING</p><h3>What is next</h3></div><button class="text-button" data-view="planner">Open Planner</button></div>
+              <div id="morningCommandUpcoming" class="morning-command-list"></div>
+            </article>
+          </div>
+        </section>
 
         <section id="executiveDashboard" class="executive-dashboard" aria-label="Executive Dashboard">
           <article class="card executive-hero">
@@ -1140,6 +1176,7 @@
   <script src="workspace-manager.js"></script>
   <script src="planner-service.js"></script>
   <script src="command-center.js"></script>
+  <script src="morning-command-center.js"></script>
   <script src="app.js"></script>
   <script src="artist-repository.js"></script>
   <script src="smart-task-engine.js"></script>
@@ -1160,7 +1197,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("service-worker.js?v=3.4.7", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("service-worker.js?v=3.4.8", { updateViaCache: "none" });
           await registration.update();
           let refreshing = false;
           navigator.serviceWorker.addEventListener("controllerchange", () => {
