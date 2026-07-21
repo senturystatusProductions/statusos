@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 100"><g transform="translate(0)">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3dfaa"/><stop offset="1" stop-color="#d5b46c"/></linearGradient></defs>
+<path d="M50 4 88 26v48L50 96 12 74V26Z" fill="#111216" stroke="url(#g)" stroke-width="5"/>
+<path d="M72 30H42c-9 0-15 5-15 13 0 7 5 11 13 14l18 6c3 1 4 2 4 4 0 3-2 4-6 4H29v10h30c10 0 16-5 16-14 0-7-5-11-14-14l-18-6c-3-1-4-2-4-4 0-2 2-3 5-3h28Z" fill="url(#g)"/>
+</g><text x="120" y="63" fill="#f6f4ee" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="48" font-weight="800">StatusOS</text></svg>

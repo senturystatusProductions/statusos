@@ -1,5 +1,5 @@
 # StatusOS Release
 
-- Version: 3.4.3
-- Codename: Yearly Habit Goals
-- Focus: Yearly targets with progress increments for goals such as books read.
+- Version: 3.4.4
+- Codename: Command Center Identity
+- Focus: New premium StatusOS logo, app icons, favicon, login branding, and loading branding.
