@@ -1,5 +1,5 @@
 (function () {
-  const VERSION = "3.4.2";
+  const VERSION = "3.4.3";
   const CODENAME = "Yearly Habit Goals";
   const BUILD_DATE = "2026-07-21";
   const LOG_KEY = "statusos_diagnostic_log_v1";

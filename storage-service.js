@@ -1,19 +1,13 @@
 (function () {
   const TASK_KEY = "statusos_tasks_v1";
   const QUEUE_KEY = "statusos_sync_queue_v1";
+  const DELETED_KEY = "statusos_tasks_deleted_v1";
 
   function readJSON(key, fallback) {
-    try {
-      const value = JSON.parse(localStorage.getItem(key) || "null");
-      return value == null ? fallback : value;
-    } catch {
-      return fallback;
-    }
+    try { const value = JSON.parse(localStorage.getItem(key) || "null"); return value == null ? fallback : value; }
+    catch { return fallback; }
   }
-
-  function writeJSON(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
-  }
+  function writeJSON(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
 
   function normalizeTask(task) {
     const now = new Date().toISOString();
@@ -21,61 +15,29 @@
       id: task.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
       text: String(task.text || task.title || "Untitled task"),
       done: Boolean(task.done ?? task.completed),
-      priority: task.priority || "medium",
-      category: task.category || "Productivity",
+      priority: task.priority || "medium", category: task.category || "Productivity",
       status: task.status || (Boolean(task.done ?? task.completed) ? "completed" : "not_started"),
       estimatedMinutes: Number(task.estimatedMinutes ?? task.estimated_minutes ?? 30),
       progress: Number(task.progress ?? (Boolean(task.done ?? task.completed) ? 100 : 0)),
-      dueDate: task.dueDate || task.due_date || "",
-      recurrence: task.recurrence || "none",
-      project: task.project || "",
-      artist: task.artist || "",
-      dependsOn: task.dependsOn || task.depends_on || "",
-      notes: task.notes || "",
-      completedAt: task.completedAt || task.completed_at || null,
-      createdAt: task.createdAt || task.created_at || now,
-      updatedAt: task.updatedAt || task.updated_at || now
+      dueDate: task.dueDate || task.due_date || "", recurrence: task.recurrence || "none",
+      project: task.project || "", artist: task.artist || "", dependsOn: task.dependsOn || task.depends_on || "",
+      notes: task.notes || "", completedAt: task.completedAt || task.completed_at || null,
+      createdAt: task.createdAt || task.created_at || now, updatedAt: task.updatedAt || task.updated_at || now
     };
   }
 
-  function getTasks() {
-    const tasks = readJSON(TASK_KEY, []);
-    return Array.isArray(tasks) ? tasks.map(normalizeTask) : [];
-  }
+  function getDeletedTasks() { const value = readJSON(DELETED_KEY, {}); return value && typeof value === "object" ? value : {}; }
+  function markTaskDeleted(id, deletedAt = new Date().toISOString()) { const items = getDeletedTasks(); items[id] = deletedAt; writeJSON(DELETED_KEY, items); }
+  function clearTaskDeleted(id) { const items = getDeletedTasks(); delete items[id]; writeJSON(DELETED_KEY, items); }
+  function mergeDeletedTasks(entries) { const items = getDeletedTasks(); Object.entries(entries || {}).forEach(([id, at]) => { if (!items[id] || new Date(at) > new Date(items[id])) items[id] = at; }); writeJSON(DELETED_KEY, items); return items; }
 
-  function saveTasks(tasks) {
-    writeJSON(TASK_KEY, tasks.map(normalizeTask));
-  }
-
-  function getQueue() {
-    const queue = readJSON(QUEUE_KEY, []);
-    return Array.isArray(queue) ? queue : [];
-  }
-
-  function saveQueue(queue) {
-    writeJSON(QUEUE_KEY, queue);
-  }
-
-  function queueOperation(operation) {
-    const queue = getQueue();
-    const filtered = queue.filter(item => item.taskId !== operation.taskId);
-    filtered.push({ ...operation, queuedAt: new Date().toISOString() });
-    saveQueue(filtered);
-    return filtered.length;
-  }
-
-  function clearQueue() {
-    saveQueue([]);
-  }
+  function getTasks() { const deleted = getDeletedTasks(); const tasks = readJSON(TASK_KEY, []); return Array.isArray(tasks) ? tasks.map(normalizeTask).filter(t => !deleted[t.id]) : []; }
+  function saveTasks(tasks) { const deleted = getDeletedTasks(); writeJSON(TASK_KEY, tasks.map(normalizeTask).filter(t => !deleted[t.id])); }
+  function getQueue() { const queue = readJSON(QUEUE_KEY, []); return Array.isArray(queue) ? queue : []; }
+  function saveQueue(queue) { writeJSON(QUEUE_KEY, queue); }
+  function queueOperation(operation) { const queue = getQueue(); const filtered = queue.filter(item => item.taskId !== operation.taskId); filtered.push({ ...operation, queuedAt: new Date().toISOString() }); saveQueue(filtered); return filtered.length; }
+  function clearQueue() { saveQueue([]); }
 
   window.StatusOS = window.StatusOS || {};
-  window.StatusOS.Storage = {
-    getTasks,
-    saveTasks,
-    normalizeTask,
-    getQueue,
-    saveQueue,
-    queueOperation,
-    clearQueue
-  };
+  window.StatusOS.Storage = { getTasks, saveTasks, normalizeTask, getQueue, saveQueue, queueOperation, clearQueue, getDeletedTasks, markTaskDeleted, clearTaskDeleted, mergeDeletedTasks };
 })();

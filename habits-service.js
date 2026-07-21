@@ -2,6 +2,8 @@
   const HABIT_KEY = "statusos_habits_v1";
   const TABLE = "habits";
   const DELETED_KEY = "statusos_habits_deleted_v1";
+  const QUEUE_KEY = "statusos_habits_sync_queue_v1";
+  const TOMBSTONES = "statusos_sync_tombstones";
   const localDateKey = (date = new Date()) => {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -18,8 +20,12 @@
 
   function writeLocal(habits) { localStorage.setItem(HABIT_KEY, JSON.stringify(habits.map(normalizeHabit))); }
   function readDeleted(){try{const x=JSON.parse(localStorage.getItem(DELETED_KEY)||"{}");return x&&typeof x==="object"?x:{};}catch{return {};}}
-  function markDeleted(id){const x=readDeleted();x[id]=new Date().toISOString();localStorage.setItem(DELETED_KEY,JSON.stringify(x));}
+  function markDeleted(id, at=new Date().toISOString()){const x=readDeleted();x[id]=at;localStorage.setItem(DELETED_KEY,JSON.stringify(x));}
   function clearDeleted(id){const x=readDeleted();delete x[id];localStorage.setItem(DELETED_KEY,JSON.stringify(x));}
+  function mergeDeleted(entries){const x=readDeleted();Object.entries(entries||{}).forEach(([id,at])=>{if(!x[id]||new Date(at)>new Date(x[id]))x[id]=at;});localStorage.setItem(DELETED_KEY,JSON.stringify(x));return x;}
+  function readQueue(){try{const x=JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]");return Array.isArray(x)?x:[];}catch{return [];}}
+  function writeQueue(q){localStorage.setItem(QUEUE_KEY,JSON.stringify(q));}
+  function queue(op){const q=readQueue().filter(x=>x.id!==op.id);q.push({...op,queuedAt:new Date().toISOString()});writeQueue(q);}
 
   function normalizeHabit(habit) {
     const now = new Date().toISOString();
@@ -88,29 +94,52 @@
       completion_dates: habit.completionDates, completed_date: habit.completionDates.at(-1) || null,
       streak: streak(habit), created_at: habit.createdAt, updated_at: habit.updatedAt };
   }
+  async function flushQueue() {
+    const ctx = await context(); if (!ctx) return false;
+    const pending = readQueue(), remaining = [];
+    for (const op of pending) {
+      try {
+        if (op.type === "delete") {
+          const deletedAt = op.deletedAt || op.queuedAt || new Date().toISOString();
+          const tomb = await ctx.client.from(TOMBSTONES).upsert({user_id:ctx.user.id,entity_type:"habit",entity_id:op.id,deleted_at:deletedAt},{onConflict:"user_id,entity_type,entity_id"});
+          if (tomb.error) throw tomb.error;
+          const del = await ctx.client.from(TABLE).delete().eq("id",op.id).eq("user_id",ctx.user.id); if(del.error) throw del.error;
+        } else {
+          const habit=normalizeHabit(op.habit);
+          const up=await ctx.client.from(TABLE).upsert(toRow(habit,ctx.user.id),{onConflict:"id"}); if(up.error) throw up.error;
+          await ctx.client.from(TOMBSTONES).delete().eq("user_id",ctx.user.id).eq("entity_type","habit").eq("entity_id",habit.id);
+          clearDeleted(habit.id);
+        }
+      } catch(error){console.warn("Habit sync failed",error);remaining.push(op);}
+    }
+    writeQueue(remaining); return remaining.length===0;
+  }
   async function saveHabit(habit) {
     habit = normalizeHabit(habit); habit.updatedAt = new Date().toISOString();
     const habits = readLocal(); const index = habits.findIndex(item => item.id === habit.id);
     if (index >= 0) habits[index] = habit; else habits.push(habit);
-    clearDeleted(habit.id); writeLocal(habits); window.dispatchEvent(new CustomEvent("statusos:habits-updated"));
-    const ctx = await context();
-    if (ctx) { const { error } = await ctx.client.from(TABLE).upsert(toRow(habit, ctx.user.id), { onConflict: "id" }); if (error) console.warn("Habit cloud save failed", error); }
-    return habit;
+    clearDeleted(habit.id); writeLocal(habits); queue({type:"upsert",id:habit.id,habit});
+    window.dispatchEvent(new CustomEvent("statusos:habits-updated")); await flushQueue(); return habit;
   }
   async function deleteHabit(id) {
-    markDeleted(id); writeLocal(readLocal().filter(h => h.id !== id)); window.dispatchEvent(new CustomEvent("statusos:habits-updated"));
-    const ctx = await context(); if (ctx) await ctx.client.from(TABLE).delete().eq("id", id).eq("user_id", ctx.user.id);
+    const deletedAt=new Date().toISOString(); markDeleted(id,deletedAt); writeLocal(readLocal().filter(h => h.id !== id)); queue({type:"delete",id,deletedAt});
+    window.dispatchEvent(new CustomEvent("statusos:habits-updated")); await flushQueue();
   }
   async function pullHabits() {
-    const ctx = await context(); if (!ctx) return readLocal();
-    const { data, error } = await ctx.client.from(TABLE).select("*").eq("user_id", ctx.user.id).order("created_at");
-    if (error) return readLocal();
-    const deleted=readDeleted(); const merged = new Map(); [...(data || []).map(normalizeHabit), ...readLocal()].filter(h=>!deleted[h.id]).forEach(h => {
+    const ctx = await context(); if (!ctx) return readLocal(); await flushQueue();
+    const [habitResult,tombResult]=await Promise.all([
+      ctx.client.from(TABLE).select("*").eq("user_id",ctx.user.id).order("created_at"),
+      ctx.client.from(TOMBSTONES).select("entity_id,deleted_at").eq("user_id",ctx.user.id).eq("entity_type","habit")
+    ]);
+    if (habitResult.error || tombResult.error) return readLocal();
+    const cloudDeleted=Object.fromEntries((tombResult.data||[]).map(x=>[x.entity_id,x.deleted_at]));
+    const deleted=mergeDeleted(cloudDeleted); const cloud=(habitResult.data||[]).map(normalizeHabit).filter(h=>!deleted[h.id]);
+    const merged = new Map(); [...cloud, ...readLocal()].filter(h=>!deleted[h.id]).forEach(h => {
       const old = merged.get(h.id); if (!old || new Date(h.updatedAt) >= new Date(old.updatedAt)) merged.set(h.id, h);
     });
     const habits = [...merged.values()]; writeLocal(habits);
-    for (const h of habits) if (!(data || []).some(row => row.id === h.id)) await ctx.client.from(TABLE).upsert(toRow(h, ctx.user.id), { onConflict: "id" });
-    window.dispatchEvent(new CustomEvent("statusos:habits-updated")); return habits;
+    for (const h of habits) if (!cloud.some(row => row.id === h.id)) queue({type:"upsert",id:h.id,habit:h});
+    await flushQueue(); window.dispatchEvent(new CustomEvent("statusos:habits-updated")); return habits;
   }
   function toggleDate(habit, dateKey, force) {
     habit = normalizeHabit(habit);
@@ -147,6 +176,6 @@
   }
 
   window.StatusOS = window.StatusOS || {};
-  window.StatusOS.Habits = { list: readLocal, save: saveHabit, delete: deleteHabit, pull: pullHabits, normalize: normalizeHabit,
+  window.StatusOS.Habits = { list: readLocal, save: saveHabit, delete: deleteHabit, pull: pullHabits, flush: flushQueue, normalize: normalizeHabit,
     isDoneToday, todayKey: localDateKey, toggleToday, toggleDate, addProgress, removeProgress, progress, streak, countInPeriod };
 })();
