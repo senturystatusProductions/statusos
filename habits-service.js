@@ -1,6 +1,6 @@
 (function () {
   const HABIT_KEY = "statusos_habits_v1";
-  const TABLE = "habits";
+  const TABLE = "statusos_habits";
   const DELETED_KEY = "statusos_habits_deleted_v1";
   const QUEUE_KEY = "statusos_habits_sync_queue_v1";
   const TOMBSTONES = "statusos_sync_tombstones";
@@ -94,9 +94,11 @@
       completion_dates: habit.completionDates, completed_date: habit.completionDates.at(-1) || null,
       streak: streak(habit), created_at: habit.createdAt, updated_at: habit.updatedAt };
   }
+  function emitSync(status, detail = "") { window.dispatchEvent(new CustomEvent("statusos:habit-sync-status", { detail: { status, detail } })); }
+  function isMissingTable(error) { const text = `${error?.code || ""} ${error?.message || ""}`.toLowerCase(); return text.includes("42p01") || text.includes("does not exist") || text.includes("schema cache"); }
   async function flushQueue() {
-    const ctx = await context(); if (!ctx) return false;
-    const pending = readQueue(), remaining = [];
+    const ctx = await context(); if (!ctx) { emitSync(navigator.onLine ? "local" : "offline", navigator.onLine ? "Sign in to sync habits." : "Habit changes are saved on this device."); return false; }
+    const pending = readQueue(), remaining = []; if (pending.length) emitSync("syncing", `${pending.length} habit change${pending.length===1?"":"s"}`);
     for (const op of pending) {
       try {
         if (op.type === "delete") {
@@ -110,9 +112,9 @@
           await ctx.client.from(TOMBSTONES).delete().eq("user_id",ctx.user.id).eq("entity_type","habit").eq("entity_id",habit.id);
           clearDeleted(habit.id);
         }
-      } catch(error){console.warn("Habit sync failed",error);remaining.push(op);}
+      } catch(error){console.error("Habit sync failed",error); if (isMissingTable(error)) emitSync("setup", "Run STATUSOS_HABITS_SYNC_v3.4.5.sql in Supabase."); else emitSync("pending", error?.message || "Habit sync failed."); remaining.push(op);}
     }
-    writeQueue(remaining); return remaining.length===0;
+    writeQueue(remaining); if (!remaining.length) emitSync("synced", "Habits synced across devices."); return remaining.length===0;
   }
   async function saveHabit(habit) {
     habit = normalizeHabit(habit); habit.updatedAt = new Date().toISOString();
@@ -131,7 +133,7 @@
       ctx.client.from(TABLE).select("*").eq("user_id",ctx.user.id).order("created_at"),
       ctx.client.from(TOMBSTONES).select("entity_id,deleted_at").eq("user_id",ctx.user.id).eq("entity_type","habit")
     ]);
-    if (habitResult.error || tombResult.error) return readLocal();
+    if (habitResult.error || tombResult.error) { const error=habitResult.error||tombResult.error; console.error("Habit cloud load failed", error); if (isMissingTable(error)) emitSync("setup", "Run STATUSOS_HABITS_SYNC_v3.4.5.sql in Supabase."); else emitSync("pending", error?.message || "Using local habit cache."); return readLocal(); }
     const cloudDeleted=Object.fromEntries((tombResult.data||[]).map(x=>[x.entity_id,x.deleted_at]));
     const deleted=mergeDeleted(cloudDeleted); const cloud=(habitResult.data||[]).map(normalizeHabit).filter(h=>!deleted[h.id]);
     const merged = new Map(); [...cloud, ...readLocal()].filter(h=>!deleted[h.id]).forEach(h => {
@@ -139,7 +141,7 @@
     });
     const habits = [...merged.values()]; writeLocal(habits);
     for (const h of habits) if (!cloud.some(row => row.id === h.id)) queue({type:"upsert",id:h.id,habit:h});
-    await flushQueue(); window.dispatchEvent(new CustomEvent("statusos:habits-updated")); return habits;
+    await flushQueue(); emitSync("synced", "Habits synced across devices."); window.dispatchEvent(new CustomEvent("statusos:habits-updated", {detail:{source:"cloud"}})); return habits;
   }
   function toggleDate(habit, dateKey, force) {
     habit = normalizeHabit(habit);
@@ -176,6 +178,6 @@
   }
 
   window.StatusOS = window.StatusOS || {};
-  window.StatusOS.Habits = { list: readLocal, save: saveHabit, delete: deleteHabit, pull: pullHabits, flush: flushQueue, normalize: normalizeHabit,
+  window.StatusOS.Habits = { list: readLocal, save: saveHabit, delete: deleteHabit, pull: pullHabits, flush: flushQueue, normalize: normalizeHabit, table: TABLE,
     isDoneToday, todayKey: localDateKey, toggleToday, toggleDate, addProgress, removeProgress, progress, streak, countInPeriod };
 })();

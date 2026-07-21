@@ -58,7 +58,11 @@
   function queueUpsert(task) { window.StatusOS.Storage.clearTaskDeleted(task.id); window.StatusOS.Storage.queueOperation({ type: "upsert", taskId: task.id, task }); emitStatus(navigator.onLine ? "pending" : "offline"); scheduleSync(); }
   function queueDelete(taskId) { const deletedAt = new Date().toISOString(); window.StatusOS.Storage.markTaskDeleted(taskId, deletedAt); window.StatusOS.Storage.queueOperation({ type: "delete", taskId, deletedAt }); emitStatus(navigator.onLine ? "pending" : "offline"); scheduleSync(); }
   function scheduleSync() { clearTimeout(syncTimer); syncTimer = setTimeout(flushQueue, 300); }
-  async function subscribeRealtime() { const context = await getContext(); if (!context || !context.client.channel) return; if (realtimeChannel) context.client.removeChannel(realtimeChannel); realtimeChannel = context.client.channel(`statusos-sync-${context.user.id}`).on("postgres_changes", { event: "*", schema: "public", table: TABLE, filter: `user_id=eq.${context.user.id}` }, pullTasks).on("postgres_changes", { event: "*", schema: "public", table: TOMBSTONES, filter: `user_id=eq.${context.user.id}` }, pullTasks).subscribe(); }
+  async function subscribeRealtime() { const context = await getContext(); if (!context || !context.client.channel) return; if (realtimeChannel) context.client.removeChannel(realtimeChannel); realtimeChannel = context.client.channel(`statusos-sync-${context.user.id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: TABLE, filter: `user_id=eq.${context.user.id}` }, pullTasks)
+      .on("postgres_changes", { event: "*", schema: "public", table: "statusos_habits", filter: `user_id=eq.${context.user.id}` }, () => window.StatusOS?.Habits?.pull?.())
+      .on("postgres_changes", { event: "*", schema: "public", table: TOMBSTONES, filter: `user_id=eq.${context.user.id}` }, async () => { await pullTasks(); await window.StatusOS?.Habits?.pull?.(); })
+      .subscribe(); }
   async function initialize() { emitStatus(navigator.onLine ? "syncing" : "offline"); await flushQueue(); await pullTasks(); await window.StatusOS?.Habits?.flush?.(); await window.StatusOS?.Habits?.pull?.(); await subscribeRealtime(); }
   window.addEventListener("online", () => { emitStatus("syncing", "Connection restored"); initialize(); }); window.addEventListener("offline", () => emitStatus("offline", "Changes are saved locally."));
   window.StatusOS = window.StatusOS || {}; window.StatusOS.Sync = { initialize, pullTasks, flushQueue, queueUpsert, queueDelete, status: () => currentStatus };
