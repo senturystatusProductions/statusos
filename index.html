@@ -100,7 +100,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v3.4.6 Habit Sync ID Repair</small>
+        <small id="appVersionLabel" class="version-label">v3.4.7 PWA Cache Recovery</small>
       </div>
     </aside>
 
@@ -1158,7 +1158,29 @@
   <script src="daily-polish-341.js"></script>
   <script>
     if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
+      window.addEventListener("load", async () => {
+        try {
+          const registration = await navigator.serviceWorker.register("service-worker.js?v=3.4.7", { updateViaCache: "none" });
+          await registration.update();
+          let refreshing = false;
+          navigator.serviceWorker.addEventListener("controllerchange", () => {
+            if (refreshing) return;
+            refreshing = true;
+            window.location.reload();
+          });
+          if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
+          registration.addEventListener("updatefound", () => {
+            const worker = registration.installing;
+            worker?.addEventListener("statechange", () => {
+              if (worker.state === "installed" && navigator.serviceWorker.controller) {
+                worker.postMessage({ type: "SKIP_WAITING" });
+              }
+            });
+          });
+        } catch (error) {
+          console.error("Service worker update failed", error);
+        }
+      });
     }
   </script>
 </body>

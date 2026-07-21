@@ -1,3 +1,3 @@
-# StatusOS v3.4.6
+# StatusOS v3.4.7
 
-**Codename:** Habit Sync ID Repair
+**Codename:** PWA Cache Recovery

@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "3.4.5";
-  const CODENAME = "Habit Sync Recovery";
+  const VERSION = "3.4.7";
+  const CODENAME = "PWA Cache Recovery";
   const BUILD_DATE = "2026-07-21";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

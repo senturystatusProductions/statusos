@@ -1,5 +1,57 @@
-const CACHE="statusos-v3.4.6";
-const ASSETS=["./","./index.html","./style.css","./storage-service.js","./sync-service.js","./foundation.js","./habits-service.js","./music-service.js","./public-beta.js","./daily-briefing.js","./smart-alerts.js","./weekly-review.js","./habit-calendar.js","./ux-polish.js","./notification-manager.js","./app-services.js","./settings-service.js","./artist-repository.js","./smart-task-engine.js","./artist-os.js","./data-protection.js","./ios-app.js","./ai-inbox.js","./workspace-manager.js","./planner-service.js","./command-center.js","./app.js","./auth.js","./mindset-routine.js","./daily-use-polish.js","./project-command-center.js","./unified-timeline.js","./finance-os.js","./executive-dashboard.js","./reliability-center.js","./daily-polish-341.js","./config.js","./manifest.json","./icon-192.png","./icon-512.png","./favicon.png","./statusos-logo.svg","./statusos-wordmark.svg"];
-self.addEventListener("install",event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));});
-self.addEventListener("activate",event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
-self.addEventListener("fetch",event=>{if(event.request.method!=="GET")return;event.respondWith(fetch(event.request).then(response=>{const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));return response;}).catch(()=>caches.match(event.request)));});
+const CACHE = "statusos-v3.4.7";
+const CORE = [
+  "./index.html", "./style.css", "./manifest.json", "./favicon.png",
+  "./icon-192.png", "./icon-512.png", "./statusos-logo.svg", "./statusos-wordmark.svg"
+];
+
+self.addEventListener("install", event => {
+  self.skipWaiting();
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)));
+});
+
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key))))
+      .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener("message", event => {
+  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
+  if (event.data?.type === "CLEAR_CACHES") {
+    event.waitUntil(caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key)))));
+  }
+});
+
+self.addEventListener("fetch", event => {
+  if (event.request.method !== "GET") return;
+  const request = event.request;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request, { cache: "no-store" })
+        .then(response => {
+          const copy = response.clone();
+          caches.open(CACHE).then(cache => cache.put("./index.html", copy));
+          return response;
+        })
+        .catch(() => caches.match("./index.html"))
+    );
+    return;
+  }
+
+  event.respondWith(
+    fetch(request, { cache: "no-store" })
+      .then(response => {
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE).then(cache => cache.put(request, copy));
+        }
+        return response;
+      })
+      .catch(() => caches.match(request))
+  );
+});
