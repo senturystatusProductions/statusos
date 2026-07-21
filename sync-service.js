@@ -60,7 +60,7 @@
   function scheduleSync() { clearTimeout(syncTimer); syncTimer = setTimeout(flushQueue, 300); }
   async function subscribeRealtime() { const context = await getContext(); if (!context || !context.client.channel) return; if (realtimeChannel) context.client.removeChannel(realtimeChannel); realtimeChannel = context.client.channel(`statusos-sync-${context.user.id}`)
       .on("postgres_changes", { event: "*", schema: "public", table: TABLE, filter: `user_id=eq.${context.user.id}` }, pullTasks)
-      .on("postgres_changes", { event: "*", schema: "public", table: "statusos_habits", filter: `user_id=eq.${context.user.id}` }, () => window.StatusOS?.Habits?.pull?.())
+      .on("postgres_changes", { event: "*", schema: "public", table: "statusos_habits_v2", filter: `user_id=eq.${context.user.id}` }, () => window.StatusOS?.Habits?.pull?.())
       .on("postgres_changes", { event: "*", schema: "public", table: TOMBSTONES, filter: `user_id=eq.${context.user.id}` }, async () => { await pullTasks(); await window.StatusOS?.Habits?.pull?.(); })
       .subscribe(); }
   async function initialize() { emitStatus(navigator.onLine ? "syncing" : "offline"); await flushQueue(); await pullTasks(); await window.StatusOS?.Habits?.flush?.(); await window.StatusOS?.Habits?.pull?.(); await subscribeRealtime(); }

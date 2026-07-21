@@ -1,3 +1,3 @@
-# StatusOS v3.4.5
+# StatusOS v3.4.6
 
-**Codename:** Habit Sync Recovery
+**Codename:** Habit Sync ID Repair

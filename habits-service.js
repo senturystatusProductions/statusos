@@ -1,6 +1,6 @@
 (function () {
   const HABIT_KEY = "statusos_habits_v1";
-  const TABLE = "statusos_habits";
+  const TABLE = "statusos_habits_v2";
   const DELETED_KEY = "statusos_habits_deleted_v1";
   const QUEUE_KEY = "statusos_habits_sync_queue_v1";
   const TOMBSTONES = "statusos_sync_tombstones";
@@ -112,7 +112,7 @@
           await ctx.client.from(TOMBSTONES).delete().eq("user_id",ctx.user.id).eq("entity_type","habit").eq("entity_id",habit.id);
           clearDeleted(habit.id);
         }
-      } catch(error){console.error("Habit sync failed",error); if (isMissingTable(error)) emitSync("setup", "Run STATUSOS_HABITS_SYNC_v3.4.5.sql in Supabase."); else emitSync("pending", error?.message || "Habit sync failed."); remaining.push(op);}
+      } catch(error){console.error("Habit sync failed",error); if (isMissingTable(error)) emitSync("setup", "Run STATUSOS_HABITS_SYNC_v3.4.6.sql in Supabase."); else emitSync("pending", error?.message || "Habit sync failed."); remaining.push(op);}
     }
     writeQueue(remaining); if (!remaining.length) emitSync("synced", "Habits synced across devices."); return remaining.length===0;
   }
@@ -133,7 +133,7 @@
       ctx.client.from(TABLE).select("*").eq("user_id",ctx.user.id).order("created_at"),
       ctx.client.from(TOMBSTONES).select("entity_id,deleted_at").eq("user_id",ctx.user.id).eq("entity_type","habit")
     ]);
-    if (habitResult.error || tombResult.error) { const error=habitResult.error||tombResult.error; console.error("Habit cloud load failed", error); if (isMissingTable(error)) emitSync("setup", "Run STATUSOS_HABITS_SYNC_v3.4.5.sql in Supabase."); else emitSync("pending", error?.message || "Using local habit cache."); return readLocal(); }
+    if (habitResult.error || tombResult.error) { const error=habitResult.error||tombResult.error; console.error("Habit cloud load failed", error); if (isMissingTable(error)) emitSync("setup", "Run STATUSOS_HABITS_SYNC_v3.4.6.sql in Supabase."); else emitSync("pending", error?.message || "Using local habit cache."); return readLocal(); }
     const cloudDeleted=Object.fromEntries((tombResult.data||[]).map(x=>[x.entity_id,x.deleted_at]));
     const deleted=mergeDeleted(cloudDeleted); const cloud=(habitResult.data||[]).map(normalizeHabit).filter(h=>!deleted[h.id]);
     const merged = new Map(); [...cloud, ...readLocal()].filter(h=>!deleted[h.id]).forEach(h => {
