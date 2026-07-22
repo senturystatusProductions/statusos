@@ -1,0 +1,8 @@
+STATUSOS v3.5.2 INSTALL
+
+1. Deploy all files in this package over the current StatusOS files.
+2. Open the website and confirm v3.5.2 Pomodoro Bubble Reset.
+3. Refresh the iPhone Home Screen app if it does not update immediately.
+4. Test by selecting three bubbles, then click bubble 3, bubble 2, and bubble 1 to return to zero.
+
+No Supabase SQL is required for this update.

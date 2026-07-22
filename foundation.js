@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "3.5.1";
-  const CODENAME = "Focus Planner Cloud Sync";
+  const VERSION = "3.5.3";
+  const CODENAME = "Focus Alarm Studio";
   const BUILD_DATE = "2026-07-22";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

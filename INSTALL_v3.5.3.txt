@@ -1,0 +1,9 @@
+STATUSOS v3.5.3 INSTALL
+
+1. Replace the deployed StatusOS files with every file and folder in this package.
+2. Make sure the new sounds folder is uploaded with the rest of the app.
+3. Open the website and confirm the footer says v3.5.3 Focus Alarm Studio.
+4. On iPhone, fully close and reopen the installed app if the old cache appears.
+5. Use the 10-second preset to test the alarm and Stop Alarm button.
+
+No Supabase SQL is required for this update.

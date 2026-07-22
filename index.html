@@ -100,7 +100,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v3.5.1 Focus Planner Cloud Sync</small>
+        <small id="appVersionLabel" class="version-label">v3.5.3 Focus Alarm Studio</small>
       </div>
     </aside>
 
@@ -869,12 +869,19 @@
 
               <p class="pomodoro-heading">Preset durations</p>
               <div class="pomodoro-presets">
+                <button type="button" data-pomodoro-seconds="10">10 sec</button>
+                <button type="button" data-pomodoro-seconds="30">30 sec</button>
                 <button type="button" data-pomodoro-minutes="25">25 min</button>
                 <button type="button" data-pomodoro-minutes="20">20 min</button>
                 <button type="button" data-pomodoro-minutes="15">15 min</button>
                 <button type="button" data-pomodoro-minutes="10">10 min</button>
                 <button type="button" data-pomodoro-minutes="5">5 min</button>
-                <button id="pomodoroCustomBtn" type="button">Custom</button>
+              </div>
+
+              <div class="pomodoro-custom-time" aria-label="Custom timer duration">
+                <label>Minutes<input id="pomodoroCustomMinutes" type="number" min="0" max="180" value="25" inputmode="numeric"></label>
+                <label>Seconds<input id="pomodoroCustomSeconds" type="number" min="0" max="59" value="0" inputmode="numeric"></label>
+                <button id="pomodoroCustomBtn" class="button secondary" type="button">Set Custom</button>
               </div>
 
               <div class="pomodoro-controls">
@@ -889,14 +896,44 @@
                 <button type="button" data-pomodoro-mode="long">Long break</button>
               </div>
 
-              <div class="pomodoro-alerts">
-                <label><input id="pomodoroChime" type="checkbox" checked> Chime</label>
-                <label><input id="pomodoroVibrate" type="checkbox" checked> Vibrate where supported</label>
+              <section class="focus-alarm-studio" aria-labelledby="focusAlarmHeading">
+                <div class="focus-alarm-head">
+                  <div><p class="eyebrow">FOCUS SOUNDS</p><h3 id="focusAlarmHeading">Alarm Studio</h3></div>
+                  <label class="focus-sound-toggle"><input id="pomodoroChime" type="checkbox" checked> Sound on</label>
+                </div>
+                <div id="pomodoroSoundOptions" class="focus-sound-options"></div>
+                <div class="focus-alarm-settings">
+                  <label>Alarm length
+                    <select id="pomodoroAlarmDuration">
+                      <option value="30" selected>30 seconds</option>
+                      <option value="60">60 seconds</option>
+                      <option value="until-stop">Until I press Stop</option>
+                    </select>
+                  </label>
+                  <label>Volume <span id="pomodoroVolumeValue">80%</span>
+                    <input id="pomodoroVolume" type="range" min="0" max="100" value="80">
+                  </label>
+                  <label class="focus-check"><input id="pomodoroVibrate" type="checkbox" checked> Vibrate where supported</label>
+                </div>
+              </section>
+
+              <div id="pomodoroCompletion" class="pomodoro-completion hidden" role="status" aria-live="assertive">
+                <div class="pomodoro-completion-glow"></div>
+                <p class="eyebrow">SESSION COMPLETE</p>
+                <h3 id="pomodoroCompletionTitle">Focus session complete. Great work.</h3>
+                <strong id="pomodoroCompletionMinutes">+1 Focus Session</strong>
+                <small id="pomodoroCompletionTotal">Today's total: 0 min</small>
+                <button id="pomodoroStopAlarm" class="button danger" type="button">■ STOP ALARM</button>
               </div>
 
               <div class="pomodoro-stats">
-                <div><span>Focus sessions</span><strong id="pomodoroSessionCount">0</strong></div>
-                <div><span>Focus time</span><strong id="pomodoroFocusTime">0 min</strong></div>
+                <div><span>Today sessions</span><strong id="pomodoroSessionCount">0</strong></div>
+                <div><span>Today focus</span><strong id="pomodoroFocusTime">0 min</strong></div>
+                <div><span>This week</span><strong id="pomodoroWeekTime">0 min</strong></div>
+                <div><span>This month</span><strong id="pomodoroMonthTime">0 min</strong></div>
+                <div><span>This year</span><strong id="pomodoroYearTime">0 min</strong></div>
+                <div><span>Current streak</span><strong id="pomodoroFocusStreak">0 days</strong></div>
+                <div><span>Best focus day</span><strong id="pomodoroBestDay">0 min</strong></div>
                 <div><span>Break time</span><strong id="pomodoroBreakTime">0 min</strong></div>
               </div>
               <p id="pomodoroStatus" class="small muted">Choose a task and press Start.</p>
@@ -1304,7 +1341,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("service-worker.js?v=3.5.1", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("service-worker.js?v=3.5.3", { updateViaCache: "none" });
           await registration.update();
           let refreshing = false;
           navigator.serviceWorker.addEventListener("controllerchange", () => {
