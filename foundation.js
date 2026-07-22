@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "3.5.0";
-  const CODENAME = "Focus Planner & Success History";
+  const VERSION = "3.5.1";
+  const CODENAME = "Focus Planner Cloud Sync";
   const BUILD_DATE = "2026-07-22";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

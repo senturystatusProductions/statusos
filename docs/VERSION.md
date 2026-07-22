@@ -1,3 +1,3 @@
-# StatusOS v3.5.0
+# StatusOS v3.5.1
 
-**Codename:** Focus Planner & Success History
+**Codename:** Focus Planner Cloud Sync

@@ -1,0 +1,7 @@
+STATUSOS v3.5.1 INSTALL
+
+1. In Supabase SQL Editor, run STATUSOS_FOCUS_PLANNER_SYNC_v3.5.1.sql once.
+2. Deploy every file in this package.
+3. Open the website in Safari and confirm v3.5.1 Focus Planner Cloud Sync.
+4. Open the iPhone Home Screen app and allow one refresh.
+5. Add or edit a Focus Planner task on one device, then open the other device to confirm sync.

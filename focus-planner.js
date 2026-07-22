@@ -1,7 +1,9 @@
-/* StatusOS v3.5.0 Focus Planner & Pomodoro */
+/* StatusOS v3.5.1 Focus Planner Cloud Sync */
 (function(){
   'use strict';
   const KEY='statusos_success_os_v2';
+  const CLOUD_TABLE='statusos_success_os';
+  let cloudPushTimer=null;
   const quotes=[
     ['Challenges are what make life interesting, and overcoming them is what makes life meaningful.','Joshua J. Marine'],
     ['Success is the sum of small efforts, repeated day in and day out.','Robert Collier'],
@@ -22,8 +24,12 @@
   let duration=25*60, remaining=duration, running=false, endAt=0, ticker=null, mode='focus', audioCtx=null;
 
   function read(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch{return {}}}
-  function day(){const data=read();data.days ||= {};data.days[selectedDate] ||= {morning:{checks:{}},night:{},planner:{}};data.days[selectedDate].planner ||= {};const p=data.days[selectedDate].planner;p.tasks ||= Array.from({length:5},()=>({text:'',target:1,actual:0}));while(p.tasks.length<5)p.tasks.push({text:'',target:1,actual:0});p.stats ||= {sessions:0,focusMinutes:0,breakMinutes:0};return {data,p}}
-  function save(mutator){const {data,p}=day();mutator(p);localStorage.setItem(KEY,JSON.stringify(data));window.dispatchEvent(new CustomEvent('statusos:success-updated'));renderPlanner()}
+  function day(){const data=read();data.days ||= {};data.days[selectedDate] ||= {morning:{checks:{}},night:{},planner:{}};const entry=data.days[selectedDate];entry.planner ||= {};const p=entry.planner;p.tasks ||= Array.from({length:5},()=>({text:'',target:1,actual:0}));while(p.tasks.length<5)p.tasks.push({text:'',target:1,actual:0});p.stats ||= {sessions:0,focusMinutes:0,breakMinutes:0};return {data,entry,p}}
+  function save(mutator){const {data,entry,p}=day();mutator(p);entry.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify(data));window.dispatchEvent(new CustomEvent('statusos:success-updated'));scheduleCloudPush();renderPlanner()}
+  async function cloudContext(){const sb=window.statusOSSupabase;if(!sb||!navigator.onLine)return null;const {data:{user},error}=await sb.auth.getUser();if(error||!user)return null;return {sb,user}}
+  async function cloudPush(){const ctx=await cloudContext();if(!ctx)return;try{const data=read();const rows=Object.entries(data.days||{}).map(([entry_date,payload])=>({user_id:ctx.user.id,entry_date,payload,updated_at:payload.updatedAt||new Date().toISOString()}));if(rows.length){const {error}=await ctx.sb.from(CLOUD_TABLE).upsert(rows,{onConflict:'user_id,entry_date'});if(error)throw error;}window.dispatchEvent(new CustomEvent('statusos:focus-sync',{detail:{status:'synced'}}));}catch(error){console.warn('Focus Planner cloud push failed',error);window.dispatchEvent(new CustomEvent('statusos:focus-sync',{detail:{status:'pending',error}}));}}
+  function scheduleCloudPush(){clearTimeout(cloudPushTimer);cloudPushTimer=setTimeout(cloudPush,500)}
+  async function cloudPull(){const ctx=await cloudContext();if(!ctx)return;try{const {data:rows,error}=await ctx.sb.from(CLOUD_TABLE).select('entry_date,payload,updated_at').eq('user_id',ctx.user.id);if(error)throw error;const local=read();local.days ||= {};for(const row of rows||[]){const current=local.days[row.entry_date];const localTime=current?.updatedAt||'';const cloudTime=row.updated_at||row.payload?.updatedAt||'';if(!current||!localTime||new Date(cloudTime)>=new Date(localTime)){local.days[row.entry_date]={...(row.payload||{}),updatedAt:cloudTime||new Date().toISOString()};}}localStorage.setItem(KEY,JSON.stringify(local));renderPlanner();window.dispatchEvent(new CustomEvent('statusos:success-updated'));window.dispatchEvent(new CustomEvent('statusos:focus-sync',{detail:{status:'synced'}}));}catch(error){console.warn('Focus Planner cloud pull failed',error);window.dispatchEvent(new CustomEvent('statusos:focus-sync',{detail:{status:'pending',error}}));}}
   function quoteForDate(){const n=selectedDate.replaceAll('-','').split('').reduce((a,b)=>a+Number(b),0);return quotes[n%quotes.length]}
   function taskMarkup(task,index){const bubbles=Array.from({length:5},(_,i)=>`<button type="button" class="focus-bubble ${i<Math.min(task.actual||0,5)?'filled':''}" data-bubble="${i+1}" aria-label="Set ${i+1} completed Pomodoros"></button>`).join('');return `<div class="focus-task-main"><span>${index+1}.</span><input class="focus-task-input" value="${escapeHtml(task.text)}" placeholder="Enter task..."></div><div class="focus-task-tracking"><label>Target <input class="focus-target-input" type="number" min="1" max="12" value="${Math.max(1,Number(task.target)||1)}"></label><div class="focus-bubbles" aria-label="Completed Pomodoros">${bubbles}</div><span class="focus-actual">${Number(task.actual)||0} actual</span><button type="button" class="focus-use-timer">Use timer</button></div>`}
   function renderPlanner(){
@@ -74,7 +80,10 @@
     document.querySelectorAll('[data-pomodoro-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.pomodoroMode)));
     window.addEventListener('statusos:success-date-changed',e=>{selectedDate=e.detail.date;pause();restart();renderPlanner()});
     window.addEventListener('storage',e=>{if(e.key===KEY)renderPlanner()});
-    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&running)tick()});
+    window.addEventListener('statusos:app-ready',()=>setTimeout(async()=>{await cloudPull();await cloudPush();},300));
+    window.addEventListener('online',async()=>{await cloudPull();await cloudPush();});
+    document.addEventListener('visibilitychange',async()=>{if(document.visibilityState==='visible'){if(running)tick();await cloudPull();await cloudPush();}});
+    setTimeout(cloudPull,700);
     renderPlanner();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();

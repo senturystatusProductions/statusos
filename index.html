@@ -100,7 +100,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v3.5.0 Focus Planner & Success History</small>
+        <small id="appVersionLabel" class="version-label">v3.5.1 Focus Planner Cloud Sync</small>
       </div>
     </aside>
 
@@ -1304,7 +1304,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("service-worker.js?v=3.5.0", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("service-worker.js?v=3.5.1", { updateViaCache: "none" });
           await registration.update();
           let refreshing = false;
           navigator.serviceWorker.addEventListener("controllerchange", () => {
