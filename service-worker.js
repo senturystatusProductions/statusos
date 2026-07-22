@@ -1,4 +1,4 @@
-const CACHE = "statusos-v3.7.0";
+const CACHE = "statusos-v3.7.0-mobile-audio-fix-1";
 const CORE = [
   "./index.html", "./style.css", "./manifest.json", "./favicon.png",
   "./icon-192.png", "./icon-512.png", "./focus-planner.js", "./performance-timer.js",
