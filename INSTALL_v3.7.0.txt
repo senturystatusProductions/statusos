@@ -1,0 +1,9 @@
+STATUSOS v3.7.0 INSTALL
+
+1. Back up the current StatusOS folder.
+2. Replace all website files with this package.
+3. Upload the complete sounds folder, including boxing-bell-1.wav, boxing-bell-2.wav and boxing-bell-3.wav.
+4. Hard refresh the website or reopen the installed PWA.
+5. Confirm the footer says v3.7.0 Performance Timer.
+
+No new SQL is required.

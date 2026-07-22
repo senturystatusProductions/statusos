@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "3.6.0";
-  const CODENAME = "Focus Planner UX Refresh";
+  const VERSION = "3.7.0";
+  const CODENAME = "Performance Timer";
   const BUILD_DATE = "2026-07-22";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

@@ -1,9 +1,10 @@
-const CACHE = "statusos-v3.6.0";
+const CACHE = "statusos-v3.7.0";
 const CORE = [
   "./index.html", "./style.css", "./manifest.json", "./favicon.png",
-  "./icon-192.png", "./icon-512.png", "./focus-planner.js",
+  "./icon-192.png", "./icon-512.png", "./focus-planner.js", "./performance-timer.js",
   "./sounds/classic-ring.wav", "./sounds/80s-digital-alarm.wav", "./sounds/tibetan-bell.wav",
-  "./sounds/wind-chimes.wav", "./sounds/rooster.wav", "./sounds/pinball-arcade.wav", "./mindset-routine.js", "./statusos-logo.svg", "./statusos-wordmark.svg"
+  "./sounds/wind-chimes.wav", "./sounds/rooster.wav", "./sounds/pinball-arcade.wav",
+  "./sounds/boxing-bell-1.wav", "./sounds/boxing-bell-2.wav", "./sounds/boxing-bell-3.wav", "./mindset-routine.js", "./statusos-logo.svg", "./statusos-wordmark.svg"
 ];
 
 self.addEventListener("install", event => {

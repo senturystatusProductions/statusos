@@ -100,7 +100,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v3.6.0 Focus Planner UX Refresh</small>
+        <small id="appVersionLabel" class="version-label">v3.7.0 Performance Timer</small>
       </div>
     </aside>
 
@@ -856,7 +856,15 @@
             </article>
 
             <aside class="card pomodoro-panel">
-              <p class="eyebrow">POMODORO TIMER</p>
+              <p class="eyebrow">PERFORMANCE TIMER</p>
+              <div class="performance-mode-switch" role="tablist" aria-label="Timer mode">
+                <button class="active" type="button" data-performance-mode="focus">Focus</button>
+                <button type="button" data-performance-mode="tabata">Tabata</button>
+                <button type="button" data-performance-mode="boxing">Boxing</button>
+                <button type="button" data-performance-mode="hiit">HIIT</button>
+                <button type="button" data-performance-mode="emom">EMOM</button>
+                <button type="button" data-performance-mode="stopwatch">Stopwatch</button>
+              </div>
               <div class="pomodoro-current-task">
                 <span>CURRENT TASK</span>
                 <strong id="pomodoroCurrentTask">No task selected</strong>
@@ -878,8 +886,36 @@
                 <select id="pomodoroTaskSelect"></select>
               </label>
 
-              <div class="pomodoro-preset-head"><p class="pomodoro-heading">Preset durations</p><small>Tap a time</small></div>
-              <div class="pomodoro-presets compact">
+              <section id="performanceWorkoutPanel" class="performance-workout-panel hidden" aria-label="Workout timer settings">
+                <div class="performance-phase-strip">
+                  <span id="performancePhaseLabel">READY</span>
+                  <strong id="performanceRoundLabel">Round 1 / 8</strong>
+                </div>
+                <div class="performance-presets">
+                  <button type="button" data-workout-preset="tabata">Classic Tabata</button>
+                  <button type="button" data-workout-preset="boxing">Boxing 3×5</button>
+                  <button type="button" data-workout-preset="kettlebell">Kettlebell</button>
+                  <button type="button" data-workout-preset="skipping">Skipping</button>
+                </div>
+                <div class="performance-config-grid">
+                  <label>Work seconds<input id="performanceWork" type="number" min="1" max="3600" value="20"></label>
+                  <label>Rest seconds<input id="performanceRest" type="number" min="0" max="1800" value="10"></label>
+                  <label>Rounds<input id="performanceRounds" type="number" min="1" max="100" value="8"></label>
+                  <label>Warm-up seconds<input id="performanceWarmup" type="number" min="0" max="1800" value="10"></label>
+                  <label>Cool-down seconds<input id="performanceCooldown" type="number" min="0" max="1800" value="0"></label>
+                  <label class="performance-check"><input id="performanceHalfway" type="checkbox" checked> Halfway bell</label>
+                  <label class="performance-check"><input id="performanceVoice" type="checkbox"> Voice cues</label>
+                  <label class="performance-check"><input id="performanceVibrate" type="checkbox" checked> Vibrate</label>
+                </div>
+                <div class="performance-bell-map">
+                  <div><span>Work starts</span><strong>Bell 1</strong><button type="button" data-preview-bell="1">▶</button></div>
+                  <div><span>Rest + halfway</span><strong>Bell 2</strong><button type="button" data-preview-bell="2">▶</button></div>
+                  <div><span>Workout complete</span><strong>Bell 3</strong><button type="button" data-preview-bell="3">▶</button></div>
+                </div>
+              </section>
+
+              <div class="pomodoro-focus-only pomodoro-preset-head"><p class="pomodoro-heading">Preset durations</p><small>Tap a time</small></div>
+              <div class="pomodoro-focus-only pomodoro-presets compact">
                 <button type="button" data-pomodoro-seconds="10">10s</button>
                 <button type="button" data-pomodoro-seconds="30">30s</button>
                 <button type="button" data-pomodoro-minutes="5">5m</button>
@@ -892,7 +928,7 @@
                 <button type="button" data-pomodoro-minutes="60">60m</button>
               </div>
 
-              <details class="pomodoro-advanced">
+              <details class="pomodoro-focus-only pomodoro-advanced">
                 <summary>Advanced timer settings</summary>
                 <div class="pomodoro-custom-time" aria-label="Custom timer duration">
                   <label>Minutes<input id="pomodoroCustomMinutes" type="number" min="0" max="180" value="25" inputmode="numeric"></label>
@@ -901,13 +937,13 @@
                 </div>
               </details>
 
-              <div class="pomodoro-mode-row">
+              <div class="pomodoro-focus-only pomodoro-mode-row">
                 <button class="active" type="button" data-pomodoro-mode="focus">Focus</button>
                 <button type="button" data-pomodoro-mode="short">Short break</button>
                 <button type="button" data-pomodoro-mode="long">Long break</button>
               </div>
 
-              <details class="focus-alarm-details">
+              <details class="pomodoro-focus-only focus-alarm-details">
                 <summary>Sound and alarm settings</summary>
               <section class="focus-alarm-studio" aria-labelledby="focusAlarmHeading">
                 <div class="focus-alarm-head">
@@ -949,6 +985,12 @@
                 <div><span>Current streak</span><strong id="pomodoroFocusStreak">0 days</strong></div>
                 <div><span>Best focus day</span><strong id="pomodoroBestDay">0 min</strong></div>
                 <div><span>Break time</span><strong id="pomodoroBreakTime">0 min</strong></div>
+              </div>
+              <div id="performanceWorkoutStats" class="performance-workout-stats hidden">
+                <div><span>Workouts</span><strong id="performanceWorkoutCount">0</strong></div>
+                <div><span>Workout time</span><strong id="performanceWorkoutMinutes">0 min</strong></div>
+                <div><span>Rounds completed</span><strong id="performanceRoundsTotal">0</strong></div>
+                <div><span>Current streak</span><strong id="performanceWorkoutStreak">0 days</strong></div>
               </div>
               <p id="pomodoroStatus" class="small muted">Choose a task and press Start.</p>
             </aside>
@@ -1344,6 +1386,7 @@
   <script src="auth.js"></script>
   <script src="mindset-routine.js"></script>
   <script src="focus-planner.js"></script>
+  <script src="performance-timer.js"></script>
   <script src="daily-use-polish.js"></script>
   <script src="project-command-center.js"></script>
   <script src="unified-timeline.js"></script>
@@ -1355,7 +1398,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("service-worker.js?v=3.6.0", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("service-worker.js?v=3.7.0", { updateViaCache: "none" });
           await registration.update();
           let refreshing = false;
           navigator.serviceWorker.addEventListener("controllerchange", () => {
