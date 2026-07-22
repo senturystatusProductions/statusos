@@ -1,7 +1,7 @@
 (function () {
-  const VERSION = "3.4.9";
-  const CODENAME = "UI Polish";
-  const BUILD_DATE = "2026-07-21";
+  const VERSION = "3.5.0";
+  const CODENAME = "Focus Planner & Success History";
+  const BUILD_DATE = "2026-07-22";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;
 

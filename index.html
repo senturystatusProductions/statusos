@@ -100,7 +100,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v3.4.9 UI Polish</small>
+        <small id="appVersionLabel" class="version-label">v3.5.0 Focus Planner & Success History</small>
       </div>
     </aside>
 
@@ -756,11 +756,26 @@
           <span id="mindsetStreak" class="status-pill">0 day streak</span>
         </div>
 
+        <div class="success-date-nav card" aria-label="Success OS date navigation">
+          <button id="successPrevDay" class="button secondary" type="button" aria-label="Previous day">← Previous</button>
+          <div class="success-date-center">
+            <label for="successDatePicker">Selected day</label>
+            <input id="successDatePicker" type="date">
+            <strong id="successDateLabel"></strong>
+            <span id="successPastDayBadge" class="status-pill hidden">Editing past day</span>
+          </div>
+          <div class="success-date-actions">
+            <button id="successTodayBtn" class="button secondary" type="button">Today</button>
+            <button id="successNextDay" class="button secondary" type="button" aria-label="Next day">Next →</button>
+          </div>
+        </div>
+
         <div class="success-tabs" role="tablist" aria-label="Success OS sections">
           <button data-success-tab="morning" class="active" type="button">Morning <span id="morningTabDone" class="success-tab-done hidden">Completed</span></button>
           <button data-success-tab="purpose" type="button">Purpose</button>
           <button data-success-tab="identity" type="button">Identity</button>
           <button data-success-tab="night" type="button">Night <span id="nightTabDone" class="success-tab-done hidden">Completed</span></button>
+          <button data-success-tab="focus" type="button">Focus Planner</button>
           <button data-success-tab="progress" type="button">Progress</button>
         </div>
 
@@ -796,6 +811,97 @@
 
         <section data-success-panel="night" class="success-panel hidden">
           <article class="card mindset-card"><p class="eyebrow">EVENING SUCCESS REVIEW</p><h3>End with evidence, learning, and expectation.</h3><label>Biggest win<textarea id="eveningWins" placeholder="What did I accomplish today?"></textarea></label><label>Biggest lesson<textarea id="eveningLesson" placeholder="What did today teach me?"></textarea></label><label>Evidence I am moving forward<textarea id="eveningEvidence" placeholder="A completed task, reply, sale, idea, or disciplined choice..."></textarea></label><label>Tomorrow's first action<input id="tomorrowPriority" placeholder="What will I do first tomorrow?"></label><div class="night-suggestion"><strong>Before sleep</strong><span>Read your purpose once. Picture tomorrow's first action completed. Let your final thought be expectation, not worry.</span></div><button id="saveEveningResetBtn" class="button" type="button">Complete Night Review</button><p id="eveningResetStatus" class="small muted"></p></article>
+        </section>
+
+        <section data-success-panel="focus" class="success-panel hidden">
+          <div class="focus-planner-layout">
+            <article class="card focus-planner-sheet">
+              <div class="focus-quote-block">
+                <p id="focusQuoteText"></p>
+                <strong id="focusQuoteAuthor"></strong>
+              </div>
+
+              <section class="focus-task-group">
+                <p class="eyebrow">MOST IMPORTANT TASK OF THE DAY</p>
+                <p class="muted">If this was the only thing you did today, you would be satisfied.</p>
+                <div id="focusTask1" class="focus-task-row" data-focus-task="0"></div>
+              </section>
+
+              <section class="focus-task-group">
+                <p class="eyebrow">SECONDARY TASKS OF IMPORTANCE</p>
+                <p class="muted">Completion of these tasks will make the day even better.</p>
+                <div id="focusTask2" class="focus-task-row" data-focus-task="1"></div>
+                <div id="focusTask3" class="focus-task-row" data-focus-task="2"></div>
+              </section>
+
+              <section class="focus-task-group">
+                <p class="eyebrow">ADDITIONAL TASKS</p>
+                <p class="muted">Do these only after you have completed the tasks above.</p>
+                <div id="focusTask4" class="focus-task-row" data-focus-task="3"></div>
+                <div id="focusTask5" class="focus-task-row" data-focus-task="4"></div>
+              </section>
+
+              <section class="focus-notes-section">
+                <p class="eyebrow">NOTES</p>
+                <p class="muted">Extra space for ideas, future tasks, inspiration, etc.</p>
+                <textarea id="focusPlannerNotes" rows="6" placeholder="Write notes for this day..."></textarea>
+              </section>
+
+              <section class="focus-score-section">
+                <p class="eyebrow">PRODUCTIVITY SCORE</p>
+                <p class="muted">How productive were you today on a scale of 1–10? What happened?</p>
+                <div id="focusScoreButtons" class="focus-score-buttons"></div>
+                <textarea id="focusScoreReflection" rows="3" placeholder="What helped or got in the way today?"></textarea>
+              </section>
+            </article>
+
+            <aside class="card pomodoro-panel">
+              <p class="eyebrow">POMODORO TIMER</p>
+              <div class="pomodoro-ring" id="pomodoroRing">
+                <span id="pomodoroMode">FOCUS</span>
+                <strong id="pomodoroDisplay">25:00</strong>
+                <small id="pomodoroTaskLabel">No task selected</small>
+              </div>
+
+              <label>Working on
+                <select id="pomodoroTaskSelect"></select>
+              </label>
+
+              <p class="pomodoro-heading">Preset durations</p>
+              <div class="pomodoro-presets">
+                <button type="button" data-pomodoro-minutes="25">25 min</button>
+                <button type="button" data-pomodoro-minutes="20">20 min</button>
+                <button type="button" data-pomodoro-minutes="15">15 min</button>
+                <button type="button" data-pomodoro-minutes="10">10 min</button>
+                <button type="button" data-pomodoro-minutes="5">5 min</button>
+                <button id="pomodoroCustomBtn" type="button">Custom</button>
+              </div>
+
+              <div class="pomodoro-controls">
+                <button id="pomodoroStart" class="button" type="button">▶ Start</button>
+                <button id="pomodoroPause" class="button secondary" type="button">Ⅱ Pause</button>
+                <button id="pomodoroRestart" class="button secondary" type="button">↻ Restart</button>
+              </div>
+
+              <div class="pomodoro-mode-row">
+                <button class="active" type="button" data-pomodoro-mode="focus">Focus</button>
+                <button type="button" data-pomodoro-mode="short">Short break</button>
+                <button type="button" data-pomodoro-mode="long">Long break</button>
+              </div>
+
+              <div class="pomodoro-alerts">
+                <label><input id="pomodoroChime" type="checkbox" checked> Chime</label>
+                <label><input id="pomodoroVibrate" type="checkbox" checked> Vibrate where supported</label>
+              </div>
+
+              <div class="pomodoro-stats">
+                <div><span>Focus sessions</span><strong id="pomodoroSessionCount">0</strong></div>
+                <div><span>Focus time</span><strong id="pomodoroFocusTime">0 min</strong></div>
+                <div><span>Break time</span><strong id="pomodoroBreakTime">0 min</strong></div>
+              </div>
+              <p id="pomodoroStatus" class="small muted">Choose a task and press Start.</p>
+            </aside>
+          </div>
         </section>
 
         <section data-success-panel="progress" class="success-panel hidden">
@@ -1186,6 +1292,7 @@
   <script src="ai-inbox.js"></script>
   <script src="auth.js"></script>
   <script src="mindset-routine.js"></script>
+  <script src="focus-planner.js"></script>
   <script src="daily-use-polish.js"></script>
   <script src="project-command-center.js"></script>
   <script src="unified-timeline.js"></script>
@@ -1197,7 +1304,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("service-worker.js?v=3.4.9", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("service-worker.js?v=3.5.0", { updateViaCache: "none" });
           await registration.update();
           let refreshing = false;
           navigator.serviceWorker.addEventListener("controllerchange", () => {

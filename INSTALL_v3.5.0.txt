@@ -1,0 +1,11 @@
+STATUSOS v3.5.0 INSTALL
+
+1. Upload/replace every file in this package.
+2. Open the website in Safari first.
+3. Confirm the footer reads: v3.5.0 Focus Planner & Success History
+4. Reopen the iPhone Home Screen app. Allow one automatic refresh if prompted.
+5. Open Success OS and test Previous Day, Today, Night, and Focus Planner.
+
+No Supabase SQL is required.
+
+NOTE: The completion chime works after you press Start because browsers require a user gesture before playing audio. Vibration uses the browser vibration API and works only on devices/browsers that support it.

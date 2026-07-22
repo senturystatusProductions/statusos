@@ -25,14 +25,22 @@
     return JSON.parse(JSON.stringify(defaults));
   }
   let data=read();
-  function write(){localStorage.setItem(KEY,JSON.stringify(data));window.dispatchEvent(new CustomEvent('statusos:success-updated'));render();}
-  function current(){const key=iso();data.days[key] ||= {morning:{checks:{}},night:{}};data.days[key].morning ||= {checks:{}};data.days[key].morning.checks ||= {};data.days[key].night ||= {};return data.days[key];}
+  let selectedDate=iso();
+  const todayKey=()=>iso();
+  function write(){try{const latest=JSON.parse(localStorage.getItem(KEY)||'{}');Object.keys(latest.days||{}).forEach(k=>{if(latest.days[k]?.planner){data.days[k] ||= {};data.days[k].planner=latest.days[k].planner}})}catch{}localStorage.setItem(KEY,JSON.stringify(data));window.dispatchEvent(new CustomEvent('statusos:success-updated'));render();}
+  function current(){const key=selectedDate;data.days[key] ||= {morning:{checks:{}},night:{},planner:{}};data.days[key].morning ||= {checks:{}};data.days[key].morning.checks ||= {};data.days[key].night ||= {};data.days[key].planner ||= {};return data.days[key];}
+  function dateFromKey(key){const [y,m,d]=key.split('-').map(Number);return new Date(y,m-1,d)}
+  function setSelectedDate(key){if(!/^\d{4}-\d{2}-\d{2}$/.test(key))return; if(key>todayKey())key=todayKey(); selectedDate=key; render(); window.dispatchEvent(new CustomEvent('statusos:success-date-changed',{detail:{date:key}}));}
+  window.StatusOSSuccessDate={get:()=>selectedDate,set:setSelectedDate,today:todayKey};
   function setTab(name){document.querySelectorAll('[data-success-tab]').forEach(b=>b.classList.toggle('active',b.dataset.successTab===name));document.querySelectorAll('[data-success-panel]').forEach(p=>p.classList.toggle('hidden',p.dataset.successPanel!==name));}
   function completeDay(x){return !!(x?.morning?.complete&&x?.night?.complete)}
   function streak(){let n=0,d=new Date();while(completeDay(data.days[iso(d)])){n++;d.setDate(d.getDate()-1)}return n}
-  function principle(){const start=new Date(new Date().getFullYear(),0,0);const day=Math.floor((new Date()-start)/86400000);return principles[day%principles.length]}
+  function principle(){const chosen=dateFromKey(selectedDate);const start=new Date(chosen.getFullYear(),0,0);const day=Math.floor((chosen-start)/86400000);return principles[Math.abs(day)%principles.length]}
   function render(){
     const x=current();
+    const chosen=dateFromKey(selectedDate),today=todayKey();
+    const picker=document.getElementById('successDatePicker');if(picker){picker.max=today;picker.value=selectedDate;}
+    setTimeout(()=>{const label=document.getElementById('successDateLabel');if(label)label.textContent=chosen.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'});const badge=document.getElementById('successPastDayBadge');badge?.classList.toggle('hidden',selectedDate===today);const next=document.getElementById('successNextDay');if(next)next.disabled=selectedDate>=today;},0);
     const checks=x.morning.checks||{};
     document.querySelectorAll('[data-mindset-check]').forEach(el=>el.checked=!!checks[el.dataset.mindsetCheck]);
     const set=(id,v,prop='value')=>{const el=document.getElementById(id);if(el&&document.activeElement!==el)el[prop]=v};
@@ -47,7 +55,7 @@
     const keys=Object.keys(data.days).sort().slice(-30),mc=keys.filter(k=>data.days[k].morning?.complete).length,nc=keys.filter(k=>data.days[k].night?.complete).length,dc=keys.filter(k=>completeDay(data.days[k])).length;
     set('successMorningCount',String(mc),'textContent');set('successNightCount',String(nc),'textContent');set('successConsistency',`${Math.round(dc/30*100)}%`,'textContent');
     const hist=document.getElementById('successHistory');if(hist){let rows=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=iso(d),z=data.days[k]||{};rows.push(`<div><span>${d.toLocaleDateString(undefined,{weekday:'short'})}</span><i class="${z.morning?.complete?'done':''}">Morning</i><i class="${z.night?.complete?'done':''}">Night</i></div>`)}hist.innerHTML=rows.join('')}
-    const title=document.getElementById('successLaunchTitle'),text=document.getElementById('successLaunchText'),btn=document.getElementById('dashboardSuccessBtn');if(title&&text&&btn){if(!x.morning.complete){title.textContent='Start with purpose';text.textContent='Complete your morning ritual before the day gets noisy.';btn.textContent='Start My Day'}else if(!x.night.complete){title.textContent='Morning ritual complete';text.textContent=x.morning.action?`Today's major win: ${x.morning.action}`:'Carry your purpose into focused action.';btn.textContent='Open Success OS'}else{title.textContent='Day reflected';text.textContent='Your morning and night routines are complete.';btn.textContent='View Progress'}}
+    const todayData=data.days[todayKey()]||{morning:{},night:{}};const title=document.getElementById('successLaunchTitle'),text=document.getElementById('successLaunchText'),btn=document.getElementById('dashboardSuccessBtn');if(title&&text&&btn){if(!todayData.morning?.complete){title.textContent='Start with purpose';text.textContent='Complete your morning ritual before the day gets noisy.';btn.textContent='Start My Day'}else if(!todayData.night?.complete){title.textContent='Morning ritual complete';text.textContent=todayData.morning.action?`Today's major win: ${todayData.morning.action}`:'Carry your purpose into focused action.';btn.textContent='Open Success OS'}else{title.textContent='Day reflected';text.textContent='Your morning and night routines are complete.';btn.textContent='View Progress'}}
   }
   function escapeHtml(v){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
   function saveMorning(){const x=current();x.morning.checks={};document.querySelectorAll('[data-mindset-check]').forEach(el=>x.morning.checks[el.dataset.mindsetCheck]=el.checked);x.morning.gratitude=document.getElementById('morningGratitude')?.value.trim()||'';x.morning.action=document.getElementById('mindsetAction')?.value.trim()||'';x.morning.complete=Object.keys(x.morning.checks).length===6&&Object.values(x.morning.checks).every(Boolean)&&!!x.morning.gratitude&&!!x.morning.action;x.morning.completedAt=x.morning.complete?(x.morning.completedAt||new Date().toISOString()):null;write()}
@@ -132,6 +140,10 @@
     document.getElementById('identityList')?.addEventListener('click',e=>{const b=e.target.closest('[data-remove-identity]');if(!b)return;data.identities.splice(Number(b.dataset.removeIdentity),1);write()});
     document.getElementById('saveEveningResetBtn')?.addEventListener('click',()=>{const ok=saveNightDraft(true);const el=document.getElementById('eveningResetStatus');if(el)el.textContent=ok?'Night review complete. Tomorrow begins with a clear direction.':'Your draft is saved. Fill in all four reflection fields to complete the review.';if(ok)try{navigator.vibrate?.(20)}catch{}});
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){saveMorning();saveNightDraft(false)}});window.addEventListener('pagehide',()=>{saveMorning();saveNightDraft(false)});
+    document.getElementById('successPrevDay')?.addEventListener('click',()=>{const d=dateFromKey(selectedDate);d.setDate(d.getDate()-1);setSelectedDate(iso(d))});
+    document.getElementById('successNextDay')?.addEventListener('click',()=>{const d=dateFromKey(selectedDate);d.setDate(d.getDate()+1);setSelectedDate(iso(d))});
+    document.getElementById('successTodayBtn')?.addEventListener('click',()=>setSelectedDate(todayKey()));
+    document.getElementById('successDatePicker')?.addEventListener('change',e=>setSelectedDate(e.target.value));
     window.addEventListener('storage',e=>{if(e.key===KEY){data=read();render()}});render();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();

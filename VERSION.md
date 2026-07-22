@@ -1,3 +1,3 @@
-# StatusOS v3.4.9
+# StatusOS v3.5.0
 
-**Codename:** UI Polish
+**Codename:** Focus Planner & Success History
