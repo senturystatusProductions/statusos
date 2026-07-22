@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "3.5.3";
-  const CODENAME = "Focus Alarm Studio";
+  const VERSION = "3.6.0";
+  const CODENAME = "Focus Planner UX Refresh";
   const BUILD_DATE = "2026-07-22";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

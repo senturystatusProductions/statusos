@@ -1,0 +1,9 @@
+STATUSOS v3.6.0 INSTALL
+
+1. Upload every file and folder from this package.
+2. Confirm the sounds folder is uploaded.
+3. Hard refresh the website once.
+4. Open the installed phone app and allow its automatic cache refresh.
+5. Confirm the footer says v3.6.0 Focus Planner UX Refresh.
+
+No Supabase SQL is required.

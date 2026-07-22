@@ -1,3 +1,3 @@
-# StatusOS v3.5.3
+# StatusOS v3.6.0
 
-**Codename:** Focus Alarm Studio
+**Codename:** Focus Planner UX Refresh
