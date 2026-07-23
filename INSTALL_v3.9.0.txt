@@ -1,0 +1,8 @@
+StatusOS v3.9.0 Installation
+
+1. Replace the existing project files with this release.
+2. Start the app using your normal local server or deployed site.
+3. Perform one hard refresh: Ctrl + Shift + R.
+4. Press Ctrl + K (Cmd + K on Mac) to open the Command Palette.
+
+No Supabase SQL migration is required.

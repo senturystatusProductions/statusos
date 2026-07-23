@@ -1,5 +1,5 @@
 (function () {
-  const VERSION = "3.8.1";
+  const VERSION = "3.9.0";
   const CODENAME = "Daily Command Center";
   const BUILD_DATE = "2026-07-23";
   const LOG_KEY = "statusos_diagnostic_log_v1";

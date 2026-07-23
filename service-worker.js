@@ -1,4 +1,4 @@
-const CACHE = "statusos-v3.8.1-mobile-audio-fix-1";
+const CACHE = "statusos-v3.9.0-command-palette-1";
 const CORE = [
   "./index.html", "./style.css", "./manifest.json", "./favicon.png",
   "./icon-192.png", "./icon-512.png", "./focus-planner.js", "./performance-timer.js",
@@ -6,7 +6,8 @@ const CORE = [
   "./sounds/wind-chimes.wav", "./sounds/rooster.wav", "./sounds/pinball-arcade.wav",
   "./sounds/boxing-bell-1.wav", "./sounds/boxing-bell-2.wav", "./sounds/boxing-bell-3.wav", "./mindset-routine.js", "./statusos-logo.svg", "./statusos-wordmark.svg",
   "navigation-stability.js",
-  "quick-capture.js"
+  "quick-capture.js",
+  "command-palette.js"
 ];
 
 self.addEventListener("install", event => {
