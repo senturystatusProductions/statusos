@@ -1,0 +1,1 @@
+Upload every file and folder from this package, replacing the previous StatusOS files. Keep the sounds folder intact. No Supabase SQL migration is required. After upload, refresh twice or close and reopen the installed app so the v3.8.0 service worker takes control.

@@ -12,67 +12,12 @@
   };
   let mode='focus',running=false,paused=false,timer=null,phase='ready',round=1,remaining=0,phaseDuration=0,halfwayPlayed=false,startedAt=0,workoutElapsed=0,stopwatchElapsed=0;
   let audio=null;
-  let voiceTimer=null;
-  let bellsUnlocked=false;
-  const bellPlayers=Object.fromEntries(Object.entries(bells).map(([key,src])=>{
-    const player=new Audio(src);
-    player.preload='auto';
-    player.playsInline=true;
-    player.volume=.9;
-    try{player.load()}catch{}
-    return [key,player];
-  }));
   const $=id=>document.getElementById(id);
   const readPrefs=()=>{try{return {...{work:20,rest:10,rounds:8,warmup:10,cooldown:0,halfway:true,voice:false,vibrate:true},...JSON.parse(localStorage.getItem(PREF)||'{}')}}catch{return {work:20,rest:10,rounds:8,warmup:10,cooldown:0,halfway:true,voice:false,vibrate:true}}};
   const savePrefs=()=>{const p=getConfig();localStorage.setItem(PREF,JSON.stringify(p));};
   const getConfig=()=>({work:Math.max(1,+$('performanceWork')?.value||20),rest:Math.max(0,+$('performanceRest')?.value||0),rounds:Math.max(1,+$('performanceRounds')?.value||8),warmup:Math.max(0,+$('performanceWarmup')?.value||0),cooldown:Math.max(0,+$('performanceCooldown')?.value||0),halfway:!!$('performanceHalfway')?.checked,voice:!!$('performanceVoice')?.checked,vibrate:!!$('performanceVibrate')?.checked});
-  function unlockBellAudio(){
-    if(bellsUnlocked)return;
-    bellsUnlocked=true;
-    Object.values(bellPlayers).forEach(player=>{
-      try{
-        const originalVolume=player.volume;
-        player.volume=0;
-        player.currentTime=0;
-        const attempt=player.play();
-        if(attempt&&typeof attempt.then==='function'){
-          attempt.then(()=>{
-            player.pause();
-            player.currentTime=0;
-            player.volume=originalVolume;
-          }).catch(()=>{player.volume=originalVolume;});
-        }else{
-          player.pause();
-          player.currentTime=0;
-          player.volume=originalVolume;
-        }
-      }catch{}
-    });
-  }
-  function playBell(n){
-    try{
-      const player=bellPlayers[n];
-      if(!player)return;
-      if(audio&&audio!==player){audio.pause();audio.currentTime=0;}
-      audio=player;
-      player.pause();
-      player.currentTime=0;
-      player.volume=.9;
-      const attempt=player.play();
-      if(attempt&&typeof attempt.catch==='function')attempt.catch(error=>console.warn('StatusOS bell playback blocked:',error));
-      if(getConfig().vibrate&&navigator.vibrate)navigator.vibrate(n===3?[200,100,200,100,400]:[180]);
-    }catch(error){console.warn('StatusOS bell playback failed:',error);}
-  }
-  function speak(text,delay=650){
-    if(!getConfig().voice||!('speechSynthesis'in window))return;
-    clearTimeout(voiceTimer);
-    voiceTimer=setTimeout(()=>{
-      try{
-        speechSynthesis.cancel();
-        speechSynthesis.speak(new SpeechSynthesisUtterance(text));
-      }catch{}
-    },delay);
-  }
+  function playBell(n){try{audio?.pause();audio=new Audio(bells[n]);audio.volume=.9;audio.play().catch(()=>{});if(getConfig().vibrate&&navigator.vibrate)navigator.vibrate(n===3?[200,100,200,100,400]:[180]);}catch{}}
+  function speak(text){if(!getConfig().voice||!('speechSynthesis'in window))return;try{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(text));}catch{}}
   function fmt(sec){sec=Math.max(0,Math.floor(sec));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`}
   function setVisual(next){const ring=$('pomodoroRing');ring?.classList.remove('performance-work','performance-rest','performance-halfway','performance-done','performance-ready');ring?.classList.add(`performance-${next}`);}
   function update(){
@@ -89,7 +34,6 @@
   function setPhase(next,seconds){phase=next;phaseDuration=Math.max(0,seconds);remaining=phaseDuration;halfwayPlayed=false;setVisual(next);if(next==='work'){playBell(1);speak(`Round ${round}. Work.`)}else if(next==='rest'){playBell(2);speak('Rest.')}else if(next==='cooldown'){playBell(2);speak('Cool down.')}update();}
   function begin(){
     if(mode==='focus')return;
-    unlockBellAudio();
     if(running)return;
     if(paused){running=true;paused=false;timer=setInterval(tick,1000);update();return;}
     const c=getConfig();savePrefs();startedAt=Date.now();workoutElapsed=0;round=1;stopwatchElapsed=0;running=true;paused=false;
@@ -108,7 +52,7 @@
   }
   function advance(){const c=getConfig();if(phase==='ready'){setPhase('work',c.work);return}if(phase==='work'){if(round>=c.rounds){if(c.cooldown>0)setPhase('cooldown',c.cooldown);else complete();return}if(c.rest>0)setPhase('rest',c.rest);else{round++;setPhase('work',c.work)}return}if(phase==='rest'){round++;setPhase('work',c.work);return}if(phase==='cooldown')complete();}
   function pause(){if(mode==='focus'||!running)return;running=false;paused=true;clearInterval(timer);timer=null;speak('Paused.');update();}
-  function reset(){if(mode==='focus')return;running=false;paused=false;clearInterval(timer);timer=null;clearTimeout(voiceTimer);audio?.pause();phase='ready';round=1;remaining=mode==='stopwatch'?0:getConfig().work;phaseDuration=remaining;stopwatchElapsed=0;setVisual('ready');update();$('pomodoroStatus').textContent='Ready when you are.';}
+  function reset(){if(mode==='focus')return;running=false;paused=false;clearInterval(timer);timer=null;audio?.pause();phase='ready';round=1;remaining=mode==='stopwatch'?0:getConfig().work;phaseDuration=remaining;stopwatchElapsed=0;setVisual('ready');update();$('pomodoroStatus').textContent='Ready when you are.';}
   function complete(){running=false;paused=false;clearInterval(timer);timer=null;phase='done';remaining=0;setVisual('done');playBell(3);speak('Workout complete. Great work.');recordWorkout();$('pomodoroStatus').textContent='Workout complete. Great work.';update();}
   function recordWorkout(){const today=new Date().toISOString().slice(0,10);let h=[];try{h=JSON.parse(localStorage.getItem(HISTORY)||'[]')}catch{}h.push({date:today,mode,seconds:Math.max(1,workoutElapsed),rounds:mode==='stopwatch'?0:getConfig().rounds,completedAt:new Date().toISOString()});localStorage.setItem(HISTORY,JSON.stringify(h.slice(-500)));renderStats();window.dispatchEvent(new CustomEvent('statusos:workout-completed',{detail:h[h.length-1]}));}
   function renderStats(){let h=[];try{h=JSON.parse(localStorage.getItem(HISTORY)||'[]')}catch{}const days=new Set(h.map(x=>x.date)),today=new Date();let streak=0;for(let i=0;i<366;i++){const d=new Date(today);d.setDate(today.getDate()-i);const k=d.toISOString().slice(0,10);if(days.has(k))streak++;else if(i===0)continue;else break}$('performanceWorkoutCount').textContent=h.length;$('performanceWorkoutMinutes').textContent=`${Math.round(h.reduce((a,x)=>a+(x.seconds||0),0)/60)} min`;$('performanceRoundsTotal').textContent=h.reduce((a,x)=>a+(x.rounds||0),0);$('performanceWorkoutStreak').textContent=`${streak} days`;}
