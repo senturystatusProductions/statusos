@@ -1,0 +1,9 @@
+STATUSOS v3.8.1 INSTALLATION
+
+1. Back up your current StatusOS folder.
+2. Replace the existing files with all files from this package.
+3. Start StatusOS through your normal local server.
+4. Hard refresh once: Ctrl + Shift + R.
+5. If an older version remains cached, close all StatusOS tabs, reopen, and refresh again.
+
+No Supabase SQL migration is required.

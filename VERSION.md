@@ -1,5 +1,5 @@
-# StatusOS v3.7.0
+# StatusOS Version
 
-**Codename:** Performance Timer
-
-Focus, Tabata, Boxing, HIIT, EMOM and Stopwatch modes with event-based boxing bells, workout presets, interval cues and local workout statistics.
+**Version:** 3.8.1
+**Codename:** Daily Command Center
+**Build Date:** 2026-07-23
