@@ -51,6 +51,8 @@
   }
   function playBell(n){
     try{
+      const src=bells[n];
+      if(window.StatusOSSoundManager&&src){window.StatusOSSoundManager.unlock();window.StatusOSSoundManager.play(src,{volume:.9});if(getConfig().vibrate&&navigator.vibrate)navigator.vibrate(n===3?[200,100,200,100,400]:[180]);return;}
       const player=bellPlayers[n];
       if(!player)return;
       if(audio&&audio!==player){audio.pause();audio.currentTime=0;}
@@ -110,7 +112,7 @@
   function pause(){if(mode==='focus'||!running)return;running=false;paused=true;clearInterval(timer);timer=null;speak('Paused.');update();}
   function reset(){if(mode==='focus')return;running=false;paused=false;clearInterval(timer);timer=null;clearTimeout(voiceTimer);audio?.pause();phase='ready';round=1;remaining=mode==='stopwatch'?0:getConfig().work;phaseDuration=remaining;stopwatchElapsed=0;setVisual('ready');update();$('pomodoroStatus').textContent='Ready when you are.';}
   function complete(){running=false;paused=false;clearInterval(timer);timer=null;phase='done';remaining=0;setVisual('done');playBell(3);speak('Workout complete. Great work.');recordWorkout();$('pomodoroStatus').textContent='Workout complete. Great work.';update();}
-  function recordWorkout(){const today=new Date().toISOString().slice(0,10);let h=[];try{h=JSON.parse(localStorage.getItem(HISTORY)||'[]')}catch{}h.push({date:today,mode,seconds:Math.max(1,workoutElapsed),rounds:mode==='stopwatch'?0:getConfig().rounds,completedAt:new Date().toISOString()});localStorage.setItem(HISTORY,JSON.stringify(h.slice(-500)));renderStats();window.dispatchEvent(new CustomEvent('statusos:workout-completed',{detail:h[h.length-1]}));}
+  function recordWorkout(){const today=new Date().toISOString().slice(0,10);window.StatusOSSessionEngine?.log({type:mode,durationSeconds:Math.max(1,workoutElapsed),rounds:mode==='stopwatch'?0:getConfig().rounds});let h=[];try{h=JSON.parse(localStorage.getItem(HISTORY)||'[]')}catch{}h.push({date:today,mode,seconds:Math.max(1,workoutElapsed),rounds:mode==='stopwatch'?0:getConfig().rounds,completedAt:new Date().toISOString()});localStorage.setItem(HISTORY,JSON.stringify(h.slice(-500)));renderStats();window.dispatchEvent(new CustomEvent('statusos:workout-completed',{detail:h[h.length-1]}));}
   function renderStats(){let h=[];try{h=JSON.parse(localStorage.getItem(HISTORY)||'[]')}catch{}const days=new Set(h.map(x=>x.date)),today=new Date();let streak=0;for(let i=0;i<366;i++){const d=new Date(today);d.setDate(today.getDate()-i);const k=d.toISOString().slice(0,10);if(days.has(k))streak++;else if(i===0)continue;else break}$('performanceWorkoutCount').textContent=h.length;$('performanceWorkoutMinutes').textContent=`${Math.round(h.reduce((a,x)=>a+(x.seconds||0),0)/60)} min`;$('performanceRoundsTotal').textContent=h.reduce((a,x)=>a+(x.rounds||0),0);$('performanceWorkoutStreak').textContent=`${streak} days`;}
   function applyPreset(name){const p=presets[name];if(!p)return;setMode(p.mode);$('performanceWork').value=p.work;$('performanceRest').value=p.rest;$('performanceRounds').value=p.rounds;$('performanceWarmup').value=p.warmup;$('performanceCooldown').value=p.cooldown;savePrefs();reset();}
   function setMode(next){

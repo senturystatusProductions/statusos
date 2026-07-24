@@ -1,9 +1,0 @@
-STATUSOS v4.0.0 INSTALL
-
-1. Back up your current StatusOS folder.
-2. Replace the current project files with the contents of this ZIP.
-3. Keep your existing config.js values if your deployed copy contains private project credentials.
-4. Open StatusOS and press Ctrl + Shift + R once.
-5. Open Artist OS and test Directory and Pipeline views.
-
-No Supabase SQL migration is required. Existing artist data is preserved.

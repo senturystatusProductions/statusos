@@ -1,0 +1,8 @@
+STATUSOS v4.1.0 INSTALL
+
+1. Back up your current StatusOS folder.
+2. Replace its files with the contents of this ZIP.
+3. Open StatusOS and press Ctrl + Shift + R once.
+4. On iPhone, fully close and reopen the installed web app after the refresh.
+
+No Supabase SQL update is required.
