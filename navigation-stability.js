@@ -1,19 +1,42 @@
+/* StatusOS v4.2.2 Navigation & Session Restore */
 (function () {
   'use strict';
 
-  const VERSION = '3.8.1';
+  const VERSION = '4.2.2';
+  const SESSION_KEY = 'statusos_navigation_session_v1';
+  const WORKSPACE_KEY = 'statusos_workspace_state_v2';
+  const DEFAULT_VIEW = 'dashboard';
 
   function getViewName(trigger) {
     return trigger && (trigger.dataset.view || trigger.dataset.viewJump || trigger.dataset.iosView || '');
   }
 
-  function activateView(viewName, source) {
-    if (!viewName) return false;
-    const target = document.getElementById(viewName);
-    if (!target || !target.classList.contains('view')) {
-      console.warn('[StatusOS Navigation] Missing view:', viewName);
-      return false;
+  function validView(viewName) {
+    const target = viewName && document.getElementById(viewName);
+    return Boolean(target?.classList.contains('view'));
+  }
+
+  function readWorkspaceView() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(WORKSPACE_KEY) || '{}');
+      return validView(saved.activeView) ? saved.activeView : '';
+    } catch {
+      return '';
     }
+  }
+
+  function saveWorkspaceView(viewName) {
+    window.StatusOS?.Workspace?.saveView?.(viewName);
+    if (window.StatusOS?.Workspace?.saveView) return;
+    try {
+      const saved = JSON.parse(localStorage.getItem(WORKSPACE_KEY) || '{}');
+      localStorage.setItem(WORKSPACE_KEY, JSON.stringify({ ...saved, activeView: viewName, updatedAt: new Date().toISOString() }));
+    } catch (_) {}
+  }
+
+  function activateView(viewName, source, options = {}) {
+    if (!validView(viewName)) return false;
+    const target = document.getElementById(viewName);
 
     document.querySelectorAll('.view.active').forEach(view => view.classList.remove('active'));
     target.classList.add('active');
@@ -38,18 +61,19 @@
       toggle?.setAttribute('aria-expanded', 'false');
     }
 
+    saveWorkspaceView(viewName);
     try { history.replaceState(null, '', `#${viewName}`); } catch (_) {}
     window.dispatchEvent(new CustomEvent('statusos:view-change', { detail: { view: viewName, version: VERSION } }));
-    target.scrollIntoView({ block: 'start' });
+
+    if (!options.preserveScroll) target.scrollIntoView({ block: 'start' });
     return true;
   }
 
-  // Delegated navigation remains reliable even when dashboard modules replace or add buttons.
   document.addEventListener('click', function (event) {
     const trigger = event.target.closest('[data-view], [data-view-jump], [data-ios-view]');
     if (!trigger) return;
     const viewName = getViewName(trigger);
-    if (!viewName || !document.getElementById(viewName)) return;
+    if (!validView(viewName)) return;
     event.preventDefault();
     event.stopImmediatePropagation();
     activateView(viewName, trigger);
@@ -58,7 +82,7 @@
   function validateNavigation() {
     const missing = [];
     document.querySelectorAll('.nav-item[data-view]').forEach(button => {
-      if (!document.getElementById(button.dataset.view)) missing.push(button.dataset.view);
+      if (!validView(button.dataset.view)) missing.push(button.dataset.view);
     });
     if (missing.length) console.error('[StatusOS Navigation] Invalid sidebar targets:', missing);
     else console.info('[StatusOS Navigation] All sidebar targets verified.');
@@ -66,8 +90,18 @@
   }
 
   function boot() {
-    const requested = location.hash.replace('#', '');
-    if (requested && document.getElementById(requested)) activateView(requested);
+    const sessionStarted = sessionStorage.getItem(SESSION_KEY) === '1';
+    let requested;
+
+    if (!sessionStarted) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      requested = DEFAULT_VIEW;
+    } else {
+      const hashView = location.hash.replace('#', '');
+      requested = validView(hashView) ? hashView : (readWorkspaceView() || DEFAULT_VIEW);
+    }
+
+    activateView(requested, null, { preserveScroll: sessionStarted });
     validateNavigation();
     window.StatusOS = window.StatusOS || {};
     window.StatusOS.Navigation = { activateView, validateNavigation, version: VERSION };

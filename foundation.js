@@ -1,7 +1,7 @@
 (function () {
-  const VERSION = "3.9.0";
-  const CODENAME = "Daily Command Center";
-  const BUILD_DATE = "2026-07-23";
+  const VERSION = "4.2.2";
+  const CODENAME = "UX & Navigation Hotfix";
+  const BUILD_DATE = "2026-07-24";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;
 

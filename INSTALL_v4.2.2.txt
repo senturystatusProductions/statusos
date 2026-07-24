@@ -1,0 +1,11 @@
+StatusOS v4.2.2 Installation
+
+1. Replace the current project files with the files in this release.
+2. Commit and push the changes to GitHub.
+3. On desktop, press Ctrl + Shift + R once.
+4. On phone, fully close StatusOS and reopen it.
+5. Confirm a new session opens Mission Control.
+6. Navigate to Artist OS, type continuously in Relationship Notes, and confirm focus stays in the notes field.
+7. Refresh while viewing another page and confirm that page remains open.
+
+No Supabase or SQL update is required.
