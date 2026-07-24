@@ -1,10 +1,11 @@
-const CACHE = "statusos-v4.1.0-session-engine-1";
+const CACHE = "statusos-v4.2.0-mission-control-1";
 const CORE = [
   "./index.html", "./style.css", "./manifest.json", "./favicon.png",
   "./icon-192.png", "./icon-512.png", "./sound-manager.js", "./session-engine.js", "./focus-planner.js", "./performance-timer.js",
   "./sounds/classic-ring.wav", "./sounds/80s-digital-alarm.wav", "./sounds/tibetan-bell.wav",
   "./sounds/wind-chimes.wav", "./sounds/rooster.wav", "./sounds/pinball-arcade.wav",
   "./sounds/boxing-bell-1.wav", "./sounds/boxing-bell-2.wav", "./sounds/boxing-bell-3.wav", "./mindset-routine.js", "./statusos-logo.svg", "./statusos-wordmark.svg",
+  "mission-control-v42.js",
   "navigation-stability.js",
   "quick-capture.js",
   "command-palette.js"

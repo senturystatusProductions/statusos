@@ -1,0 +1,9 @@
+STATUSOS v4.2.0 INSTALLATION
+
+1. Back up your current StatusOS folder.
+2. Extract this ZIP.
+3. Replace the files in your current StatusOS folder with these files.
+4. Open StatusOS and press Ctrl + Shift + R once.
+5. On phone, fully close and reopen the installed app once.
+
+No Supabase SQL update is required.

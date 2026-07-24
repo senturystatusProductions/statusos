@@ -1,5 +1,5 @@
 # StatusOS Version
 
-Version: 4.1.0
-Codename: Session Engine
-Release Type: Feature Release / Mobile Hotfix
+Version: 4.2.0
+Codename: Mission Control
+Release Type: Feature Release

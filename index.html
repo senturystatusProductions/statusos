@@ -1407,6 +1407,7 @@
   <script src="executive-dashboard.js"></script>
   <script src="reliability-center.js"></script>
   <script src="daily-polish-341.js"></script>
+  <script src="mission-control-v42.js"></script>
   <script src="navigation-stability.js"></script>
   <script src="quick-capture.js"></script>
   <script src="command-palette.js"></script>
@@ -1414,7 +1415,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("service-worker.js?v=4.1.0", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("service-worker.js?v=4.2.0", { updateViaCache: "none" });
           await registration.update();
           let refreshing = false;
           navigator.serviceWorker.addEventListener("controllerchange", () => {
