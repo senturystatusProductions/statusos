@@ -53,7 +53,8 @@
       const s=e.detail?.status||"";
       if(s===artistStatus)return;
       artistStatus=s;
-      if(s==="pending"&&e.detail?.pending)notify(`${e.detail.pending} artist change${e.detail.pending===1?"":"s"} saved locally`,{type:"info",key:"artists-pending"});
+      // Artist auto-saves stay quiet so typing is never interrupted.
+      // Sync state remains visible in the Artist OS status badge.
     });
     window.addEventListener("statusos:manual-sync-complete",()=>notify("StatusOS synced",{type:"success",key:`manual-sync-${Date.now()}`,duration:2600}));
     window.addEventListener("statusos:manual-sync-error",e=>notify(e.detail?.message||"Manual sync could not finish",{type:"error",key:`manual-sync-error-${Date.now()}`,duration:4200}));

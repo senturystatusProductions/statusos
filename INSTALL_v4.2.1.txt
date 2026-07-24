@@ -1,0 +1,7 @@
+StatusOS v4.2.1 Installation
+
+1. Replace your current project files with this release.
+2. Commit and push the updated files to GitHub.
+3. On desktop, press Ctrl + Shift + R.
+4. On phone, fully close StatusOS and reopen it once.
+5. Open an artist profile and type continuously in Relationship Notes to confirm the field no longer loses focus.

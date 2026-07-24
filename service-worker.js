@@ -1,4 +1,4 @@
-const CACHE = "statusos-v4.2.0-mission-control-1";
+const CACHE = "statusos-v4.2.1-artist-notes-hotfix-1";
 const CORE = [
   "./index.html", "./style.css", "./manifest.json", "./favicon.png",
   "./icon-192.png", "./icon-512.png", "./sound-manager.js", "./session-engine.js", "./focus-planner.js", "./performance-timer.js",

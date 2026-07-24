@@ -1,5 +1,5 @@
 # StatusOS Version
 
-**Version:** 4.2.0  
-**Codename:** Mission Control  
-**Release Type:** Feature Release  
+**Version:** 4.2.1  
+**Codename:** Artist Notes Hotfix  
+**Release Type:** Hotfix Release  
