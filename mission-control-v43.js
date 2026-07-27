@@ -1,4 +1,4 @@
-/* StatusOS v4.3.0 Daily Guidance */
+/* StatusOS v4.3.1 Mission Control */
 (function () {
   'use strict';
 

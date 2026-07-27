@@ -1,4 +1,4 @@
-StatusOS v4.3.0 Daily Guidance
+StatusOS v4.3.1 Mission Control
 
 1. Replace the existing project files with this release.
 2. Commit and push to GitHub.
