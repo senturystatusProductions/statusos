@@ -1,3 +1,3 @@
 # StatusOS Version
 
-**Current Version:** v4.3.1 Mission Control
+**Current Version:** v4.4.0 Producer Command Center

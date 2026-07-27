@@ -1,4 +1,4 @@
-StatusOS v4.3.1 Mission Control
+StatusOS v4.4.0 Producer Command Center
 
 1. Replace the existing project files with this release.
 2. Commit and push to GitHub.

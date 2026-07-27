@@ -1,4 +1,4 @@
-/* StatusOS v4.3.1 Mission Control */
+/* StatusOS v4.4.0 Producer Command Center */
 (function () {
   'use strict';
 
