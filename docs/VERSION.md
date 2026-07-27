@@ -1,5 +1,3 @@
-# StatusOS Version
+# StatusOS v4.2.3
 
-Version: 4.2.2
-Codename: UX & Navigation Hotfix
-Release Type: Hotfix Release
+Morning Routine Reliability Hotfix

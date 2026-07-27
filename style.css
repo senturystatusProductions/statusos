@@ -611,8 +611,7 @@ dialog.command-palette:not([open]){display:none!important}
   .mindset-card,.purpose-editor-card{padding:14px}
   .mindset-checklist label{padding:12px 0;gap:10px}
   .mindset-checklist textarea{min-height:86px}
-  .success-actions{position:sticky;bottom:calc(76px + env(safe-area-inset-bottom));z-index:5;background:linear-gradient(180deg,transparent,var(--card,#151a23) 24%);padding-top:18px;padding-bottom:4px}
-  .keyboard-open .success-actions{position:static;background:none;padding-top:12px}
+  .success-actions{position:static;background:none;padding-top:12px;padding-bottom:4px}
   input,textarea,select{font-size:16px}
   .report-problem-card{margin-bottom:90px}
 }
@@ -832,3 +831,7 @@ textarea{min-height:112px}
 
 /* v4.2.1 Artist Notes Auto-Save */
 .artist-notes-save-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}.artist-notes-save-row .small{min-height:1.2em}
+
+/* StatusOS v4.2.3 Morning Routine Reliability */
+#completeMorningMindset.completed,#saveEveningResetBtn.completed{border-color:rgba(74,222,128,.45);background:rgba(74,222,128,.12)}
+@media(max-width:760px){.success-actions{position:static!important;bottom:auto!important;z-index:auto!important;background:none!important;padding-top:12px}.success-actions .button{width:100%}}

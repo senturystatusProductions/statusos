@@ -1,4 +1,4 @@
-const CACHE = "statusos-v4.2.2-ux-navigation-hotfix-1";
+const CACHE = "statusos-v4.2.3-morning-routine-reliability-1";
 const CORE = [
   "./index.html", "./style.css", "./manifest.json", "./favicon.png",
   "./icon-192.png", "./icon-512.png", "./sound-manager.js", "./session-engine.js", "./focus-planner.js", "./performance-timer.js",
