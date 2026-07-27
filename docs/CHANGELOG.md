@@ -94,3 +94,8 @@ All notable StatusOS changes are documented here.
 
 ## v1.6.0 — Smart Alerts
 - Added actionable Mission Control alerts for tasks, habits, and music deadlines.
+
+## v4.3.0 — Daily Guidance
+- Added Morning Briefing, Suggested Next Action, Continue Working 2.0, and Today's Progress to Mission Control.
+- Added responsive mobile layouts for daily guidance.
+- No database migration required.

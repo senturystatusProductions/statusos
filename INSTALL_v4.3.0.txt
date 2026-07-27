@@ -1,0 +1,8 @@
+StatusOS v4.3.0 Daily Guidance
+
+1. Replace the existing project files with this release.
+2. Commit and push to GitHub.
+3. Desktop: press Ctrl + Shift + R once.
+4. Phone/PWA: fully close StatusOS and reopen it.
+
+No SQL or Supabase changes are required.

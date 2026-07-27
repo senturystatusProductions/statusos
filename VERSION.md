@@ -1,3 +1,5 @@
-# StatusOS v4.2.3
+# StatusOS Version
 
-Morning Routine Reliability Hotfix
+**Current Version:** v4.3.0 Daily Guidance
+
+**Stable Baseline:** v4.2.3 Morning Routine Reliability
