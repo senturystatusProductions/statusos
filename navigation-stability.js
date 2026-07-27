@@ -1,8 +1,8 @@
-/* StatusOS v4.2.2 Navigation & Session Restore */
+/* StatusOS v4.3.1 Navigation & Session Restore */
 (function () {
   'use strict';
 
-  const VERSION = '4.2.2';
+  const VERSION = '4.3.1';
   const SESSION_KEY = 'statusos_navigation_session_v1';
   const WORKSPACE_KEY = 'statusos_workspace_state_v2';
   const DEFAULT_VIEW = 'dashboard';

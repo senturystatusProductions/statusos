@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "4.2.2";
-  const CODENAME = "UX & Navigation Hotfix";
+  const VERSION = "4.3.1";
+  const CODENAME = "Mission Control";
   const BUILD_DATE = "2026-07-24";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;
