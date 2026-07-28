@@ -1,5 +1,5 @@
-# StatusOS Version
+# StatusOS v4.6.0
 
-**Current Version:** v4.5.0 Project Workspace 2.0
+**Codename:** Knowledge Engine Foundation
 
-**Stable Baseline:** v4.2.3 Morning Routine Reliability
+Central timeline storage and context API for artists, projects, tasks, payments, and notes.

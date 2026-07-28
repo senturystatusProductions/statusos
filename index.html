@@ -100,7 +100,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v4.5.0 Project Workspace 2.0</small>
+        <small id="appVersionLabel" class="version-label">v4.6.0 Knowledge Engine Foundation</small>
       </div>
     </aside>
 
@@ -1402,6 +1402,7 @@
   <script src="performance-timer.js"></script>
   <script src="daily-use-polish.js"></script>
   <script src="project-command-center.js"></script>
+  <script src="timeline-engine.js"></script>
   <script src="unified-timeline.js"></script>
   <script src="finance-os.js"></script>
   <script src="executive-dashboard.js"></script>
@@ -1415,7 +1416,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("service-worker.js?v=4.5.0", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("service-worker.js?v=4.6.0", { updateViaCache: "none" });
           await registration.update();
           let refreshing = false;
           navigator.serviceWorker.addEventListener("controllerchange", () => {
