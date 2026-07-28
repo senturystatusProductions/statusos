@@ -1,4 +1,4 @@
-const CACHE = "statusos-v4.4.1-suggested-action-navigation-hotfix-1";
+const CACHE = "statusos-v4.5.0-project-workspace-2-0-1";
 const CORE = [
   "./index.html", "./style.css", "./manifest.json", "./favicon.png",
   "./icon-192.png", "./icon-512.png", "./sound-manager.js", "./session-engine.js", "./focus-planner.js", "./performance-timer.js",

@@ -1,4 +1,4 @@
-/* StatusOS v4.4.1 Suggested Action Navigation Hotfix */
+/* StatusOS v4.5.0 Project Workspace 2.0 */
 (function () {
   'use strict';
 

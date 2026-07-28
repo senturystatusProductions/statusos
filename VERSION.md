@@ -1,5 +1,5 @@
 # StatusOS Version
 
-**Current Version:** v4.4.1 Suggested Action Navigation Hotfix
+**Current Version:** v4.5.0 Project Workspace 2.0
 
 **Stable Baseline:** v4.2.3 Morning Routine Reliability

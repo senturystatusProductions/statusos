@@ -100,7 +100,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v4.4.1 Suggested Action Navigation Hotfix</small>
+        <small id="appVersionLabel" class="version-label">v4.5.0 Project Workspace 2.0</small>
       </div>
     </aside>
 
@@ -654,7 +654,7 @@
 
       <section id="projects" class="view project-command-view">
         <div class="section-head">
-          <div><p class="eyebrow">PROJECT COMMAND CENTER</p><h2>Projects</h2><p class="muted">One workspace for deadlines, money, tasks, deliverables, notes, and next actions.</p></div>
+          <div><p class="eyebrow">PROJECT COMMAND CENTER</p><h2>Projects</h2><p class="muted">One workspace for deadlines, money, tasks, deliverables, files, sessions, notes, and next actions.</p></div>
           <button class="button" data-open="projectModal">Add Project</button>
         </div>
         <div id="projectCommandSummary" class="project-command-summary"></div>
@@ -1415,7 +1415,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("service-worker.js?v=4.4.1", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("service-worker.js?v=4.5.0", { updateViaCache: "none" });
           await registration.update();
           let refreshing = false;
           navigator.serviceWorker.addEventListener("controllerchange", () => {
