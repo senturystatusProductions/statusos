@@ -1,3 +1,3 @@
 # StatusOS Version
 
-**Current Version:** v4.4.0 Producer Command Center
+**Current Version:** v4.4.1 Suggested Action Navigation Hotfix

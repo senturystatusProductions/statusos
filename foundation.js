@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "4.4.0";
-  const CODENAME = "Producer Command Center";
+  const VERSION = "4.4.1";
+  const CODENAME = "Suggested Action Navigation Hotfix";
   const BUILD_DATE = "2026-07-24";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

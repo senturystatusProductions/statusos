@@ -1,4 +1,4 @@
-/* StatusOS v4.4.0 Producer Command Center */
+/* StatusOS v4.4.1 Suggested Action Navigation Hotfix */
 (function () {
   'use strict';
 
@@ -57,7 +57,7 @@
   }
 
   function viewLabel(view) {
-    const labels = { dashboard: 'Mission Control', tasks: 'Tasks', projects: 'Projects', artists: 'Artist CRM', 'artist-os': 'Artist OS', 'focus-planner': 'Focus Planner', 'performance-timer': 'Performance Timer', assistant: 'AI Assistant', success: 'Success OS', finance: 'Finance OS' };
+    const labels = { dashboard: 'Mission Control', tasks: 'Tasks', projects: 'Projects', crm: 'Artist CRM', 'artist-os': 'Artist OS', planner: 'Focus Planner', 'performance-timer': 'Performance Timer', assistant: 'AI Assistant', success: 'Success OS', finance: 'Finance OS' };
     return labels[view] || String(view || 'Mission Control').replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
 
@@ -79,7 +79,7 @@
     const overdue = open.filter(item => item.dueDate && item.dueDate < today());
     const dueToday = open.filter(item => item.dueDate === today());
     const top = getTopTasks(allTasks)[0];
-    if (!routines.morning) return { title: 'Complete your morning routine', detail: 'Set your direction before the day gets noisy.', view: 'success' };
+    if (!routines.morning) return { title: 'Complete your morning routine', detail: 'Set your direction before the day gets noisy.', view: 'reset' };
     if (overdue[0]) return { title: overdue[0].text || overdue[0].title, detail: 'This task is overdue. Clear it before starting lower-priority work.', view: 'tasks' };
     if (dueToday[0]) return { title: dueToday[0].text || dueToday[0].title, detail: 'This is due today and should be handled next.', view: 'tasks' };
     if (top) return { title: top.text || top.title, detail: 'This is currently your highest-impact open task.', view: 'tasks' };
@@ -170,14 +170,14 @@
       </div>
       <article class="card mc43-progress"><div class="section-head"><div><p class="eyebrow">TODAY'S PROGRESS</p><h3>Momentum built today</h3></div><strong id="mc43ProgressPercent">0%</strong></div><div class="mc43-progress-track"><i id="mc43ProgressBar"></i></div><div id="mc43ProgressStats" class="mc43-progress-stats"></div></article>
       <div class="mc42-grid mc42-support-grid">
-        <article class="card"><div class="section-head"><div><p class="eyebrow">SESSION SUMMARY</p><h3>Productive time today</h3></div><button class="text-button" data-view="focus-planner">Start Session</button></div><div id="mc42Sessions" class="mc42-session-list"></div></article>
+        <article class="card"><div class="section-head"><div><p class="eyebrow">SESSION SUMMARY</p><h3>Productive time today</h3></div><button class="text-button" data-view="planner">Start Session</button></div><div id="mc42Sessions" class="mc42-session-list"></div></article>
         <article class="card"><div class="section-head"><div><p class="eyebrow">TODAY'S TIMELINE</p><h3>Recent progress</h3></div></div><div id="mc42Timeline" class="mc42-timeline"></div></article>
       </div>
       <article class="card mc42-actions"><div class="section-head"><div><p class="eyebrow">QUICK ACTIONS</p><h3>Move forward now</h3></div></div><div class="mc42-action-grid">
         <button type="button" data-capture-action="task"><span>＋</span><b>New Task</b></button>
         <button type="button" data-capture-action="artist"><span>＋</span><b>New Artist</b></button>
         <button type="button" data-capture-action="project"><span>＋</span><b>New Project</b></button>
-        <button type="button" data-view="focus-planner"><span>▶</span><b>Start Session</b></button>
+        <button type="button" data-view="planner"><span>▶</span><b>Start Session</b></button>
         <button type="button" data-view="assistant"><span>✦</span><b>Ask AI</b></button>
       </div></article>
       <article class="card mc42-win"><div><p class="eyebrow">DAILY WIN</p><h3>What was today's biggest win?</h3></div><form id="mc42WinForm"><input id="mc42WinInput" maxlength="180" placeholder="Finished a beat, closed a client, completed a workout..."><button class="button" type="submit">Save Win</button></form><p id="mc42WinSaved" class="muted small"></p></article>`;
@@ -241,12 +241,16 @@
     const overdueCount = allTasks.filter(item => !item.done && item.dueDate && item.dueDate < today()).length;
     if ($('mc43Briefing')) $('mc43Briefing').innerHTML = [
       `<button type="button" data-view="tasks"><span>${overdueCount ? '!' : '✓'}</span><div><strong>${overdueCount ? `${overdueCount} overdue task${overdueCount === 1 ? '' : 's'}` : 'No overdue tasks'}</strong><small>${openCount} open task${openCount === 1 ? '' : 's'} total</small></div></button>`,
-      `<button type="button" data-view="success"><span>${routines.morning ? '✓' : '○'}</span><div><strong>Morning routine ${routines.morning ? 'complete' : 'incomplete'}</strong><small>Night routine ${routines.night ? 'complete' : 'still open'}</small></div></button>`,
-      `<button type="button" data-view="focus-planner"><span>⏱</span><div><strong>${formatDuration(todaySessions.reduce((sum, item) => sum + Number(item.durationSeconds || 0), 0))} focused today</strong><small>${todaySessions.length} completed session${todaySessions.length === 1 ? '' : 's'}</small></div></button>`
+      `<button type="button" data-view="reset"><span>${routines.morning ? '✓' : '○'}</span><div><strong>Morning routine ${routines.morning ? 'complete' : 'incomplete'}</strong><small>Night routine ${routines.night ? 'complete' : 'still open'}</small></div></button>`,
+      `<button type="button" data-view="planner"><span>⏱</span><div><strong>${formatDuration(todaySessions.reduce((sum, item) => sum + Number(item.durationSeconds || 0), 0))} focused today</strong><small>${todaySessions.length} completed session${todaySessions.length === 1 ? '' : 's'}</small></div></button>`
     ].join('');
     if ($('mc43NextTitle')) $('mc43NextTitle').textContent = nextAction.title;
     if ($('mc43NextDetail')) $('mc43NextDetail').textContent = nextAction.detail;
-    if ($('mc43NextButton')) $('mc43NextButton').dataset.mc43Resume = nextAction.view;
+    if ($('mc43NextButton')) {
+      $('mc43NextButton').dataset.mc43Resume = nextAction.view;
+      $('mc43NextButton').dataset.view = nextAction.view;
+      $('mc43NextButton').setAttribute('aria-label', `Open ${viewLabel(nextAction.view)}`);
+    }
 
     const taskHost = $('mc42Tasks');
     taskHost.innerHTML = top.length ? top.map((task, index) => `<article class="mc42-task"><span class="mc42-task-number">${index + 1}</span><div><strong>${esc(task.text || task.title)}</strong><small>${esc(task.priority || 'medium')} priority${task.dueDate ? ` · due ${esc(task.dueDate)}` : ''}</small></div><button type="button" data-mc42-complete="${esc(task.id)}" aria-label="Complete task">✓</button></article>`).join('') : '<div class="mc42-empty">No open smart tasks. Add a task to set today’s mission.</div>';
