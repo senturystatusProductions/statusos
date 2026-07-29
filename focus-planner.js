@@ -79,6 +79,21 @@
   function start(){if(running)return;stopAlarm();prepareAudio();if(remaining<=0)remaining=duration;endAt=Date.now()+remaining*1000;running=true;ticker=setInterval(tick,250);const status=document.getElementById('pomodoroStatus');if(status)status.textContent=mode==='focus'?'Focus on one task until the alarm.':'Step away and reset.';updateTimerUI()}
   function pause(){if(!running)return;remaining=Math.max(0,Math.ceil((endAt-Date.now())/1000));running=false;clearInterval(ticker);ticker=null;const status=document.getElementById('pomodoroStatus');if(status)status.textContent='Paused. Continue when ready.';updateTimerUI()}
   function restart(){stopAlarm();running=false;clearInterval(ticker);ticker=null;remaining=duration;const status=document.getElementById('pomodoroStatus');if(status)status.textContent='Timer restarted.';updateTimerUI()}
+  function stopForExternalTimer(){
+    const wasActive=running||alarmActive||remaining<duration;
+    stopAlarm();
+    running=false;
+    clearInterval(ticker);
+    ticker=null;
+    remaining=duration;
+    updateTimerUI();
+    return wasActive;
+  }
+  window.StatusOSFocusTimer={
+    isActive:()=>running||alarmActive||remaining<duration,
+    isRunning:()=>running,
+    stopAndReset:stopForExternalTimer
+  };
   function setDurationSeconds(sec){stopAlarm();running=false;clearInterval(ticker);ticker=null;duration=Math.max(1,Math.min(10800,Math.round(Number(sec)||1500)));remaining=duration;document.querySelectorAll('[data-pomodoro-minutes],[data-pomodoro-seconds]').forEach(b=>{const value=b.dataset.pomodoroSeconds?Number(b.dataset.pomodoroSeconds):Number(b.dataset.pomodoroMinutes)*60;b.classList.toggle('active',value===duration)});const mins=document.getElementById('pomodoroCustomMinutes'),seconds=document.getElementById('pomodoroCustomSeconds');if(mins)mins.value=Math.floor(duration/60);if(seconds)seconds.value=duration%60;updateTimerUI()}
   function setMode(next){mode=next;document.querySelectorAll('[data-pomodoro-mode]').forEach(b=>b.classList.toggle('active',b.dataset.pomodoroMode===mode));setDurationSeconds(mode==='focus'?25*60:mode==='short'?5*60:15*60)}
   function bind(){

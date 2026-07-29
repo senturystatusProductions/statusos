@@ -1,4 +1,4 @@
-const CACHE = "statusos-v4.6.0-knowledge-engine-1";
+const CACHE = "statusos-v4.6.1-timer-state-isolation-1";
 const CORE = [
   "./index.html", "./style.css", "./manifest.json", "./favicon.png",
   "./icon-192.png", "./icon-512.png", "./sound-manager.js", "./session-engine.js", "./focus-planner.js", "./performance-timer.js",

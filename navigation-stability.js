@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const VERSION = '4.6.0';
+  const VERSION = '4.6.1';
   const SESSION_KEY = 'statusos_navigation_session_v1';
   const WORKSPACE_KEY = 'statusos_workspace_state_v2';
   const DEFAULT_VIEW = 'dashboard';

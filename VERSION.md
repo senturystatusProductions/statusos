@@ -1,5 +1,3 @@
-# StatusOS v4.6.0
+# StatusOS v4.6.1
 
-**Codename:** Knowledge Engine Foundation
-
-Central timeline storage and context API for artists, projects, tasks, payments, and notes.
+**Timer State Isolation Hotfix**
