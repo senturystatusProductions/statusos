@@ -1,3 +1,5 @@
-# StatusOS v4.6.1
+# StatusOS v4.6.2
 
-**Timer State Isolation Hotfix**
+**Timer Controller Conflict Hotfix**
+
+Only the selected timer controller may update the shared timer display. Focus and performance timers now use explicit ownership and stale callback protection.

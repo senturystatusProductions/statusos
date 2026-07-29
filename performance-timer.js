@@ -1,6 +1,12 @@
-/* StatusOS v4.6.1 Performance Timer State Isolation Hotfix */
+/* StatusOS v4.6.2 Timer Controller Conflict Hotfix */
 (function(){
   'use strict';
+  const timerController=window.StatusOSTimerController=window.StatusOSTimerController||{
+    owner:'focus',generation:0,
+    claim(next){this.owner=next;this.generation+=1;window.dispatchEvent(new CustomEvent('statusos:timer-owner-changed',{detail:{owner:next,generation:this.generation}}));return this.generation;},
+    is(next){return this.owner===next;}
+  };
+  let sessionGeneration=timerController.generation;
   const PREF='statusos_performance_timer_v1';
   const HISTORY='statusos_workout_history_v1';
   const bells={1:'./sounds/boxing-bell-1.wav',2:'./sounds/boxing-bell-2.wav',3:'./sounds/boxing-bell-3.wav'};
@@ -79,6 +85,7 @@
   function fmt(sec){sec=Math.max(0,Math.floor(sec));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`}
   function setVisual(next){const ring=$('pomodoroRing');ring?.classList.remove('performance-work','performance-rest','performance-halfway','performance-done','performance-ready');ring?.classList.add(`performance-${next}`);}
   function update(){
+    if(mode==='focus'||!timerController.is('performance'))return;
     const display=$('pomodoroDisplay'),modeLabel=$('pomodoroMode'),phaseLabel=$('performancePhaseLabel'),roundLabel=$('performanceRoundLabel');
     if(display)display.textContent=fmt(mode==='stopwatch'?stopwatchElapsed:remaining);
     if(modeLabel)modeLabel.textContent=mode==='stopwatch'?'STOPWATCH':phase.toUpperCase();
@@ -92,26 +99,28 @@
   function setPhase(next,seconds){phase=next;phaseDuration=Math.max(0,seconds);remaining=phaseDuration;halfwayPlayed=false;setVisual(next);if(next==='work'){playBell(1);speak(`Round ${round}. Work.`)}else if(next==='rest'){playBell(2);speak('Rest.')}else if(next==='cooldown'){playBell(2);speak('Cool down.')}update();}
   function begin(){
     if(mode==='focus')return;
+    sessionGeneration=timerController.claim('performance');
     unlockBellAudio();
     if(running)return;
-    if(paused){running=true;paused=false;timer=setInterval(tick,1000);update();return;}
+    if(paused){running=true;paused=false;timer=setInterval(()=>tick(sessionGeneration),1000);update();return;}
     const c=getConfig();savePrefs();startedAt=Date.now();workoutElapsed=0;round=1;stopwatchElapsed=0;running=true;paused=false;
-    if(mode==='stopwatch'){phase='work';phaseDuration=0;remaining=0;setVisual('work');timer=setInterval(tick,1000);speak('Start.');update();return;}
+    if(mode==='stopwatch'){phase='work';phaseDuration=0;remaining=0;setVisual('work');timer=setInterval(()=>tick(sessionGeneration),1000);speak('Start.');update();return;}
     if(mode==='emom'){c.rest=0;$('performanceRest').value=0;}
     if(c.warmup>0){setPhase('ready',c.warmup);speak('Get ready.')}else setPhase('work',c.work);
-    timer=setInterval(tick,1000);update();
+    timer=setInterval(()=>tick(sessionGeneration),1000);update();
   }
-  function tick(){
-    if(!running)return;
+  function tick(generation=sessionGeneration){
+    if(generation!==sessionGeneration||!timerController.is('performance')||!running)return;
     if(mode==='stopwatch'){stopwatchElapsed++;workoutElapsed++;update();return;}
     remaining--;workoutElapsed++;
     const c=getConfig();
-    if(phase==='work'&&c.halfway&&!halfwayPlayed&&phaseDuration>=10&&remaining===Math.floor(phaseDuration/2)){halfwayPlayed=true;playBell(2);speak('Halfway.');setVisual('halfway');visualTimer=setTimeout(()=>{visualTimer=null;if(phase==='work')setVisual('work')},650)}
+    if(phase==='work'&&c.halfway&&!halfwayPlayed&&phaseDuration>=10&&remaining===Math.floor(phaseDuration/2)){halfwayPlayed=true;playBell(2);speak('Halfway.');setVisual('halfway');visualTimer=setTimeout(()=>{visualTimer=null;if(timerController.is('performance')&&phase==='work')setVisual('work')},650)}
     if(remaining<=0)advance();else update();
   }
   function advance(){const c=getConfig();if(phase==='ready'){setPhase('work',c.work);return}if(phase==='work'){if(round>=c.rounds){if(c.cooldown>0)setPhase('cooldown',c.cooldown);else complete();return}if(c.rest>0)setPhase('rest',c.rest);else{round++;setPhase('work',c.work)}return}if(phase==='rest'){round++;setPhase('work',c.work);return}if(phase==='cooldown')complete();}
   function pause(){if(mode==='focus'||!running)return;running=false;paused=true;clearInterval(timer);timer=null;speak('Paused.');update();}
   function destroyRuntime(){
+    sessionGeneration=timerController.generation+1;
     running=false;
     paused=false;
     clearInterval(timer);
@@ -163,6 +172,12 @@
     if(mode==='focus')window.StatusOSFocusTimer?.stopAndReset?.();
     else destroyRuntime();
     mode=next;
+    if(mode==='focus'){
+      timerController.claim('focus');
+      window.StatusOSFocusTimer?.activate?.();
+    }else{
+      sessionGeneration=timerController.claim('performance');
+    }
     document.querySelectorAll('[data-performance-mode]').forEach(b=>b.classList.toggle('active',b.dataset.performanceMode===mode));
     const workout=mode!=='focus';$('performanceWorkoutPanel')?.classList.toggle('hidden',!workout);$('performanceWorkoutStats')?.classList.toggle('hidden',!workout);document.querySelectorAll('.pomodoro-focus-only').forEach(el=>el.classList.toggle('hidden',workout));
     const taskSelect=$('pomodoroTaskSelect')?.closest('label');if(taskSelect)taskSelect.classList.toggle('hidden',workout);
@@ -170,7 +185,7 @@
     if(mode==='boxing'){Object.assign($('performanceWork'),{value:180});$('performanceRest').value=60;$('performanceRounds').value=5}
     if(mode==='emom'){Object.assign($('performanceWork'),{value:60});$('performanceRest').value=0;$('performanceRounds').value=10}
     if(mode==='stopwatch'){$('performancePhaseLabel').textContent='OPEN TIMER'}
-    if(workout){$('pomodoroCurrentTask').textContent=mode==='stopwatch'?'Open workout timer':`${mode.toUpperCase()} workout`;reset();$('pomodoroStatus').textContent='Set your intervals and press Start.';}else{setVisual('ready');$('pomodoroStatus').textContent='Choose a task and press Start.';}
+    if(workout){$('pomodoroCurrentTask').textContent=mode==='stopwatch'?'Open workout timer':`${mode.toUpperCase()} workout`;reset();$('pomodoroStatus').textContent='Set your intervals and press Start.';}else{setVisual('ready');$('pomodoroStatus').textContent='Choose a task and press Start.';window.StatusOSFocusTimer?.activate?.();}
     return true;
   }
   function intercept(id,fn){$(id)?.addEventListener('click',e=>{if(mode==='focus')return;e.preventDefault();e.stopImmediatePropagation();fn();},true)}
@@ -181,7 +196,7 @@
     document.querySelectorAll('[data-preview-bell]').forEach(b=>b.addEventListener('click',()=>playBell(+b.dataset.previewBell)));
     document.querySelectorAll('#performanceWorkoutPanel input').forEach(el=>el.addEventListener('change',()=>{savePrefs();if(!running)reset()}));
     intercept('pomodoroStart',begin);intercept('pomodoroPause',pause);intercept('pomodoroRestart',reset);intercept('pomodoroStopAlarm',reset);
-    renderStats();update();
+    renderStats();if(mode!=='focus'){sessionGeneration=timerController.claim('performance');update();}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();
 })();

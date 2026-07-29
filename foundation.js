@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "4.6.1";
-  const CODENAME = "Timer State Isolation Hotfix";
+  const VERSION = "4.6.2";
+  const CODENAME = "Timer Controller Conflict Hotfix";
   const BUILD_DATE = "2026-07-24";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

@@ -1,6 +1,12 @@
 /* StatusOS v3.6.0 Focus Planner UX Refresh */
 (function(){
   'use strict';
+  const timerController=window.StatusOSTimerController=window.StatusOSTimerController||{
+    owner:'focus',
+    generation:0,
+    claim(next){this.owner=next;this.generation+=1;window.dispatchEvent(new CustomEvent('statusos:timer-owner-changed',{detail:{owner:next,generation:this.generation}}));return this.generation;},
+    is(next){return this.owner===next;}
+  };
   const KEY='statusos_success_os_v2';
   const SETTINGS_KEY='statusos_focus_alarm_settings_v1';
   const CLOUD_TABLE='statusos_success_os';
@@ -63,7 +69,7 @@
   }
   function updateTaskLabel(){const s=document.getElementById('pomodoroTaskSelect'),label=document.getElementById('pomodoroTaskLabel');if(!label)return;label.textContent=s?.value===''||!s?'No task selected':s.options[s.selectedIndex]?.text||'Selected task'}
   function fmt(sec){return `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`}
-  function updateTimerUI(){if(running)remaining=Math.max(0,Math.ceil((endAt-Date.now())/1000));const d=document.getElementById('pomodoroDisplay');if(d)d.textContent=fmt(remaining);const m=document.getElementById('pomodoroMode');if(m)m.textContent=mode==='focus'?'FOCUS':mode==='short'?'SHORT BREAK':'LONG BREAK';const ring=document.getElementById('pomodoroRing');if(ring){const progress=duration?Math.max(0,Math.min(1,1-remaining/duration)):0;ring.style.setProperty('--timer-progress',`${progress*360}deg`)}const start=document.getElementById('pomodoroStart');if(start)start.textContent=running?'Running…':remaining<duration&&remaining>0?'▶ Continue':'▶ Start';const stop=document.getElementById('pomodoroStopAlarm');if(stop){stop.classList.toggle('hidden',!alarmActive);stop.setAttribute('aria-hidden',String(!alarmActive))}document.title=running?`${fmt(remaining)} • StatusOS`:'StatusOS'}
+  function updateTimerUI(){if(!timerController.is('focus'))return;if(running)remaining=Math.max(0,Math.ceil((endAt-Date.now())/1000));const d=document.getElementById('pomodoroDisplay');if(d)d.textContent=fmt(remaining);const m=document.getElementById('pomodoroMode');if(m)m.textContent=mode==='focus'?'FOCUS':mode==='short'?'SHORT BREAK':'LONG BREAK';const ring=document.getElementById('pomodoroRing');if(ring){const progress=duration?Math.max(0,Math.min(1,1-remaining/duration)):0;ring.style.setProperty('--timer-progress',`${progress*360}deg`)}const start=document.getElementById('pomodoroStart');if(start)start.textContent=running?'Running…':remaining<duration&&remaining>0?'▶ Continue':'▶ Start';const stop=document.getElementById('pomodoroStopAlarm');if(stop){stop.classList.toggle('hidden',!alarmActive);stop.setAttribute('aria-hidden',String(!alarmActive))}document.title=running?`${fmt(remaining)} • StatusOS`:'StatusOS'}
   function prepareAudio(){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;audioCtx ||= new AC();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx}catch{return null}}
   function playSynthOnce(){const ctx=prepareAudio();if(!ctx)return;const now=ctx.currentTime,volume=settings().volume??.8;[659.25,783.99,987.77].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.0001,now+i*.2);g.gain.exponentialRampToValueAtTime(Math.max(.01,.2*volume),now+i*.2+.02);g.gain.exponentialRampToValueAtTime(.0001,now+i*.2+1.4);o.connect(g);g.connect(ctx.destination);o.start(now+i*.2);o.stop(now+i*.2+1.5)})}
   function stopAudioOnly(){clearTimeout(alarmStopTimer);alarmStopTimer=null;clearInterval(synthAlarmTimer);synthAlarmTimer=null;clearTimeout(previewTimer);previewTimer=null;window.StatusOSSoundManager?.stop();if(alarmAudio){try{alarmAudio.pause();alarmAudio.currentTime=0}catch{}alarmAudio=null}try{navigator.vibrate?.(0)}catch{}}
@@ -75,10 +81,10 @@
   function showCompletion(sessionSeconds){const completion=document.getElementById('pomodoroCompletion');if(!completion)return;const {p}=day();completion.classList.remove('hidden');document.getElementById('pomodoroRing')?.classList.add('alarm-ringing');const title=document.getElementById('pomodoroCompletionTitle'),invested=document.getElementById('pomodoroCompletionMinutes'),total=document.getElementById('pomodoroCompletionTotal');if(title)title.textContent=mode==='focus'?'Focus session complete. Great work.':'Break complete. Ready for the next focused block.';if(invested)invested.textContent=mode==='focus'?`+1 Focus Session • ${formatTime(sessionSeconds)} invested`:`${formatTime(sessionSeconds)} break complete`;if(total)total.textContent=`Today's focus total: ${formatTime(focusSecondsForPlanner(p))}`}
   function startAlarm(){const s=settings();if(s.soundOn===false)return;alarmActive=true;beginSound(selectedSound(),true);vibrateAlarm();const limit=s.alarmDuration==='until-stop'?0:Number(s.alarmDuration||30)*1000;if(limit>0)alarmStopTimer=setTimeout(stopAlarm,limit);updateTimerUI()}
   function finish(){clearInterval(ticker);ticker=null;running=false;remaining=0;const sessionSeconds=duration;window.StatusOSSessionEngine?.log({type:mode==='focus'?'focus':'break',durationSeconds:sessionSeconds,sound:settings().sound,task:document.getElementById('pomodoroTaskLabel')?.textContent||''});save(p=>{p.stats.sessions=(p.stats.sessions||0)+1;if(mode==='focus'){p.stats.focusSeconds=focusSecondsForPlanner(p)+sessionSeconds;p.stats.focusMinutes=Math.round(p.stats.focusSeconds/60);const index=Number(document.getElementById('pomodoroTaskSelect')?.value);if(Number.isInteger(index)&&index>=0&&p.tasks[index])p.tasks[index].actual=(p.tasks[index].actual||0)+1}else{p.stats.breakSeconds=breakSecondsForPlanner(p)+sessionSeconds;p.stats.breakMinutes=Math.round(p.stats.breakSeconds/60)}});showCompletion(sessionSeconds);startAlarm();const status=document.getElementById('pomodoroStatus');if(status)status.textContent='Timer complete. Press Stop Alarm when you are ready.';updateTimerUI()}
-  function tick(){updateTimerUI();if(remaining<=0)finish()}
-  function start(){if(running)return;stopAlarm();prepareAudio();if(remaining<=0)remaining=duration;endAt=Date.now()+remaining*1000;running=true;ticker=setInterval(tick,250);const status=document.getElementById('pomodoroStatus');if(status)status.textContent=mode==='focus'?'Focus on one task until the alarm.':'Step away and reset.';updateTimerUI()}
-  function pause(){if(!running)return;remaining=Math.max(0,Math.ceil((endAt-Date.now())/1000));running=false;clearInterval(ticker);ticker=null;const status=document.getElementById('pomodoroStatus');if(status)status.textContent='Paused. Continue when ready.';updateTimerUI()}
-  function restart(){stopAlarm();running=false;clearInterval(ticker);ticker=null;remaining=duration;const status=document.getElementById('pomodoroStatus');if(status)status.textContent='Timer restarted.';updateTimerUI()}
+  function tick(){if(!timerController.is('focus'))return;updateTimerUI();if(remaining<=0)finish()}
+  function start(){timerController.claim('focus');if(running)return;stopAlarm();prepareAudio();if(remaining<=0)remaining=duration;endAt=Date.now()+remaining*1000;running=true;ticker=setInterval(tick,250);const status=document.getElementById('pomodoroStatus');if(status)status.textContent=mode==='focus'?'Focus on one task until the alarm.':'Step away and reset.';updateTimerUI()}
+  function pause(){if(!timerController.is('focus')||!running)return;remaining=Math.max(0,Math.ceil((endAt-Date.now())/1000));running=false;clearInterval(ticker);ticker=null;const status=document.getElementById('pomodoroStatus');if(status)status.textContent='Paused. Continue when ready.';updateTimerUI()}
+  function restart(){timerController.claim('focus');stopAlarm();running=false;clearInterval(ticker);ticker=null;remaining=duration;const status=document.getElementById('pomodoroStatus');if(status)status.textContent='Timer restarted.';updateTimerUI()}
   function stopForExternalTimer(){
     const wasActive=running||alarmActive||remaining<duration;
     stopAlarm();
@@ -92,7 +98,8 @@
   window.StatusOSFocusTimer={
     isActive:()=>running||alarmActive||remaining<duration,
     isRunning:()=>running,
-    stopAndReset:stopForExternalTimer
+    stopAndReset:stopForExternalTimer,
+    activate(){timerController.claim('focus');stopForExternalTimer();updateTimerUI();}
   };
   function setDurationSeconds(sec){stopAlarm();running=false;clearInterval(ticker);ticker=null;duration=Math.max(1,Math.min(10800,Math.round(Number(sec)||1500)));remaining=duration;document.querySelectorAll('[data-pomodoro-minutes],[data-pomodoro-seconds]').forEach(b=>{const value=b.dataset.pomodoroSeconds?Number(b.dataset.pomodoroSeconds):Number(b.dataset.pomodoroMinutes)*60;b.classList.toggle('active',value===duration)});const mins=document.getElementById('pomodoroCustomMinutes'),seconds=document.getElementById('pomodoroCustomSeconds');if(mins)mins.value=Math.floor(duration/60);if(seconds)seconds.value=duration%60;updateTimerUI()}
   function setMode(next){mode=next;document.querySelectorAll('[data-pomodoro-mode]').forEach(b=>b.classList.toggle('active',b.dataset.pomodoroMode===mode));setDurationSeconds(mode==='focus'?25*60:mode==='short'?5*60:15*60)}
