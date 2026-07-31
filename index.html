@@ -100,7 +100,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v4.6.2 Timer Controller Conflict Hotfix</small>
+        <small id="appVersionLabel" class="version-label">v4.7.0 Artist CRM Intelligence</small>
       </div>
     </aside>
 
@@ -1204,11 +1204,11 @@
       <label>Name<input name="name" required placeholder="Artist name"></label>
       <label>Instagram Handle<input name="contact" placeholder="@artist"></label>
       <label>Email<input name="email" type="email" placeholder="artist@email.com"></label>
-      <label>Genre / Style<input name="genre" placeholder="Boom bap, R&B..."></label><label>Relationship<select name="relationship"><option>Cold</option><option selected>Warm</option><option>Hot Lead</option><option>Client</option><option>VIP</option></select></label><label>Phone<input name="phone" placeholder="Phone number"></label><label>Location<input name="location" placeholder="City / region"></label><label>Website<input name="website" placeholder="https://"></label><label>Tags<input name="tags" placeholder="West Coast, VIP"></label><label>Revenue (CAD)<input name="revenue" type="number" min="0" step="1" value="0"></label>
+      <label>Genre / Style<input name="genre" placeholder="Boom bap, R&B..."></label><label>Role<select name="role"><option selected>Artist / Client</option><option>Prospect</option><option>Collaborator</option><option>Friend</option><option>Label / Manager</option><option>Vendor</option></select></label><label>Relationship<select name="relationship"><option>Cold</option><option selected>Warm</option><option>Hot Lead</option><option>Client</option><option>VIP</option></select></label><label>Trust Level<select name="trustLevel"><option>Low</option><option selected>Medium</option><option>High</option><option>Very High</option></select></label><label>Preferred Contact<select name="preferredChannel"><option selected>Instagram</option><option>Email</option><option>Phone</option><option>Text</option><option>WhatsApp</option><option>Other</option></select></label><label>Phone<input name="phone" placeholder="Phone number"></label><label>Location<input name="location" placeholder="City / region"></label><label>Website<input name="website" placeholder="https://"></label><label>Tags<input name="tags" placeholder="West Coast, VIP"></label><label>Revenue (CAD)<input name="revenue" type="number" min="0" step="1" value="0"></label>
       <label>Status<select name="status"><option>New Lead</option><option>Contacted</option><option>Replied</option><option>Interested</option><option>Free Beat Sent</option><option>Negotiating</option><option>Client</option><option>Returning Client</option><option>Inactive</option></select></label>
       <label>Follow-up Date<input name="followUp" type="date"></label>
     </div>
-    <label>Initial Notes<textarea name="notes" placeholder="What stood out about their music?"></textarea></label>
+    <label>Current Situation<textarea name="currentSituation" placeholder="Example: Waiting on cheques before paying a deposit."></textarea></label><label>Communication Style<textarea name="communicationStyle" placeholder="How they communicate, what tone works, and anything to avoid."></textarea></label><label>Initial Notes<textarea name="notes" placeholder="What stood out about their music?"></textarea></label>
     <button class="button" value="default">Save Artist</button>
   </form>
 </dialog>
@@ -1416,7 +1416,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("service-worker.js?v=4.6.2", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("service-worker.js?v=4.7.0", { updateViaCache: "none" });
           await registration.update();
           let refreshing = false;
           navigator.serviceWorker.addEventListener("controllerchange", () => {

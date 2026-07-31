@@ -1,5 +1,5 @@
-# StatusOS v4.6.2
+# StatusOS v4.7.0
 
-**Timer Controller Conflict Hotfix**
+**Codename:** Artist CRM Intelligence
 
-Only the selected timer controller may update the shared timer display. Focus and performance timers now use explicit ownership and stale callback protection.
+**Build date:** 2026-07-29
