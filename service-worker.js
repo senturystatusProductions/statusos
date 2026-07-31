@@ -1,4 +1,4 @@
-const CACHE = "statusos-v4.7.0-artist-crm-intelligence-1";
+const CACHE = "statusos-v4.8.0-context-engine-1";
 const CORE = [
   "./index.html", "./style.css", "./manifest.json", "./favicon.png",
   "./icon-192.png", "./icon-512.png", "./sound-manager.js", "./session-engine.js", "./focus-planner.js", "./performance-timer.js",
@@ -6,6 +6,7 @@ const CORE = [
   "./sounds/wind-chimes.wav", "./sounds/rooster.wav", "./sounds/pinball-arcade.wav",
   "./sounds/boxing-bell-1.wav", "./sounds/boxing-bell-2.wav", "./sounds/boxing-bell-3.wav", "./mindset-routine.js", "./statusos-logo.svg", "./statusos-wordmark.svg",
   "mission-control-v43.js",
+  "context-engine.js",
   "timeline-engine.js", "unified-timeline.js",
   "navigation-stability.js",
   "quick-capture.js",

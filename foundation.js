@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "4.7.0";
-  const CODENAME = "Artist CRM Intelligence";
+  const VERSION = "4.8.0";
+  const CODENAME = "Context Engine";
   const BUILD_DATE = "2026-07-24";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

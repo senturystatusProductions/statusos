@@ -1443,10 +1443,21 @@ function bindAssistant() {
     messages.scrollTop = messages.scrollHeight;
 
     try {
+      const contextPackage = window.StatusOS?.ContextEngine?.build?.(message) || { prompt: message, artist: null, hasContext: false };
+      if (contextPackage.artist?.name) {
+        assistantReply.textContent = `StatusOS AI is reviewing ${contextPackage.artist.name}'s history...`;
+      }
+
       const { data, error } = await window.statusOSSupabase.functions.invoke(
         "statusos-ai",
         {
-          body: { message }
+          body: {
+            message: contextPackage.prompt,
+            originalMessage: message,
+            contextArtistId: contextPackage.artist?.id || null,
+            contextArtistName: contextPackage.artist?.name || null,
+            contextVersion: "4.8.0"
+          }
         }
       );
 

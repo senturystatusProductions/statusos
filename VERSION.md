@@ -1,5 +1,5 @@
-# StatusOS v4.7.0
+# StatusOS v4.8.0
 
-**Codename:** Artist CRM Intelligence
+**Codename:** Context Engine
 
-**Build date:** 2026-07-29
+**Build date:** 2026-07-31
