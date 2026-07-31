@@ -852,3 +852,13 @@ textarea{min-height:112px}
 
 /* StatusOS v5.0.0 Business Intelligence */
 .business-intelligence-panel{margin-bottom:18px;padding:20px}.bi-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}.bi-header h3{margin:3px 0 0}.bi-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}.bi-metrics>div{padding:13px;border:1px solid var(--border);border-radius:14px;background:var(--surface-2)}.bi-metrics strong{display:block;font-size:1.25rem}.bi-metrics span{display:block;margin-top:3px;color:var(--muted);font-size:.78rem}.bi-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:12px}.bi-grid>section{padding:15px;border:1px solid var(--border);border-radius:15px;background:var(--surface-2)}.bi-grid h4{margin:5px 0 7px;font-size:1.05rem}.bi-opportunity-list{display:grid;gap:7px}.bi-opportunity{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 11px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:inherit;text-align:left;cursor:pointer}.bi-opportunity span{display:grid;gap:2px}.bi-opportunity small{color:var(--muted)}.bi-opportunity strong{display:grid;place-items:center;min-width:38px;height:38px;border-radius:50%;background:var(--accent-soft);font-size:.85rem}@media(max-width:760px){.business-intelligence-panel{padding:15px}.bi-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.bi-grid{grid-template-columns:1fr}.bi-header{align-items:center}}
+
+/* v5.0.1 AI Actions Engine */
+.assistant-message.assistant-action-card{display:block;max-width:560px;border:1px solid rgba(89,202,154,.45);background:rgba(16,31,39,.96);padding:16px}
+.assistant-action-card>strong{display:block;font-size:1rem;margin-bottom:12px}
+.assistant-action-details{display:grid;gap:8px;margin-bottom:14px}
+.assistant-action-details>div{display:flex;justify-content:space-between;gap:18px;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:7px}
+.assistant-action-details span{color:var(--muted,#9fb0bb)}
+.assistant-action-details b{text-align:right}
+.assistant-action-controls{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:600px){.assistant-action-details>div{align-items:flex-start}.assistant-action-controls button{flex:1}}

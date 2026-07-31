@@ -1,3 +1,2 @@
-# StatusOS Version
-
-**Current Version:** v4.5.0 Project Workspace 2.0
+StatusOS v5.0.1
+AI Actions Engine

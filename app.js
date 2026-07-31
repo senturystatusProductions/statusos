@@ -1450,6 +1450,63 @@ function bindAssistant() {
     messages.scrollTop = messages.scrollHeight;
 
     try {
+      const detectedAction = window.StatusOS?.AIActions?.parse?.(message);
+      if (detectedAction) {
+        const validation = window.StatusOS.AIActions.validate(detectedAction);
+        if (!validation.ok) {
+          assistantReply.textContent = validation.message;
+          input.focus();
+          messages.scrollTop = messages.scrollHeight;
+          return;
+        }
+        const summary = window.StatusOS.AIActions.summary(detectedAction);
+        assistantReply.textContent = "";
+        assistantReply.classList.add("assistant-action-card");
+        const heading = document.createElement("strong");
+        heading.textContent = summary.title;
+        assistantReply.appendChild(heading);
+        const details = document.createElement("div");
+        details.className = "assistant-action-details";
+        summary.rows.forEach(([label, value]) => {
+          const row = document.createElement("div");
+          const key = document.createElement("span");
+          const val = document.createElement("b");
+          key.textContent = label;
+          val.textContent = value;
+          row.append(key, val);
+          details.appendChild(row);
+        });
+        assistantReply.appendChild(details);
+        const controls = document.createElement("div");
+        controls.className = "assistant-action-controls";
+        const confirmButton = document.createElement("button");
+        confirmButton.type = "button";
+        confirmButton.className = "primary-button";
+        confirmButton.textContent = "Confirm & Create";
+        const cancelButton = document.createElement("button");
+        cancelButton.type = "button";
+        cancelButton.className = "secondary-button";
+        cancelButton.textContent = "Cancel";
+        controls.append(confirmButton, cancelButton);
+        assistantReply.appendChild(controls);
+        confirmButton.addEventListener("click", () => {
+          const result = window.StatusOS.AIActions.execute(detectedAction);
+          assistantReply.classList.remove("assistant-action-card");
+          assistantReply.textContent = result.message;
+          if (result.ok) {
+            window.StatusOS?.ContextEngine?.rememberUser?.(message, { artist: detectedAction.data.artistId ? { id: detectedAction.data.artistId, name: detectedAction.data.artist } : null });
+            window.StatusOS?.ContextEngine?.rememberAssistant?.(result.message);
+          }
+          messages.scrollTop = messages.scrollHeight;
+        }, { once: true });
+        cancelButton.addEventListener("click", () => {
+          assistantReply.classList.remove("assistant-action-card");
+          assistantReply.textContent = "Project creation cancelled.";
+        }, { once: true });
+        messages.scrollTop = messages.scrollHeight;
+        return;
+      }
+
       const contextPackage = window.StatusOS?.ContextEngine?.build?.(message) || { prompt: message, artist: null, hasContext: false };
       window.StatusOS?.ContextEngine?.rememberUser?.(message, contextPackage);
       if (contextPackage.artist?.name) {

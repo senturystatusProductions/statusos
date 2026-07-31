@@ -51,7 +51,31 @@
 
   function rerender(){window.renderProjects();}
   window.StatusOS=window.StatusOS||{};
+  function createProject(input={}){
+    const p=normalize({
+      id:uid(),
+      name:String(input.name||'').trim(),
+      artist:String(input.artist||'').trim(),
+      artistId:input.artistId||null,
+      type:String(input.type||'Project').trim()||'Project',
+      status:String(input.status||'Planning').trim()||'Planning',
+      deadline:String(input.deadline||'').trim(),
+      budget:Number(input.budget||0),
+      paid:Number(input.paid||0),
+      progress:Number(input.progress||0),
+      notes:String(input.notes||'').trim(),
+      nextStep:String(input.nextStep||'').trim(),
+      deliverables:[], activity:[], resources:[], sessions:[]
+    });
+    if(!p.name)return null;
+    activity(p,'Project Created',input.source?`Created via ${input.source}`:'Project workspace created');
+    state.projects.push(p);
+    persist();
+    return p;
+  }
+
   window.StatusOS.ProjectCommand={
+    create:createProject,
     open:id=>{selectedId=id;rerender();},
     back:()=>{selectedId=null;rerender();},
     saveDetails:id=>{const p=project(id);if(!p)return;p.status=$('projectStatus').value;p.deadline=$('projectDeadline').value;activity(p,'Project Details Updated',`${p.status}${p.deadline?' · '+date(p.deadline):''}`);persist();},

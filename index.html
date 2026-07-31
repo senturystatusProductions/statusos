@@ -1395,6 +1395,7 @@
   <script src="smart-task-engine.js"></script>
   <script src="artist-os.js"></script>
   <script src="context-engine.js"></script>
+  <script src="ai-actions.js"></script>
   <script src="business-intelligence.js"></script>
   <script src="data-protection.js"></script>
   <script src="ios-app.js"></script>
@@ -1421,7 +1422,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("service-worker.js?v=5.0.0", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("service-worker.js?v=5.0.1", { updateViaCache: "none" });
           await registration.update();
           let refreshing = false;
           navigator.serviceWorker.addEventListener("controllerchange", () => {
