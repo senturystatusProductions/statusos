@@ -1,4 +1,4 @@
-/* StatusOS v4.9.0 AI Conversation Memory */
+/* StatusOS v5.0.0 Business Intelligence */
 (function () {
   "use strict";
 
@@ -191,6 +191,9 @@
     } else {
       sections.push("", "ARTIST CONTEXT:", "No matching artist was found in StatusOS for this question. If the question requires a specific artist, briefly say that the artist needs to be added or named.");
     }
+
+    const businessContext = window.StatusOS?.BusinessIntelligence?.promptContext?.();
+    if (businessContext) sections.push("", businessContext);
 
     if (topic) sections.push("", `CURRENT TOPIC: ${topic}`);
     if (memory.turns.length) {

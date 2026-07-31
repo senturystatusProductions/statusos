@@ -1464,7 +1464,7 @@ function bindAssistant() {
             originalMessage: message,
             contextArtistId: contextPackage.artist?.id || null,
             contextArtistName: contextPackage.artist?.name || null,
-            contextVersion: "4.9.0"
+            contextVersion: "5.0.0"
           }
         }
       );

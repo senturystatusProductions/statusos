@@ -1,6 +1,6 @@
 (function () {
-  const VERSION = "4.9.0";
-  const CODENAME = "AI Conversation Memory";
+  const VERSION = "5.0.0";
+  const CODENAME = "Business Intelligence";
   const BUILD_DATE = "2026-07-24";
   const LOG_KEY = "statusos_diagnostic_log_v1";
   const MAX_LOGS = 100;

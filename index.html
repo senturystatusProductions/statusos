@@ -100,7 +100,7 @@
 
       <div class="sidebar-footer">
         <small>Local-first. Cloud sync when connected.</small>
-        <small id="appVersionLabel" class="version-label">v4.9.0 AI Conversation Memory</small>
+        <small id="appVersionLabel" class="version-label">v5.0.0 Business Intelligence</small>
       </div>
     </aside>
 
@@ -732,6 +732,8 @@
           <button id="assistantClearMemory" class="button secondary" type="button">New Conversation</button>
         </div>
       
+        <article id="businessIntelligencePanel" class="card business-intelligence-panel" aria-label="Business intelligence summary"></article>
+
         <div class="card">
           <div id="assistantMessages" class="assistant-messages">
             <div class="assistant-message ai">
@@ -1393,6 +1395,7 @@
   <script src="smart-task-engine.js"></script>
   <script src="artist-os.js"></script>
   <script src="context-engine.js"></script>
+  <script src="business-intelligence.js"></script>
   <script src="data-protection.js"></script>
   <script src="ios-app.js"></script>
   <script src="ai-inbox.js"></script>
@@ -1418,7 +1421,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("service-worker.js?v=4.7.0", { updateViaCache: "none" });
+          const registration = await navigator.serviceWorker.register("service-worker.js?v=5.0.0", { updateViaCache: "none" });
           await registration.update();
           let refreshing = false;
           navigator.serviceWorker.addEventListener("controllerchange", () => {
