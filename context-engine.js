@@ -1,4 +1,4 @@
-/* StatusOS v4.8.0 Context Engine */
+/* StatusOS v4.9.0 AI Conversation Memory */
 (function () {
   "use strict";
 
@@ -19,6 +19,76 @@
       return fallback;
     }
   };
+
+
+  const MEMORY_KEY = "statusos_ai_conversation_memory_v1";
+  const MAX_TURNS = 12;
+
+  function loadMemory() {
+    const value = safeJson(MEMORY_KEY, {});
+    return {
+      currentArtistId: value.currentArtistId || null,
+      currentArtistName: value.currentArtistName || null,
+      currentProjectId: value.currentProjectId || null,
+      currentProjectName: value.currentProjectName || null,
+      currentTopic: value.currentTopic || null,
+      turns: Array.isArray(value.turns) ? value.turns.slice(-MAX_TURNS) : [],
+      updatedAt: value.updatedAt || null
+    };
+  }
+
+  function saveMemory(memory) {
+    const next = { ...memory, turns: (memory.turns || []).slice(-MAX_TURNS), updatedAt: new Date().toISOString() };
+    localStorage.setItem(MEMORY_KEY, JSON.stringify(next));
+    window.dispatchEvent(new CustomEvent("statusos:ai-memory-updated", { detail: next }));
+    return next;
+  }
+
+  function inferTopic(message, previousTopic) {
+    const text = lower(message);
+    const topics = [
+      ["deposit", /deposit|down payment|upfront|payment/],
+      ["follow-up", /follow up|follow-up|check in|ask again|message again|when should i/],
+      ["beats", /beat|instrumental|stems/],
+      ["mixing", /mix|master|vocals|revision/],
+      ["project", /album|project|track|song/],
+      ["invoice", /invoice|balance|owed|outstanding/],
+      ["outreach", /contact|dm|email|reach out/]
+    ];
+    const match = topics.find(([, pattern]) => pattern.test(text));
+    return match ? match[0] : previousTopic || null;
+  }
+
+  function memoryArtist(memory) {
+    if (!memory.currentArtistId && !memory.currentArtistName) return null;
+    const artists = listArtists();
+    return artists.find(a => String(a.id) === String(memory.currentArtistId))
+      || artists.find(a => lower(a.name) === lower(memory.currentArtistName))
+      || null;
+  }
+
+  function rememberUser(message, contextPackage) {
+    const memory = loadMemory();
+    const artist = contextPackage?.artist || null;
+    if (artist) {
+      memory.currentArtistId = artist.id || null;
+      memory.currentArtistName = artist.name || null;
+    }
+    memory.currentTopic = inferTopic(message, memory.currentTopic);
+    memory.turns.push({ role: "user", content: clean(message), createdAt: new Date().toISOString() });
+    return saveMemory(memory);
+  }
+
+  function rememberAssistant(message) {
+    const memory = loadMemory();
+    memory.turns.push({ role: "assistant", content: clean(message), createdAt: new Date().toISOString() });
+    return saveMemory(memory);
+  }
+
+  function resetMemory() {
+    localStorage.removeItem(MEMORY_KEY);
+    window.dispatchEvent(new CustomEvent("statusos:ai-memory-updated", { detail: loadMemory() }));
+  }
 
   const clean = value => String(value ?? "").trim();
   const lower = value => clean(value).toLowerCase();
@@ -105,7 +175,10 @@
   }
 
   function build(message) {
-    const artist = detectArtist(message);
+    const memory = loadMemory();
+    const explicitArtist = detectArtist(message);
+    const artist = explicitArtist || memoryArtist(memory);
+    const topic = inferTopic(message, memory.currentTopic);
     const sections = [
       "You are the StatusOS AI Business Manager for Sam Cannarella / Sentury Status Productions.",
       "Use the supplied StatusOS data as the source of truth. Never invent missing facts.",
@@ -119,15 +192,29 @@
       sections.push("", "ARTIST CONTEXT:", "No matching artist was found in StatusOS for this question. If the question requires a specific artist, briefly say that the artist needs to be added or named.");
     }
 
-    sections.push("", "USER QUESTION:", clean(message), "", "RESPONSE RULES:", "Answer directly and use the artist history when available. For message-writing requests, provide one polished message first, then a brief reason only if useful. Do not repeat the full context back to the user.");
+    if (topic) sections.push("", `CURRENT TOPIC: ${topic}`);
+    if (memory.turns.length) {
+      sections.push("", "RECENT CONVERSATION:");
+      memory.turns.slice(-8).forEach(turn => {
+        sections.push(`${turn.role === "assistant" ? "ASSISTANT" : "USER"}: ${clean(turn.content)}`);
+      });
+      sections.push("Maintain continuity. Resolve words such as he, she, they, it, that, again, and next from this recent conversation and the current artist context.");
+    }
+
+    sections.push("", "USER QUESTION:", clean(message), "", "RESPONSE RULES:", "Answer the current question directly. Continue the existing conversation instead of asking the user to repeat details already present above. Use the artist history when available. For message-writing requests, provide one polished message first, then a brief reason only if useful. Do not repeat the full context back to the user.");
 
     return {
       prompt: sections.join("\n"),
       artist: artist ? { id: artist.id, name: artist.name } : null,
-      hasContext: Boolean(artist)
+      hasContext: Boolean(artist),
+      topic,
+      memoryTurns: memory.turns.length
     };
   }
 
   window.StatusOS = window.StatusOS || {};
-  window.StatusOS.ContextEngine = { build, detectArtist, artistContext, producerDNA: [...PRODUCER_DNA] };
+  window.StatusOS.ContextEngine = {
+    build, detectArtist, artistContext, producerDNA: [...PRODUCER_DNA],
+    rememberUser, rememberAssistant, resetMemory, getMemory: loadMemory
+  };
 })();

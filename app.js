@@ -1424,6 +1424,13 @@ function bindAssistant() {
 
   if (!input || !sendButton || !messages) return;
 
+  const clearMemoryButton = document.getElementById("assistantClearMemory");
+  clearMemoryButton?.addEventListener("click", () => {
+    window.StatusOS?.ContextEngine?.resetMemory?.();
+    messages.innerHTML = '<div class="assistant-message ai">Conversation memory cleared. Start a new topic whenever you are ready.</div>';
+    input.focus();
+  });
+
   async function sendAssistantMessage() {
     const message = input.value.trim();
 
@@ -1444,6 +1451,7 @@ function bindAssistant() {
 
     try {
       const contextPackage = window.StatusOS?.ContextEngine?.build?.(message) || { prompt: message, artist: null, hasContext: false };
+      window.StatusOS?.ContextEngine?.rememberUser?.(message, contextPackage);
       if (contextPackage.artist?.name) {
         assistantReply.textContent = `StatusOS AI is reviewing ${contextPackage.artist.name}'s history...`;
       }
@@ -1456,7 +1464,7 @@ function bindAssistant() {
             originalMessage: message,
             contextArtistId: contextPackage.artist?.id || null,
             contextArtistName: contextPackage.artist?.name || null,
-            contextVersion: "4.8.0"
+            contextVersion: "4.9.0"
           }
         }
       );
@@ -1465,6 +1473,7 @@ function bindAssistant() {
 
       assistantReply.textContent =
         data?.reply || "StatusOS AI did not return a response.";
+      window.StatusOS?.ContextEngine?.rememberAssistant?.(assistantReply.textContent);
     } catch (error) {
       console.error("StatusOS AI request failed:", error);
       assistantReply.textContent =

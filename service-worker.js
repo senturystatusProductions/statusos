@@ -1,4 +1,4 @@
-const CACHE = "statusos-v4.8.0-context-engine-1";
+const CACHE = "statusos-v4.9.0-ai-conversation-memory-1";
 const CORE = [
   "./index.html", "./style.css", "./manifest.json", "./favicon.png",
   "./icon-192.png", "./icon-512.png", "./sound-manager.js", "./session-engine.js", "./focus-planner.js", "./performance-timer.js",
